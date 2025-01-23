@@ -4,79 +4,255 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prefire - Автоматизация тестирования для iOS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
+            background-color: #121212;
+            color: #eaeaea;
             line-height: 1.6;
         }
         header {
-            background: linear-gradient(90deg, #2A0722, #990D58);
+            background: #1f1f1f;
             color: #fff;
-            padding: 1rem 0;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         header img {
-            width: 300px;
+            width: 180px;
+        }
+        nav {
+            display: flex;
+            gap: 1rem;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: background 0.3s;
+        }
+        nav a:hover {
+            background: #990D58;
+            border-radius: 5px;
+        }
+        .hero {
+            background-color: #1f1f1f;
+            color: #fff;
+            padding: 4rem 2rem;
+            position: relative;
+			z-index: 2;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
             margin-bottom: 1rem;
         }
-        header h1 {
-            margin: 0;
-            font-size: 2.5rem;
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #ccc;
+        }
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .hero-buttons a {
+            background: #990D58;
+            color: #fff;
+            padding: 0.75rem 2rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        .hero-buttons a:hover {
+            background: #e91e63;
+        }
+
+		.hero-icon {
+            position: absolute;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+			z-index: 1; 
+            width: 200px;
+        }
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem auto;
+            max-width: 1000px;
+            padding: 0 2rem;
+        }
+        .card {
+            background: #1f1f1f;
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .card img {
+            width: 50px;
+            margin-bottom: 1rem;
+        }
+        .card h3 {
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        .card p {
+            font-size: 1rem;
+            color: #ccc;
         }
         section {
-            padding: 2rem;
+            padding: 3rem 2rem;
             margin: 0 auto;
-            max-width: 800px;
+            max-width: 1000px;
+        }
+        .section-card {
+            background: #1f1f1f;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+        }
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        section h2::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: #990D58;
+            margin-top: 0.5rem;
+        }
+        section p, ol {
+            font-size: 1.1rem;
+            color: #ccc;
+        }
+        ol li {
+            margin-bottom: 0.5rem;
         }
         .cta {
             text-align: center;
             margin: 2rem 0;
         }
         .cta a {
-            background: #2A0722;
+            background: #990D58;
             color: #fff;
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 2rem;
             text-decoration: none;
             border-radius: 5px;
-            transition: background 0.3s ease;
+            font-weight: 500;
+            transition: background 0.3s;
         }
         .cta a:hover {
-            background: #005bb5;
+            background: #e91e63;
         }
         footer {
-            background: #333;
-            color: #fff;
+            background: #1f1f1f;
+            color: #ccc;
             text-align: center;
-            padding: 1rem 0;
+            padding: 2rem 0;
             margin-top: 2rem;
+            font-size: 0.9rem;
         }
         footer a {
-            color: #2A0722;
+            color: #990D58;
             text-decoration: none;
         }
         footer a:hover {
             text-decoration: underline;
+        }
+        .code-example {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: #222;
+            padding: 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .code-example pre, .hljs {
+            margin: 0;
+            flex-grow: 1;
+			background-color: transparent;
+        }
+        .code-image {
+            flex-shrink: 0;
+            width: 40%;
+        }
+        .code-image img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 <body>
     <header>
         <img src="https://i.ibb.co/QCKtnCh/Frame-15.png" alt="Prefire Logo">
-        <p>Автоматизация тестирования для iOS-разработчиков</p>
+        <nav>
+            <a href="#about">О проекте</a>
+            <a href="#start">Как начать</a>
+            <a href="#examples">Примеры</a>
+            <a href="#faq">FAQ</a>
+            <a href="https://github.com/BarredEwe/Prefire" target="_blank">GitHub</a>
+        </nav>
     </header>
 
-    <section>
+    <section class="hero">
+        <h1>Скорость Swift. Удобство Prefire.</h1>
+        <p>Prefire автоматизирует создание снепшот тестов на основе превью,<br> помогая iOS-разработчикам экономить время и силы.</p>
+        <div class="hero-buttons">
+            <a href="https://github.com/BarredEwe/Prefire" target="_blank">Документация</a>
+            <a href="https://github.com/BarredEwe/Prefire" target="_blank">Сообщество</a>
+        </div>
+        <img class="hero-icon" src="https://i.ibb.co/Fzv838n/Group-48095456.png" alt="Hero Icon">
+    </section>
+
+    <div class="card-container">
+        <div class="card">
+            <img src="https://img.icons8.com/?size=64&id=AOY94AyMQPT2&format=png&color=FCC419" alt="Preview Icon">
+            <h3>Быстрое создание</h3>
+            <p>Автоматизируйте создание снепшот тестов с минимальными усилиями.</p>
+        </div>
+        <div class="card">
+            <img src="https://img.icons8.com/?size=64&id=_BTyk4vBumjx&format=png&color=000000" alt="SwiftUI Icon">
+            <h3>Работает с SwiftUI UIKit</h3>
+            <p>Используйте силу #Preview для удобного тестирования.</p>
+        </div>
+        <div class="card">
+            <img src="https://img.icons8.com/?size=64&id=63655&format=png&color=000000" alt="Open Source Icon">
+            <h3>Полностью бесплатен</h3>
+            <p>Открытый код для всех iOS-разработчиков.</p>
+        </div>
+    </div>
+
+    <section id="about" class="section-card">
         <h2>О проекте</h2>
         <p>Prefire — библиотека на основе SwiftUI Preview, которая автоматизирует создание Playbook представлений, Snapshot тестов и многого другого. С ее помощью iOS-разработчики могут легко создавать и тестировать свои приложения.</p>
     </section>
 
-    <section>
+    <section id="start" class="section-card">
         <h2>Как начать</h2>
         <ol>
             <li>Добавьте Prefire в зависимости вашего проекта через Swift Package Manager.</li>
@@ -88,10 +264,33 @@
         </div>
     </section>
 
-    <section>
+    <section id="examples" class="section-card">
+        <h2>Примеры</h2>
+        <p>Создание и тестирование UI стало еще проще с Prefire. Вот пример кода:</p>
+        <div class="code-example">
+            <pre><code class="swift">
+import SwiftUI
+import Prefire
+
+#Preview {
+    PrefireView()
+        .previewUserStory(.auth)
+        .snapshot(perceptualPrecision: 0.98)
+}
+            </code></pre>
+            <div class="code-image">
+                <img src="https://i.ibb.co/ZYW3VTp/snapshot-example.png" alt="Snapshot Example">
+            </div>
+        </div>
+        <p>После настройки вы сможете легко генерировать Snapshot тесты с помощью встроенных плагинов Prefire.</p>
+    </section>
+
+    <section id="faq" class="section-card">
         <h2>Часто задаваемые вопросы</h2>
         <h3>Что такое Prefire?</h3>
         <p>Библиотека для автоматического создания демо-представлений и тестов с использованием SwiftUI Preview.</p>
+		<h3>Как смотреть логи?</h3>
+		<p>Логи находятся в папке <code>DerivedData</code>. Для быстрого доступа используйте Xcode: в меню Window > Devices and Simulators выберите ваше устройство и найдите вкладку Logs.</p>
         <h3>Бесплатен ли Prefire?</h3>
         <p>Да, это полностью бесплатный проект с открытым исходным кодом.</p>
     </section>
