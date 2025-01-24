@@ -4,33 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prefire - Автоматизация тестирования для iOS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
     <style>
+        @font-face {
+            font-family: 'Roboto', sans-serif;
+            src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+            font-display: swap;
+        }
         :root {
             --background-color: #121212;
             --foreground-color: #eaeaea;
             --header-background: #1f1f1f;
             --card-background: #1f1f1f;
+            --border-color: #5F5F5F;
             --text-color: #ccc;
             --link-color: #fff;
             --link-hover-color: #e91e63;
             --accent-color: #990D58;
             --code-background: #222;
         }
-
-        /* Светлая тема */
         :root.light-theme {
             --background-color: #ffffff;
             --foreground-color: #121212;
             --header-background: #f8f9fa;
             --card-background: #ffffff;
+            --border-color: #1B1B1B;
             --text-color: #333;
-            --link-color: #007bff;
-            --link-hover-color: #0056b3;
-            --accent-color: #007bff;
+            --link-color: #fff;
+            --link-hover-color: #e91e63;
+            --accent-color: #990D58;
             --code-background: #f8f9fa;
         }
 
@@ -61,9 +65,8 @@
         }
         nav {
             display: flex;
-			flex-wrap: wrap;
             gap: 1rem;
-			justify-content: center;
+            justify-content: center;
         }
         nav a {
             color: var(--link-color);
@@ -82,7 +85,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 1rem;
+            font-size: 1.5rem;
             color: var(--link-color);
         }
         .hero {
@@ -94,8 +97,9 @@
             z-index: 2;
         }
         .hero h1 {
-            font-size: 3rem;
-            font-weight: 700;
+            font-size: 64px;
+            font-weight: 400;
+            line-height: 120%;
             margin-bottom: 1rem;
         }
         .hero p {
@@ -111,35 +115,32 @@
         .hero-buttons a {
             background: var(--accent-color);
             color: var(--link-color);
-			padding: 0.5rem 1.5rem;
+            padding: 12px 24px;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 12px;
             font-weight: 500;
-            transition: background 0.3s;
+            font-size: 14px;
+            transition: all 0.25s ease 0ms;
         }
         .hero-buttons a:hover {
             background: var(--link-hover-color);
         }
-        .hero-icon {
-            position: relative;
-            z-index: 1;
-            width: 200px;
-        }
         .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
             margin: 2rem auto;
-            max-width: 1000px;
-            padding: 0 2rem;
+            max-width: 1065px;
+            padding: 0;
         }
         .card {
+            flex: 1;
             background: var(--card-background);
             color: var(--foreground-color);
+            border: 1px solid var(--border-color);
             padding: 1.5rem;
-            border-radius: 10px;
+            border-radius: 20px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
         .card img {
             width: 50px;
@@ -154,21 +155,21 @@
             color: var(--text-color);
         }
         section {
-            padding: 3rem 2rem;
+            padding: 1rem 1rem;
             margin: 0 auto;
             max-width: 1000px;
         }
-        .section-card {
+        /* .section-card {
             background: var(--card-background);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
             margin-bottom: 2rem;
-        }
+        } */
         section h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+            font-weight: 400;
+            font-size: 64px;
             position: relative;
+            margin-bottom: 2rem;
         }
         section h2::after {
             content: '';
@@ -176,10 +177,12 @@
             width: 50px;
             height: 3px;
             background: var(--accent-color);
-            margin-top: 0.5rem;
+            /* margin-top: 0.5rem; */
         }
         section p, ol {
-            font-size: 1.1rem;
+            font-weight: 500;
+            font-size: 24px;
+            line-height: 133%;
             color: var(--text-color);
         }
         ol li {
@@ -240,6 +243,24 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
+        @media screen and (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                align-items: center;
+            }
+            .hero-buttons {
+                flex-direction: column;
+            }
+        }
+        .fade-in {
+            opacity: 0; 
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -252,7 +273,7 @@
             <a href="#faq">FAQ</a>
             <a href="https://github.com/BarredEwe/Prefire" target="_blank">GitHub</a>
         </nav>
-        <div class="theme-toggle" onclick="toggleTheme()">
+        <div class="theme-toggle" aria-label="Toggle theme" onclick="toggleTheme()">
             <span>🌓</span>
         </div>
     </header>
@@ -260,8 +281,8 @@
     <section class="hero">
 		<div>
 		<img class="hero-icon" src="https://i.ibb.co/Fzv838n/Group-48095456.png" alt="Hero Icon" align="right">
-			<h1>Скорость Swift. Удобство Prefire.</h1>
-			<p>Prefire автоматизирует создание снепшот тестов на основе превью,<br> помогая iOS-разработчикам экономитьвремя и силы.</p>
+			<h1>Скорость Swift<br>Удобство 🔥 Prefire</h1>
+			<p>Prefire автоматизирует создание снепшот тестов на основе превью,<br> помогая iOS-разработчикам экономить время и силы.</p>
 		</div>
 			<div class="hero-buttons">
 			<a href="https://github.com/BarredEwe/Prefire" target="_blank">Документация</a>
@@ -308,18 +329,31 @@
         <h2>Примеры</h2>
         <p>Создание и тестирование UI стало еще проще с Prefire. Вот пример кода:</p>
         <div class="code-example">
-            <pre><code class="swift">
-import SwiftUI
-import Prefire
-
+            <div>
+            <pre class="fade-in"><code class="swift">
+// 1️⃣ Создайте Preview с использованием Prefire
 #Preview {
     PrefireView()
         .previewUserStory(.auth)
         .snapshot(perceptualPrecision: 0.98)
 }
             </code></pre>
-            <div class="code-image">
-                <img src="https://i.ibb.co/ZYW3VTp/snapshot-example.png" alt="Snapshot Example">
+            <pre class="fade-in"><code class="swift">
+// 2️⃣ Запустите Snapshot тесты и получите сгенерированные тесты
+class PrefireSnapshotTests: XCTestCase {
+    func test_PrefireView_0_Preview() {
+        let preview = {
+            PrefireView()
+                .previewUserStory(.auth)
+                .snapshot(perceptualPrecision: 0.98)
+        }
+        assertSnapshots(for: PrefireSnapshot(preview()))
+    }
+}
+            </code></pre>
+            </div>
+            <div class="code-image fade-in">
+                <img src="https://i.ibb.co/ZYW3VTp/snapshot-example.png" alt="Snapshot Example" loading="lazy">
             </div>
         </div>
         <p>После настройки вы сможете легко генерировать Snapshot тесты с помощью встроенных плагинов Prefire.</p>
@@ -340,23 +374,40 @@ import Prefire
     </footer>
 
     <script>
-        // Переключение темы
         function toggleTheme() {
             const root = document.documentElement;
             root.classList.toggle('light-theme');
 
-            // Сохранение выбранной темы в localStorage
             const isLight = root.classList.contains('light-theme');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
-        // Установка темы при загрузке страницы
         (function () {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
                 document.documentElement.classList.add('light-theme');
             }
         })();
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const animatedElements = document.querySelectorAll(".fade-in");
+
+            const handleScroll = () => {
+                animatedElements.forEach((el) => {
+                    const rect = el.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+
+                    if (rect.top < windowHeight - 100) { 
+                        el.classList.add("visible");
+                    } else {
+                        el.classList.remove("visible"); 
+                    }
+                });
+            };
+
+            window.addEventListener("scroll", handleScroll);
+            handleScroll();
+        });
     </script>
 </body>
 </html>
