@@ -6,7 +6,6 @@
     <title>Prefire - Автоматизация тестирования для iOS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
     <style>
         @font-face {
             font-family: 'Roboto', sans-serif;
@@ -390,6 +389,7 @@ class PrefireSnapshotTests: XCTestCase {
         })();
 
         document.addEventListener("DOMContentLoaded", () => {
+            hljs.highlightAll();
             const animatedElements = document.querySelectorAll(".fade-in");
 
             const handleScroll = () => {
