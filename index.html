@@ -1,452 +1,306 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prefire - Автоматизация тестирования для iOS</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <style>
-        @font-face {
-            font-family: 'Roboto', sans-serif;
-            src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-            font-display: swap;
-        }
-        :root {
-            --background-color: #121212;
-            --foreground-color: #eaeaea;
-            --header-background: #1f1f1f;
-            --card-background: #1f1f1f;
-            --border-color: #5F5F5F;
-            --text-color: #ccc;
-            --link-color: #fff;
-            --link-hover-color: #e91e63;
-            --accent-color: #990D58;
-            --code-background: #222;
-        }
-        :root.light-theme {
-            --background-color: #ffffff;
-            --foreground-color: #121212;
-            --header-background: #f8f9fa;
-            --card-background: #ffffff;
-            --border-color: #1B1B1B;
-            --text-color: #333;
-            --link-color: #fff;
-            --link-hover-color: #e91e63;
-            --accent-color: #990D58;
-            --code-background: #f8f9fa;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-color);
-            color: var(--foreground-color);
-            line-height: 1.6;
-			overflow-x: hidden;
-        }
-        header {
-            background: var(--header-background);
-            color: var(--foreground-color);
-			padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-			flex-wrap: wrap;
-        }
-        header img {
-            width: 150px;
-        }
-        nav {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-        nav a {
-            color: var(--link-color);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 0.75rem;
-            transition: background 0.3s, color 0.3s;
-        }
-        nav a:hover {
-            background: var(--accent-color);
-            border-radius: 5px;
-            color: var(--link-hover-color);
-        }
-        .theme-toggle {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            color: var(--link-color);
-        }
-        .hero {
-                        display: flex;
-                        flex-direction: column;
-            color: var(--foreground-color);
-                        padding: 2rem 1.5rem;
-            position: relative;
-            z-index: 2;
-        }
-        .hero-icon {
-            max-width: 150px;
-            height: auto;
-        }
-        .hero h1 {
-            font-size: 64px;
-            font-weight: 400;
-            line-height: 120%;
-            margin-bottom: 1rem;
-        }
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            color: var(--text-color);
-        }
-        .hero-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-        .hero-buttons a {
-            background: var(--accent-color);
-            color: var(--link-color);
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 14px;
-            transition: all 0.25s ease 0ms;
-        }
-        .hero-buttons a:hover {
-            background: var(--link-hover-color);
-        }
-        .card-container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 2rem auto;
-            max-width: 1065px;
-            padding: 0;
-        }
-        .card {
-            flex: 1;
-            background: var(--card-background);
-            color: var(--foreground-color);
-            border: 1px solid var(--border-color);
-            padding: 1.5rem;
-            border-radius: 20px;
-            text-align: center;
-        }
-        .card img {
-            width: 50px;
-            margin-bottom: 1rem;
-        }
-        .card h3 {
-            font-size: 1.5rem;
-            margin: 0.5rem 0;
-        }
-        .card p {
-            font-size: 1rem;
-            color: var(--text-color);
-        }
-        section {
-            padding: 1rem 1rem;
-            margin: 0 auto;
-            max-width: 1000px;
-        }
-        /* .section-card {
-            background: var(--card-background);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-        } */
-        section h2 {
-            font-weight: 400;
-            font-size: 64px;
-            position: relative;
-            margin-bottom: 2rem;
-        }
-        section h2::after {
-            content: '';
-            display: block;
-            width: 50px;
-            height: 3px;
-            background: var(--accent-color);
-            /* margin-top: 0.5rem; */
-        }
-        section p, ol {
-            font-weight: 500;
-            font-size: 24px;
-            line-height: 133%;
-            color: var(--text-color);
-        }
-        ol li {
-            margin-bottom: 0.5rem;
-        }
-        .cta {
-            text-align: center;
-            margin: 2rem 0;
-        }
-        .cta a {
-            background: var(--accent-color);
-            color: var(--link-color);
-            padding: 0.75rem 2rem;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-        .cta a:hover {
-            background: var(--link-hover-color);
-        }
-        footer {
-            background: var(--header-background);
-            color: var(--text-color);
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: 2rem;
-            font-size: 0.9rem;
-        }
-        footer a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
-        .code-example {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            background: var(--code-background);
-            padding: 1.5rem;
-            border-radius: 10px;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-        }
-        .code-example pre, .hljs {
-            margin: 0;
-            flex-grow: 1;
-            background-color: transparent;
-        }
-        .code-image {
-            flex-shrink: 0;
-            width: 40%;
-        }
-        .code-image img {
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-        @media screen and (max-width: 768px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            nav {
-                width: 100%;
-                flex-direction: column;
-                align-items: flex-start;
-                margin-top: 0.5rem;
-            }
-            .hero {
-                flex-direction: column;
-                align-items: center;
-            }
-            .hero h1 {
-                font-size: 40px;
-            }
-            section h2 {
-                font-size: 32px;
-            }
-            .hero-buttons {
-                flex-direction: column;
-            }
-            .card-container {
-                flex-direction: column;
-            }
-            .card {
-                margin-bottom: 1rem;
-            }
-            .code-example {
-                flex-direction: column;
-            }
-            .code-image {
-                width: 100%;
-                margin-top: 1rem;
-            }
-            section p, ol {
-                font-size: 20px;
-            }
-            .hero-icon {
-                display: none;
-            }
-        }
-        .fade-in {
-            opacity: 0; 
-            transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prefire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html,body{font-family:'Inter',sans-serif;}
+    .tab-content{display:none;}
+    .tab-active{display:block;}
+    .tab-trigger[data-active="true"]{background:linear-gradient(to right,var(--tw-gradient-stops));--tw-gradient-from:#6d28d9;--tw-gradient-to:#ec4899;--tw-gradient-stops:#6d28d9,var(--tw-gradient-to);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,0.2);}
+  </style>
 </head>
-<body>
-    <header>
-        <img src="https://i.ibb.co/QCKtnCh/Frame-15.png" alt="Prefire Logo">
-        <nav>
-            <a href="#about">О проекте</a>
-            <a href="#start">Как начать</a>
-            <a href="#examples">Примеры</a>
-            <a href="#faq">FAQ</a>
-            <a href="https://github.com/BarredEwe/Prefire" target="_blank">GitHub</a>
-        </nav>
-        <div class="theme-toggle" aria-label="Toggle theme" onclick="toggleTheme()">
-            <span>🌓</span>
-        </div>
-    </header>
+<body class="flex flex-col min-h-full bg-[#f8f9fc] text-gray-800 scroll-smooth">
+<header class="bg-gradient-to-r from-indigo-800 via-purple-700 to-pink-600 text-white shadow-lg">
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+    <div class="flex items-center gap-4">
+      <img src="https://i.ibb.co/QCKtnCh/Frame-15.png" alt="Prefire" class="w-36 drop-shadow-lg">
+    </div>
+    <nav class="hidden md:flex items-center gap-6 text-sm">
+      <a href="#why" class="hover:text-white/90 transition">Why</a>
+      <a href="#features" class="hover:text-white/90 transition">Features</a>
+      <a href="#install" class="hover:text-white/90 transition">Install</a>
+      <a href="#quickstart" class="hover:text-white/90 transition">Quick&nbsp;Start</a>
+      <a href="#how" class="hover:text-white/90 transition">How&nbsp;It&nbsp;Works</a>
+      <a href="#examples" class="hover:text-white/90 transition">Examples</a>
+      <a href="#api" class="hover:text-white/90 transition">API</a>
+      <a href="#config" class="hover:text-white/90 transition">Config</a>
+    </nav>
+    <a href="https://github.com/BarredEwe/Prefire" target="_blank" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition text-sm font-medium px-4 py-2 rounded-lg backdrop-blur-md">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577v-2.256c-3.338.725-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.757-1.333-1.757-1.088-.744.084-.729.084-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.835 2.809 1.306 3.495.998.108-.775.42-1.306.762-1.606-2.665-.304-5.466-1.332-5.466-5.931 0-1.309.469-2.382 1.236-3.221-.124-.303-.535-1.527.117-3.176 0 0 1.008-.322 3.3 1.23a11.52 11.52 0 0 1 3-.404c1.02.005 2.045.138 3 .404 2.292-1.552 3.297-1.23 3.297-1.23.653 1.649.242 2.873.118 3.176.77.839 1.235 1.912 1.235 3.221 0 4.609-2.803 5.624-5.475 5.921.431.371.815 1.102.815 2.222v3.293c0 .322.218.694.825.576C20.565 22.092 24 17.592 24 12.297 24 5.67 18.627.297 12 .297z"/></svg>
+      <span class="hidden sm:inline">GitHub</span>
+    </a>
+  </div>
+</header>
 
-    <section class="hero">
-		<div>
-		<img class="hero-icon" src="https://i.ibb.co/Fzv838n/Group-48095456.png" alt="Hero Icon" align="right">
-			<h1>Скорость Swift<br>Удобство 🔥 Prefire</h1>
-			<p>Prefire автоматизирует создание снепшот тестов на основе превью,<br> помогая iOS-разработчикам экономить время и силы.</p>
-		</div>
-			<div class="hero-buttons">
-			<a href="https://github.com/BarredEwe/Prefire" target="_blank">Документация</a>
-			<a href="https://github.com/BarredEwe/Prefire" target="_blank">Сообщество</a>
-		</div>
-    </section>
+<main class="flex-1">
 
-    <div class="card-container">
-        <div class="card">
-            <img src="https://img.icons8.com/?size=64&id=AOY94AyMQPT2&format=png&color=FCC419" alt="Preview Icon">
-            <h3>Быстрое создание</h3>
-            <p>Автоматизируйте создание снепшот тестов с минимальными усилиями.</p>
-        </div>
-        <div class="card">
-            <img src="https://img.icons8.com/?size=64&id=_BTyk4vBumjx&format=png&color=000000" alt="SwiftUI Icon">
-            <h3>Работает с SwiftUI и UIKit</h3>
-            <p>Используйте силу #Preview для удобного тестирования.</p>
-        </div>
-        <div class="card">
-            <img src="https://img.icons8.com/?size=64&id=63655&format=png&color=000000" alt="Open Source Icon">
-            <h3>Полностью бесплатен</h3>
-            <p>Открытый код для всех iOS-разработчиков.</p>
-        </div>
+<!-- Hero -->
+<section class="relative isolate overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 text-white">
+  <span class="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></span>
+  <div class="max-w-7xl mx-auto px-6 py-28 relative z-10 text-center flex flex-col items-center">
+    <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight drop-shadow-lg">
+      Instant snapshots from SwiftUI <code class="text-pink-300">#Previews</code>
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg sm:text-xl text-white/90">
+      Prefire turns your <code>#Preview</code> blocks into snapshot tests, living docs &amp; playbooks — <strong>automatically</strong>.
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <span class="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm backdrop-blur-md">iOS</span>
+      <span class="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm backdrop-blur-md">Swift&nbsp;6</span>
+      <span class="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm backdrop-blur-md">Xcode&nbsp;Plugins</span>
+    </div>
+    <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="#install" class="group inline-flex items-center justify-center gap-2 bg-white text-indigo-800 font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
+        Get Started
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-indigo-800 transition transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#why" class="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-medium px-8 py-3 rounded-xl transition transform hover:-translate-y-0.5">
+        Learn&nbsp;More
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Why -->
+<section id="why" class="py-20 px-6">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">🔥 Why Prefire?</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition border border-gray-200 flex items-start gap-4">
+        <span class="text-2xl">📸</span>
+        <p class="font-medium">Snapshot tests from your <code>#Preview</code> blocks — <em>no boilerplate</em>.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition border border-gray-200 flex items-start gap-4">
+        <span class="text-2xl">📚</span>
+        <p class="font-medium">Living documentation that’s always in sync with your UI.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition border border-gray-200 flex items-start gap-4">
+        <span class="text-2xl">⚡️</span>
+        <p class="font-medium">Ultra‑fast caching system prevents redundant parsing.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition border border-gray-200 flex items-start gap-4">
+        <span class="text-2xl">🧩</span>
+        <p class="font-medium">Works seamlessly with both SwiftUI and UIKit.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition border border-gray-200 flex items-start gap-4">
+        <span class="text-2xl">🔩</span>
+        <p class="font-medium">Integrates via CLI, SPM plugin, Xcode plugin, or CI.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition border border-gray-200 flex items-start gap-4">
+        <span class="text-2xl">🧠</span>
+        <p class="font-medium">Understand flows: user stories, states, variants &amp; more.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 px-6">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">🚀 Key Features</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="p-6 bg-white rounded-3xl shadow-md flex gap-4 items-start border border-gray-100">
+        <span class="text-3xl">🧠</span>
+        <div><h3 class="font-semibold mb-1">Smart Preview Parsing</h3><p class="text-sm text-gray-600">Understands <code>#Preview</code>, <code>@Previewable</code>, flows &amp; variations.</p></div>
+      </div>
+      <div class="p-6 bg-white rounded-3xl shadow-md flex gap-4 items-start border border-gray-100">
+        <span class="text-3xl">📸</span>
+        <div><h3 class="font-semibold mb-1">Automatic Snapshot Tests</h3><p class="text-sm text-gray-600">Generates &amp; executes pixel tests on every build.</p></div>
+      </div>
+      <div class="p-6 bg-white rounded-3xl shadow-md flex gap-4 items-start border border-gray-100">
+        <span class="text-3xl">📚</span>
+        <div><h3 class="font-semibold mb-1">Interactive Playbook View</h3><p class="text-sm text-gray-600">A browsable catalog for designers &amp; QA.</p></div>
+      </div>
+      <div class="p-6 bg-white rounded-3xl shadow-md flex gap-4 items-start border border-gray-100">
+        <span class="text-3xl">⚙️</span>
+        <div><h3 class="font-semibold mb-1">CLI &amp; CI Integration</h3><p class="text-sm text-gray-600">Runs in pipelines with zero configuration.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Install -->
+<section id="install" class="py-20 px-6">
+  <div class="max-w-6xl mx-auto space-y-8">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center">📦 Installation</h2>
+    <p class="text-center text-gray-600 max-w-2xl mx-auto">Pick the method that fits your workflow.</p>
+    <div class="flex justify-center gap-3 flex-wrap">
+      <button class="tab-trigger bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl shadow-sm transition" data-target="xcode" data-active="true">Xcode&nbsp;Plugin</button>
+      <button class="tab-trigger bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl shadow-sm transition" data-target="spm">SwiftPM</button>
+      <button class="tab-trigger bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl shadow-sm transition" data-target="cli">CLI</button>
     </div>
 
-    <section id="about" class="section-card">
-        <h2>О проекте</h2>
-        <p>Prefire — библиотека на основе SwiftUI Preview, которая автоматизирует создание Playbook представлений, Snapshot тестов и многого другого. С ее помощью iOS-разработчики могут легко создавать и тестировать свои приложения.</p>
-    </section>
+    <div id="xcode" class="tab-content tab-active bg-white border border-gray-100 rounded-2xl p-6 shadow-md">
+      <ol class="list-decimal space-y-3 pl-5 text-gray-700 text-sm">
+        <li>Add <code>Prefire</code> via <strong>File &rarr; Add Packages…</strong></li>
+        <li>Select your <strong>unit test target</strong>.</li>
+        <li>Attach <code>PrefireTestsPlugin</code> under <strong>Build Tool Plugins</strong>.</li>
+        <li>Build the target — snapshot tests are auto‑generated.</li>
+      </ol>
+    </div>
 
-    <section id="start" class="section-card">
-        <h2>Как начать</h2>
-        <ol>
-            <li>Добавьте Prefire в зависимости вашего проекта через Swift Package Manager.</li>
-            <li>Интегрируйте плагины PrefirePlaybookPlugin и PrefireTestsPlugin.</li>
-            <li>Аннотируйте ваши Preview с использованием протокола PrefireProvider и запустите тесты.</li>
-        </ol>
-        <div class="cta">
-            <a href="https://github.com/BarredEwe/Prefire" target="_blank">Перейти на GitHub</a>
+    <pre id="spm" class="tab-content bg-gray-900 text-white rounded-2xl p-6 text-xs overflow-auto shadow-lg">
+dependencies: [
+    .package(url: "https://github.com/BarredEwe/Prefire", from: "4.0.0")
+],
+.testTarget(
+    plugins: [
+        .plugin(name: "PrefireTestsPlugin", package: "Prefire")
+    ]
+)
+    </pre>
+
+    <pre id="cli" class="tab-content bg-gray-900 text-white rounded-2xl p-6 text-xs overflow-auto shadow-lg">
+brew tap barredewe/prefire
+brew install prefire
+
+prefire tests
+prefire playbook
+    </pre>
+  </div>
+</section>
+
+<!-- Quick Start -->
+<section id="quickstart" class="py-20 bg-gradient-to-r from-purple-50 to-pink-50 px-6">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-8">⚡️ Quick Start</h2>
+    <ol class="list-decimal bg-white border border-gray-100 rounded-3xl shadow-lg p-8 space-y-4 text-gray-700 max-w-3xl mx-auto">
+      <li>Add Prefire to your <code>Package.swift</code> (see Installation).</li>
+      <li>Create a <code>#Preview</code>, e.g. <code>#Preview { Button("Submit") }</code></li>
+      <li>Run the test target — Prefire will generate &amp; run snapshot tests.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="how" class="py-20 px-6">
+  <div class="max-w-6xl mx-auto space-y-12">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center">🔍 How Prefire Works</h2>
+
+    <div class="grid lg:grid-cols-2 gap-10">
+
+      <!-- Pipeline -->
+      <div class="space-y-6">
+        <div class="flex items-start gap-4">
+          <span class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold shadow-lg">1</span>
+          <div>
+            <h3 class="font-semibold">Parse SourceFiles</h3>
+            <p class="text-sm text-gray-600">Scans all Swift files, detecting <code>#Preview</code> blocks and <code>PreviewProvider</code>s with modifiers like <code>.prefireEnabled()</code> or <code>.prefireIgnored()</code>.</p>
+          </div>
         </div>
-    </section>
+        <div class="flex items-start gap-4">
+          <span class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold shadow-lg">2</span>
+          <div>
+            <h3 class="font-semibold">Cache Models</h3>
+            <p class="text-sm text-gray-600">Fingerprints AST &amp; preview bodies (SHA‑256 + timestamps) to skip work on unchanged files.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <span class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold shadow-lg">3</span>
+          <div>
+            <h3 class="font-semibold">Generate Snapshot Tests</h3>
+            <p class="text-sm text-gray-600">Uses <code>Stencil</code> templates &amp; your <code>.prefire.yml</code> to emit Swift tests executed via <code>PrefireTestsPlugin</code>.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <span class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold shadow-lg">4</span>
+          <div>
+            <h3 class="font-semibold">Build Playbook Models</h3>
+            <p class="text-sm text-gray-600">Creates <code>PreviewModels.generated.swift</code> grouping previews by <em>UserStory</em> and <em>State</em> for the interactive Playbook view.</p>
+          </div>
+        </div>
+      </div>
 
-    <section id="examples" class="section-card">
-        <h2>Примеры</h2>
-        <p>Создание и тестирование UI стало еще проще с Prefire. Вот пример кода:</p>
-        <div class="code-example">
-            <div>
-            <pre class="fade-in"><code class="swift">
-// 1️⃣ Создайте Preview с использованием Prefire
+      <!-- Architecture -->
+      <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-8">
+        <h3 class="text-xl font-semibold mb-4 text-center">🧠 Internal Architecture</h3>
+        <ul class="space-y-3 text-gray-700 text-sm">
+          <li><strong>PrefireCore</strong> — AST parsing, preview detection &amp; caching layer</li>
+          <li><strong>PrefireGenerator</strong> — Stencil‑based code generator for tests &amp; models</li>
+          <li><strong>PrefireCacheManager</strong> — Unifies fingerprint &amp; file‑cache logic</li>
+          <li><strong>PrefireTestsPlugin</strong> / <strong>PrefirePlaybookPlugin</strong> — Xcode &amp; SPM integrations</li>
+          <li><strong>prefire CLI</strong> — Entry point for manual <code>tests</code> / <code>playbook</code> commands</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Examples -->
+<section id="examples" class="py-20 px-6">
+  <div class="max-w-6xl mx-auto space-y-8">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center">🧠 Usage Examples</h2>
+    <pre class="bg-gray-900 text-white rounded-3xl p-6 text-xs overflow-auto shadow-lg">
 #Preview {
-    PrefireView()
-        .previewUserStory(.auth)
-        .snapshot(perceptualPrecision: 0.98)
+  Text("Hello")
 }
-            </code></pre>
-            <pre class="fade-in"><code class="swift">
-// 2️⃣ Запустите Snapshot тесты и получите сгенерированные тесты
-class PrefireSnapshotTests: XCTestCase {
-    func test_PrefireView_0_Preview() {
-        let preview = {
-            PrefireView()
-                .previewUserStory(.auth)
-                .snapshot(perceptualPrecision: 0.98)
-        }
-        assertSnapshots(for: PrefireSnapshot(preview()))
-    }
+
+#Preview {
+  LoginView()
+    .previewUserStory(.auth)
+    .previewState(.loading)
+    .snapshot(delay: 0.3, precision: 0.95)
 }
-            </code></pre>
-            </div>
-            <div class="code-image fade-in">
-                <img src="https://i.ibb.co/ZYW3VTp/snapshot-example.png" alt="Snapshot Example" loading="lazy">
-            </div>
-        </div>
-        <p>После настройки вы сможете легко генерировать Snapshot тесты с помощью встроенных плагинов Prefire.</p>
-    </section>
+    </pre>
+    <p class="text-center text-sm text-gray-600 max-w-2xl mx-auto">Combine <code>.previewUserStory()</code>, <code>.previewState()</code> &amp; <code>.snapshot()</code> to define rich visual flows &amp; quality checks.</p>
+  </div>
+</section>
 
-    <section id="faq" class="section-card">
-        <h2>Часто задаваемые вопросы</h2>
-        <h3>Что такое Prefire?</h3>
-        <p>Библиотека для автоматического создания демо-представлений и тестов с использованием SwiftUI Preview.</p>
-        <h3>Как смотреть логи?</h3>
-        <p>Логи находятся в папке <code>DerivedData</code>. Для быстрого доступа используйте Xcode: в меню Window > Devices and Simulators выберите ваше устройство и найдите вкладку Logs.</p>
-        <h3>Бесплатен ли Prefire?</h3>
-        <p>Да, это полностью бесплатный проект с открытым исходным кодом.</p>
-    </section>
+<!-- Config -->
+<section id="config" class="py-20 px-6">
+  <div class="max-w-6xl mx-auto space-y-8">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center">🗂 Configuration</h2>
+    <p class="text-center text-gray-600">Customize generation with <code>.prefire.yml</code> at your project root:</p>
 
-    <footer>
-        <p>© 2025 Prefire | <a href="https://github.com/BarredEwe/Prefire">GitHub</a></p>
-    </footer>
+    <details class="bg-gray-900 text-white rounded-3xl p-6 shadow-lg">
+      <summary class="cursor-pointer font-medium text-lg">Show Example</summary>
+      <pre class="mt-4 text-xs overflow-auto">
+test_configuration:
+  target: MyApp
+  test_file_path: Tests/Generated/PreviewTests.swift
+  simulator_device: "iPhone15,2"
+  preview_default_enabled: true
+  sources:
+    - {PROJECT_DIR}/Sources/
+  snapshot_devices:
+    - iPhone 14
+    - iPad
+  imports:
+    - SwiftUI
+    - UIKit
+  testable_imports:
+    - MyApp
 
-    <script>
-        function toggleTheme() {
-            const root = document.documentElement;
-            root.classList.toggle('light-theme');
+playbook_configuration:
+  template_file_path: Templates/PreviewModels.stencil
+  preview_default_enabled: true</pre>
+    </details>
+  </div>
+</section>
 
-            const isLight = root.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        }
+</main>
 
-        (function () {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                document.documentElement.classList.add('light-theme');
-            }
-        })();
+<footer class="bg-gray-100 text-gray-600 text-sm py-8">
+  <div class="max-w-6xl mx-auto text-center">
+    <p>Made with ❤️ by the Prefire team – <a href="https://github.com/BarredEwe/Prefire" class="text-indigo-600 hover:underline font-medium">View on GitHub</a></p>
+  </div>
+</footer>
 
-        document.addEventListener("DOMContentLoaded", () => {
-            hljs.highlightAll();
-            const animatedElements = document.querySelectorAll(".fade-in");
-
-            const handleScroll = () => {
-                animatedElements.forEach((el) => {
-                    const rect = el.getBoundingClientRect();
-                    const windowHeight = window.innerHeight;
-
-                    if (rect.top < windowHeight - 100) { 
-                        el.classList.add("visible");
-                    } else {
-                        el.classList.remove("visible"); 
-                    }
-                });
-            };
-
-            window.addEventListener("scroll", handleScroll);
-            handleScroll();
-        });
-    </script>
+<script>
+  document.querySelectorAll('.tab-trigger').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const target=btn.dataset.target;
+      document.querySelectorAll('.tab-trigger').forEach(el=>el.dataset.active=(el.dataset.target===target));
+      document.querySelectorAll('.tab-content').forEach(el=>el.classList.toggle('tab-active',el.id===target));
+      window.location.hash='#install';
+    });
+  });
+</script>
 </body>
 </html>
