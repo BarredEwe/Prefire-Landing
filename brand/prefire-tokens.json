@@ -1,0 +1,26 @@
+{
+  "brand": "Prefire",
+  "version": "1.0",
+  "colors": {
+    "paper": "#F5F0E7",
+    "paperBright": "#FBFAF7",
+    "ink": "#17181C",
+    "inkSoft": "#343741",
+    "muted": "#665F56",
+    "ember": "#FF6A35",
+    "emberDeep": "#EE3B25",
+    "gold": "#FFB629",
+    "plum": "#31001E",
+    "magenta": "#A0075D",
+    "white": "#FFFFFF"
+  },
+  "typography": {
+    "display": "SF Pro Display / system UI",
+    "body": "SF Pro Text / system UI",
+    "code": "SF Mono / Menlo"
+  },
+  "radii": {
+    "card": 24,
+    "panel": 32
+  }
+}

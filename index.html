@@ -1,876 +1,820 @@
 <!doctype html>
-<html lang="en" class="h-full scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prefire - Instant Snapshots from SwiftUI Previews</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <title>Prefire | Snapshot tests from SwiftUI previews</title>
+  <meta name="description" content="Generate snapshot tests and an iOS Playbook from the SwiftUI previews already in your project.">
+  <meta name="theme-color" content="#17181c">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Prefire | Snapshot tests from SwiftUI previews">
+  <meta property="og:description" content="Generate snapshot tests and an iOS Playbook from the SwiftUI previews already in your project.">
+  <meta property="og:url" content="https://prefire.ru/">
+  <link rel="canonical" href="https://prefire.ru/">
+  <link rel="icon" href="assets/prefire-logo.png">
   <style>
-    html,body{font-family:'Inter',sans-serif;background:#0a0a0f;}
-    
-    /* Animated Gradient Background */
-    @keyframes gradient-shift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+    :root {
+      --paper:#f5f0e7;
+      --paper-bright:#fbfaf7;
+      --ink:#17181c;
+      --ink-soft:#343741;
+      --muted:#665f56;
+      --ember:#ff6a35;
+      --gold:#ffb629;
+      --plum:#31001e;
+      --magenta:#a0075d;
+      --line:rgba(23,24,28,.13);
+      --line-dark:rgba(255,255,255,.15);
+      --container:1180px;
+      --header-height:74px;
+      --radius-xl:32px;
+      --radius-lg:24px;
+      --radius-md:16px;
+      --shadow:0 24px 80px rgba(23,24,28,.16);
     }
-    
-    .gradient-animated {
-      background: linear-gradient(-45deg, #6366f1, #8b5cf6, #ec4899, #f59e0b);
-      background-size: 400% 400%;
-      animation: gradient-shift 15s ease infinite;
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0;
+      min-width:320px;
+      overflow-x:hidden;
+      color:var(--ink);
+      background:var(--paper);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
     }
-    
-    /* Glass Effect */
-    .glass {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+    img { display:block; max-width:100%; }
+    a { color:inherit; text-decoration:none; }
+    button,summary { font:inherit; }
+    code,pre,.mono { font-family:"SFMono-Regular",Menlo,Consolas,monospace; }
+    code { overflow-wrap:anywhere; }
+    h1,h2,h3,p { margin:0; }
+    :focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
+    .container { width:min(calc(100% - 32px),var(--container)); margin:0 auto; }
+    [id] { scroll-margin-top:calc(var(--header-height) + 18px); }
+
+    .site-header {
+      position:sticky;
+      top:0;
+      z-index:30;
+      border-bottom:1px solid var(--line);
+      background:rgba(245,240,231,.9);
+      backdrop-filter:blur(18px);
     }
-    
-    .glass-dark {
-      background: rgba(10, 10, 15, 0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    .header-inner {
+      min-height:var(--header-height);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
     }
-    
-    /* Floating Animation */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      33% { transform: translateY(-20px) rotate(2deg); }
-      66% { transform: translateY(-10px) rotate(-2deg); }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:820; letter-spacing:-.02em; }
+    .brand-mark {
+      width:40px;
+      height:40px;
+      overflow:hidden;
+      flex:0 0 auto;
+      border-radius:13px;
+      box-shadow:0 10px 26px rgba(160,7,93,.24);
     }
-    
-    .float {
-      animation: float 6s ease-in-out infinite;
+    .brand-mark img { width:auto; max-width:none; height:40px; }
+    .brand-copy { display:grid; line-height:1.02; }
+    .brand-copy small {
+      margin-top:4px;
+      color:var(--muted);
+      font:650 .66rem/1 "SFMono-Regular",Menlo,monospace;
+      letter-spacing:.08em;
+      text-transform:uppercase;
     }
-    
-    /* Glow Effects */
-    .glow-purple {
-      box-shadow: 0 0 40px rgba(139, 92, 246, 0.4), 0 0 80px rgba(139, 92, 246, 0.2);
+    .nav-wrap,.site-nav,.header-actions { display:flex; align-items:center; }
+    .nav-wrap { gap:28px; }
+    .site-nav { gap:24px; color:var(--ink-soft); font-size:.92rem; }
+    .site-nav a,.brand-kit-link { padding:9px 0; border-bottom:1px solid transparent; }
+    .site-nav a:hover,.site-nav a:focus-visible,.brand-kit-link:hover,.brand-kit-link:focus-visible {
+      color:var(--ink);
+      border-color:var(--ember);
     }
-    
-    .glow-pink {
-      box-shadow: 0 0 40px rgba(236, 72, 153, 0.4), 0 0 80px rgba(236, 72, 153, 0.2);
+    .header-actions { gap:15px; }
+    .brand-kit-link { color:var(--ink-soft); font-size:.92rem; }
+    .language-switch {
+      display:flex;
+      gap:2px;
+      padding:3px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(23,24,28,.04);
     }
-    
-    /* Card Hover Effects */
-    .card-3d {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .language-switch button {
+      border:0;
+      border-radius:999px;
+      padding:8px 11px;
+      color:var(--ink-soft);
+      background:transparent;
+      cursor:pointer;
     }
-    
-    .card-3d:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    .language-switch button.is-active { color:#fff; background:var(--ink); }
+    .github-link {
+      padding:11px 17px;
+      border-radius:999px;
+      color:#fff;
+      background:var(--ink);
+      font-weight:760;
     }
-    
-    /* Button Effects */
-    .btn-gradient {
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
+    .mobile-menu { display:none; position:relative; }
+    .mobile-menu summary {
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--paper-bright);
+      cursor:pointer;
+      list-style:none;
     }
-    
-    .btn-gradient::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      transition: left 0.5s ease;
+    .mobile-menu summary::-webkit-details-marker { display:none; }
+    .mobile-menu nav {
+      position:absolute;
+      top:calc(100% + 10px);
+      right:0;
+      min-width:220px;
+      display:grid;
+      gap:4px;
+      padding:10px;
+      border:1px solid var(--line);
+      border-radius:var(--radius-md);
+      background:var(--paper-bright);
+      box-shadow:var(--shadow);
     }
-    
-    .btn-gradient:hover::before {
-      left: 100%;
+    .mobile-menu nav a { padding:11px 12px; border-radius:11px; }
+    .mobile-menu nav a:hover,.mobile-menu nav a:focus-visible { background:rgba(255,106,53,.1); }
+
+    .hero {
+      position:relative;
+      min-height:calc(100svh - var(--header-height));
+      display:grid;
+      align-items:end;
+      overflow:hidden;
+      color:#fff;
+      background:var(--ink);
+      isolation:isolate;
     }
-    
-    .btn-gradient:active {
-      transform: scale(0.98);
+    .hero-bg {
+      position:absolute;
+      inset:0;
+      z-index:-3;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      opacity:.92;
     }
-    
-    /* Gradient Text */
-    .gradient-text {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .hero::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-2;
+      background:
+        linear-gradient(90deg,rgba(23,24,28,.18),rgba(23,24,28,.04) 52%,rgba(23,24,28,.24)),
+        linear-gradient(180deg,rgba(23,24,28,.04),rgba(23,24,28,.24));
+      pointer-events:none;
     }
-    
-    /* Tab Styles */
-    .tab-content{display:none;}
-    .tab-active{display:block;}
-    .tab-trigger {
-      position: relative;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .hero::after {
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-1;
+      background-image:
+        linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);
+      background-size:72px 72px;
+      mask-image:linear-gradient(90deg,#000,rgba(0,0,0,.55) 72%,transparent);
+      pointer-events:none;
     }
-    
-    .tab-trigger[data-active="true"] {
-      background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
-      color: #fff;
-      box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
-      transform: translateY(-2px);
+    .hero-inner {
+      display:grid;
+      grid-template-columns:minmax(0,1.18fr) minmax(330px,.72fr);
+      gap:70px;
+      align-items:end;
+      padding:clamp(88px,13vh,138px) 0 clamp(60px,9vh,92px);
     }
-    
-    .tab-trigger:not([data-active="true"]):hover {
-      background: rgba(255, 255, 255, 0.12);
-      transform: translateY(-1px);
+    .hero-copy { display:grid; gap:25px; }
+    .eyebrow {
+      color:var(--ember);
+      font:760 .74rem/1.2 "SFMono-Regular",Menlo,monospace;
+      letter-spacing:.14em;
+      text-transform:uppercase;
     }
-    
-    /* Blob Animations */
-    @keyframes blob {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(20px, -50px) scale(1.1); }
-      50% { transform: translate(-20px, 20px) scale(0.9); }
-      75% { transform: translate(50px, 50px) scale(1.05); }
+    h1 {
+      max-width:8.4ch;
+      font-size:clamp(5.1rem,9vw,8.3rem);
+      line-height:.84;
+      letter-spacing:-.068em;
+      text-wrap:balance;
     }
-    
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.5;
-      animation: blob 15s ease-in-out infinite;
+    h2 {
+      font-size:clamp(2.65rem,5vw,4.8rem);
+      line-height:.94;
+      letter-spacing:-.057em;
+      text-wrap:balance;
     }
-    
-    .blob-1 {
-      top: -10%;
-      left: -10%;
-      width: 500px;
-      height: 500px;
-      background: linear-gradient(#6366f1, #8b5cf6);
-      animation-delay: 0s;
+    h3 { font-size:1.34rem; letter-spacing:-.03em; }
+    .hero-copy>p {
+      max-width:650px;
+      color:rgba(255,255,255,.72);
+      font-size:clamp(1.08rem,1.6vw,1.28rem);
+      line-height:1.5;
     }
-    
-    .blob-2 {
-      top: 50%;
-      right: -10%;
-      width: 400px;
-      height: 400px;
-      background: linear-gradient(#ec4899, #f59e0b);
-      animation-delay: 2s;
+    .hero-copy code { color:#fff; }
+    .hero-actions { display:flex; align-items:center; flex-wrap:wrap; gap:18px; }
+    .button {
+      min-height:50px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 21px;
+      border-radius:999px;
+      font-weight:790;
     }
-    
-    .blob-3 {
-      bottom: -10%;
-      left: 30%;
-      width: 450px;
-      height: 450px;
-      background: linear-gradient(#8b5cf6, #ec4899);
-      animation-delay: 4s;
+    .button-primary {
+      color:var(--ink);
+      background:linear-gradient(135deg,var(--gold),var(--ember));
+      box-shadow:0 18px 40px rgba(255,106,53,.28);
     }
-    
-    /* Sticky Header */
-    .header-sticky {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      transition: all 0.3s ease;
+    .button-link {
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      color:rgba(255,255,255,.78);
+      font-weight:720;
     }
-    
-    .header-scrolled {
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      background: rgba(10, 10, 15, 0.8);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    .button-link::after { content:"↗"; color:var(--ember); }
+    .button-link:hover,.button-link:focus-visible { color:#fff; }
+    .proof-card {
+      align-self:end;
+      padding:26px;
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:var(--radius-lg);
+      background:rgba(23,24,28,.42);
+      box-shadow:0 24px 70px rgba(23,24,28,.24);
+      backdrop-filter:blur(18px);
     }
-    
-    /* Code Block Enhancements */
+    .proof-top { display:flex; justify-content:space-between; align-items:center; gap:18px; }
+    .proof-label {
+      color:var(--ember);
+      font:760 .7rem/1.2 "SFMono-Regular",Menlo,monospace;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+    }
+    .status {
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      color:#a9ebc4;
+      font:720 .68rem/1 "SFMono-Regular",Menlo,monospace;
+    }
+    .status::before {
+      content:"";
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:#62d694;
+      box-shadow:0 0 13px rgba(98,214,148,.6);
+    }
+    .proof-card pre {
+      margin:22px 0 26px;
+      overflow:auto;
+      color:#f8f3eb;
+      font-size:.92rem;
+      line-height:1.72;
+    }
+    .token-hot { color:var(--gold); }
+    .token-method { color:#ff8ac5; }
+    .token-value { color:#9ae2b9; }
+    .proof-result {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding-top:20px;
+      border-top:1px solid rgba(255,255,255,.16);
+    }
+    .proof-result strong { font-size:1.2rem; letter-spacing:-.03em; }
+    .proof-platforms { color:rgba(255,255,255,.58); font-size:.82rem; text-align:right; line-height:1.45; }
+
+    .section { padding:clamp(88px,10vw,124px) 0; }
+    .section-soft { background:var(--paper-bright); }
+    .section-dark { color:#fff; background:var(--ink); }
+    .section-head {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(280px,.62fr);
+      gap:48px;
+      align-items:end;
+      margin-bottom:58px;
+    }
+    .section-title { display:grid; gap:17px; }
+    .section-head>p { color:var(--muted); font-size:1.06rem; line-height:1.65; }
+    .section-dark .section-head>p { color:rgba(255,255,255,.62); }
+
+    .result-stage {
+      min-height:570px;
+      display:grid;
+      grid-template-columns:minmax(0,.82fr) minmax(420px,1.18fr);
+      overflow:hidden;
+      border-radius:var(--radius-xl);
+      color:#fff;
+      background:var(--ink);
+      box-shadow:var(--shadow);
+    }
+    .result-copy {
+      padding:clamp(34px,5vw,62px);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:46px;
+    }
+    .result-copy-top { display:grid; gap:18px; }
+    .result-index {
+      color:var(--ember);
+      font:760 .72rem/1 "SFMono-Regular",Menlo,monospace;
+      letter-spacing:.12em;
+    }
+    .result-copy h3 { max-width:10ch; font-size:clamp(2.4rem,4vw,4rem); line-height:.96; }
+    .result-copy p { max-width:480px; color:rgba(255,255,255,.64); line-height:1.6; }
+    .result-specs {
+      display:grid;
+      gap:14px;
+      padding-top:24px;
+      border-top:1px solid var(--line-dark);
+    }
+    .result-spec {
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:20px;
+    }
+    .result-spec strong { font-size:1rem; }
+    .result-spec span { color:rgba(255,255,255,.5); font-size:.82rem; text-align:right; }
+    .result-visual {
+      position:relative;
+      min-height:570px;
+      display:grid;
+      grid-template-columns:minmax(210px,.9fr) minmax(250px,1.1fr);
+      gap:18px;
+      align-items:center;
+      padding:36px;
+      background:
+        linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px),
+        radial-gradient(circle at 78% 24%,rgba(255,106,53,.32),transparent 34%),
+        var(--plum);
+      background-size:56px 56px,56px 56px,auto,auto;
+    }
+    .snapshot-proof {
+      display:grid;
+      gap:10px;
+      padding:18px;
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:20px;
+      background:rgba(23,24,28,.5);
+      backdrop-filter:blur(12px);
+    }
+    .snapshot-proof>span {
+      margin-bottom:5px;
+      color:rgba(255,255,255,.5);
+      font:700 .68rem/1.2 "SFMono-Regular",Menlo,monospace;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+    .snapshot-row {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:12px;
+      color:rgba(255,255,255,.8);
+      background:rgba(255,255,255,.045);
+      font:650 .7rem/1.35 "SFMono-Regular",Menlo,monospace;
+    }
+    .snapshot-status { display:inline-flex; align-items:center; gap:7px; color:#9ae2b9; }
+    .snapshot-status::before { content:""; width:6px; height:6px; border-radius:50%; background:#62d694; }
+    .playbook-proof {
+      justify-self:center;
+      width:min(100%,280px);
+      padding:15px;
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:28px;
+      background:rgba(23,24,28,.52);
+      box-shadow:0 26px 60px rgba(23,24,28,.32);
+      backdrop-filter:blur(12px);
+    }
+    .playbook-proof img { width:100%; max-height:430px; object-fit:contain; border-radius:16px; }
+
+    .workflow-stage { position:relative; }
+    .steps {
+      position:relative;
+      z-index:2;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      border-top:1px solid var(--line-dark);
+      border-bottom:1px solid var(--line-dark);
+    }
+    .step { min-height:245px; padding:30px 34px 34px 0; }
+    .step+.step { padding-left:34px; border-left:1px solid var(--line-dark); }
+    .step-number {
+      display:block;
+      margin-bottom:62px;
+      color:var(--ember);
+      font:760 .72rem/1 "SFMono-Regular",Menlo,monospace;
+      letter-spacing:.08em;
+    }
+    .step p { max-width:300px; margin-top:13px; color:rgba(255,255,255,.58); line-height:1.58; }
+    .step code { color:#fff; }
+    .confidence-path {
+      width:100%;
+      margin-top:28px;
+      border-radius:var(--radius-xl);
+      background:var(--ink);
+      overflow:hidden;
+    }
+
+    .install-shell {
+      display:grid;
+      grid-template-columns:300px minmax(0,1fr);
+      gap:22px;
+    }
+    .install-shell>div { min-width:0; }
+    .install-tabs { display:grid; align-content:start; gap:2px; border-top:1px solid var(--line); }
+    .install-tab {
+      width:100%;
+      padding:20px 0;
+      border:0;
+      border-bottom:1px solid var(--line);
+      color:var(--ink);
+      background:transparent;
+      text-align:left;
+      cursor:pointer;
+    }
+    .install-tab strong { display:block; margin-bottom:6px; font-size:1.05rem; }
+    .install-tab span { color:var(--muted); font-size:.86rem; }
+    .install-tab[aria-selected="true"] strong { color:var(--ember); }
+    .install-tab[aria-selected="true"] strong::after { content:" →"; }
+    .tab-panel {
+      min-height:320px;
+      padding:34px;
+      border:1px solid var(--line);
+      border-radius:var(--radius-xl);
+      background:var(--paper-bright);
+    }
+    .tab-panel[hidden] { display:none; }
+    .tab-panel p { max-width:620px; margin:13px 0 28px; color:var(--muted); line-height:1.58; }
     .code-block {
-      position: relative;
-      border-radius: 24px;
-      overflow: hidden;
+      max-width:100%;
+      padding:24px;
+      overflow:auto;
+      border-radius:var(--radius-md);
+      color:#fff;
+      background:var(--ink);
     }
-    
-    .code-block::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 40px;
-      background: linear-gradient(90deg, #1e1e2e, #2a2a3a);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    .code-block pre { margin:0; min-width:max-content; font-size:.86rem; line-height:1.7; }
+    .config-disclosure {
+      margin-top:20px;
+      overflow:hidden;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
     }
-    
-    /* Tag Marquee */
-    .tag-marquee {
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      padding: 1rem 0;
+    .config-disclosure summary {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding:22px 0;
+      cursor:pointer;
+      list-style:none;
+      font-weight:780;
     }
-    
-    .tag-marquee-inner {
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    .config-disclosure summary::-webkit-details-marker { display:none; }
+    .config-disclosure summary::after { content:"+"; color:var(--ember); font-size:1.4rem; }
+    .config-disclosure[open] summary::after { content:"−"; }
+    .config-content {
+      display:grid;
+      grid-template-columns:minmax(0,.72fr) minmax(300px,1fr);
+      gap:30px;
+      padding:0 0 26px;
     }
-    
-    .tag-marquee-track {
-      display: flex;
-      width: max-content;
-      animation: marquee-scroll 35s linear infinite;
-      gap: 1rem;
+    .config-content>* { min-width:0; }
+    .config-content p { color:var(--muted); line-height:1.58; }
+
+    .closing {
+      position:relative;
+      overflow:hidden;
+      padding:100px 0;
+      color:#fff;
+      background:var(--plum);
+      isolation:isolate;
     }
-    
-    .tag-marquee:hover .tag-marquee-track {
-      animation-play-state: paused;
+    .closing::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-2;
+      background:url("brand/assets/prefire-ember-field.svg") center/cover no-repeat;
+      opacity:.68;
     }
-    
-    @keyframes marquee-scroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+    .closing::after {
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-1;
+      background:linear-gradient(90deg,rgba(49,0,30,.18),rgba(23,24,28,.58));
     }
-    
-    .tag-badge {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 9999px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      padding: 0.5em 1.3em;
-      white-space: nowrap;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
-      cursor: pointer;
+    .closing-grid {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:44px;
+      align-items:end;
     }
-    
-    .tag-badge:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    .closing h2 { max-width:760px; }
+    .closing p { max-width:620px; margin-top:17px; color:rgba(255,255,255,.68); line-height:1.55; }
+    .closing-actions { display:grid; gap:14px; min-width:210px; }
+    .closing-actions .button-link { justify-content:center; }
+    .footer { padding:26px 0 40px; color:rgba(255,255,255,.48); background:var(--ink); }
+    .footer-inner {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      padding-top:22px;
+      border-top:1px solid var(--line-dark);
     }
-    
-    .tag-ios { background: linear-gradient(135deg, #6366f1, #818cf8); color: #fff; }
-    .tag-playbook { background: linear-gradient(135deg, #f472b6, #f9a8d4); color: #fff; }
-    .tag-previews { background: linear-gradient(135deg, #fbbf24, #fcd34d); color: #78350f; }
-    .tag-snapshot { background: linear-gradient(135deg, #a21caf, #f472b6); color: #fff; }
-    .tag-swift6 { background: linear-gradient(135deg, #ec4899, #f472b6); color: #fff; }
-    .tag-swiftui { background: linear-gradient(135deg, #10b981, #34d399); color: #065f46; }
-    .tag-tvos { background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: #fff; }
-    .tag-uikit { background: linear-gradient(135deg, #f97316, #fbbf24); color: #78350f; }
-    .tag-xcode { background: linear-gradient(135deg, #818cf8, #a5b4fc); color: #1e1b4b; }
-    
-    /* Section Number Badges */
-    .section-number {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      color: white;
-      font-weight: 800;
-      font-size: 1.25rem;
-      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
-      transition: all 0.3s ease;
-      flex-shrink: 0;
+    .footer-links { display:flex; flex-wrap:wrap; gap:18px; color:#fff; }
+
+    @media (max-width:1040px) {
+      .site-nav { display:none; }
+      .hero-inner { grid-template-columns:1fr; gap:56px; }
+      .proof-card { max-width:680px; }
+      .result-stage { grid-template-columns:1fr; }
+      .result-copy { min-height:380px; }
     }
-    
-    .section-number:hover {
-      transform: scale(1.1) rotate(5deg);
-      box-shadow: 0 12px 32px rgba(99, 102, 241, 0.5);
+    @media (max-width:820px) {
+      .brand-kit-link,.github-link { display:none; }
+      .mobile-menu { display:block; }
+      .section-head,.closing-grid { grid-template-columns:1fr; }
+      .steps { grid-template-columns:1fr; }
+      .step { min-height:0; padding:28px 0; }
+      .step+.step { padding-left:0; border-left:0; border-top:1px solid var(--line-dark); }
+      .step-number { margin-bottom:28px; }
+      .install-shell,.config-content { grid-template-columns:1fr; }
+      .install-tabs { grid-template-columns:repeat(3,1fr); border-top:0; gap:8px; }
+      .install-tab { padding:15px; border:1px solid var(--line); border-radius:14px; }
+      .install-tab span { display:none; }
+      .install-tab[aria-selected="true"] { color:#fff; border-color:var(--ink); background:var(--ink); }
+      .closing-actions { min-width:0; }
     }
-    
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 12px;
+    @media (max-width:620px) {
+      :root { --header-height:68px; }
+      .container { width:min(calc(100% - 24px),var(--container)); }
+      .header-inner { min-height:var(--header-height); }
+      .brand-copy { display:none; }
+      .header-actions { gap:8px; }
+      .language-switch button { padding-inline:10px; }
+      .mobile-menu nav { position:fixed; top:72px; left:12px; right:12px; }
+      .hero { min-height:auto; }
+      .hero-inner { padding:74px 0 44px; gap:44px; }
+      h1 { max-width:none; font-size:clamp(4.1rem,20vw,5.5rem); }
+      .hero-copy>p { font-size:1.04rem; }
+      .hero-actions { align-items:flex-start; flex-direction:column; }
+      .button-primary { width:100%; }
+      .proof-card { padding:20px; }
+      .proof-result { align-items:flex-start; flex-direction:column; }
+      .proof-platforms { text-align:left; }
+      .section { padding:78px 0; }
+      .section-head { margin-bottom:36px; }
+      .result-copy { min-height:360px; padding:30px 24px; }
+      .result-visual { min-height:650px; grid-template-columns:1fr; padding:24px; }
+      .snapshot-proof { align-self:end; }
+      .playbook-proof { width:min(100%,250px); }
+      .install-tabs { grid-template-columns:1fr; }
+      .install-tab span { display:block; }
+      .tab-panel { min-height:0; padding:22px; }
+      .config-content { padding-inline:0; }
+      .closing { padding:78px 0; }
+      .footer-inner { align-items:flex-start; flex-direction:column; }
     }
-    
-    ::-webkit-scrollbar-track {
-      background: #1a1a24;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      border-radius: 6px;
-      border: 2px solid #1a1a24;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(135deg, #818cf8, #a78bfa);
-    }
-    
-    /* Progress Bar */
-    .progress-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
-      transform-origin: left;
-      z-index: 9999;
-      transition: transform 0.1s ease;
-    }
-    
-    /* Mobile Nav */
-    @media (max-width: 768px) {
-      .mobile-nav {
-        position: fixed;
-        bottom: 24px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 999;
-      }
+    @media (prefers-reduced-motion:reduce) {
+      html { scroll-behavior:auto; }
+      *,*::before,*::after { animation:none!important; transition:none!important; }
     }
   </style>
 </head>
-<body class="flex flex-col min-h-full bg-[#0a0a0f] text-gray-100">
-
-<!-- Progress Bar -->
-<div class="progress-bar" id="progressBar"></div>
-
-<!-- Header -->
-<header class="header-sticky bg-gradient-to-r from-indigo-900/90 via-purple-800/90 to-pink-700/90 text-white shadow-2xl" id="header">
-  <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-    <div class="flex items-center gap-4">
-      <img src="https://i.ibb.co/QCKtnCh/Frame-15.png" alt="Prefire" class="w-36 drop-shadow-2xl hover:scale-105 transition-transform duration-300 cursor-pointer">
-    </div>
-    <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-      <a href="#why" class="hover:text-pink-300 transition-all duration-300 hover:scale-105">Why</a>
-      <a href="#features" class="hover:text-pink-300 transition-all duration-300 hover:scale-105">Features</a>
-      <a href="#install" class="hover:text-pink-300 transition-all duration-300 hover:scale-105">Install</a>
-      <a href="#quickstart" class="hover:text-pink-300 transition-all duration-300 hover:scale-105">Quick&nbsp;Start</a>
-      <a href="#how" class="hover:text-pink-300 transition-all duration-300 hover:scale-105">How&nbsp;It&nbsp;Works</a>
-      <a href="#examples" class="hover:text-pink-300 transition-all duration-300 hover:scale-105">Examples</a>
-      <a href="#config" class="hover:text-pink-300 transition-all duration-300 hover:scale-105">Config</a>
-    </nav>
-    <a href="https://github.com/BarredEwe/Prefire" target="_blank" class="flex items-center gap-2 glass text-sm font-semibold px-5 py-2.5 rounded-xl hover:scale-105 transition-all duration-300 glow-purple">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577v-2.256c-3.338.725-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.757-1.333-1.757-1.088-.744.084-.729.084-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.835 2.809 1.306 3.495.998.108-.775.42-1.306.762-1.606-2.665-.304-5.466-1.332-5.466-5.931 0-1.309.469-2.382 1.236-3.221-.124-.303-.535-1.527.117-3.176 0 0 1.008-.322 3.3 1.23a11.52 11.52 0 0 1 3-.404c1.02.005 2.045.138 3 .404 2.292-1.552 3.297-1.23 3.297-1.23.653 1.649.242 2.873.118 3.176.77.839 1.235 1.912 1.235 3.221 0 4.609-2.803 5.624-5.475 5.921.431.371.815 1.102.815 2.222v3.293c0 .322.218.694.825.576C20.565 22.092 24 17.592 24 12.297 24 5.67 18.627.297 12 .297z"/></svg>
-      <span class="hidden sm:inline">GitHub</span>
-    </a>
-  </div>
-</header>
-
-<main class="flex-1">
-
-<!-- Hero -->
-<section class="relative isolate overflow-hidden min-h-[90vh] flex items-center justify-center">
-  <!-- Animated Blobs -->
-  <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-  </div>
-  
-  <!-- Grid Pattern -->
-  <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40"></div>
-  
-  <div class="max-w-7xl mx-auto px-6 py-20 relative z-10 text-center flex flex-col items-center">
-    <div class="float">
-      <h1 class="text-5xl sm:text-7xl font-black leading-tight mb-6" data-aos="fade-down" data-aos-duration="800">
-        Instant snapshots from<br>
-        <span class="gradient-text">SwiftUI #Previews</span>
-      </h1>
-    </div>
-    
-    <p class="mt-6 max-w-2xl text-xl sm:text-2xl text-gray-300 font-medium" data-aos="fade-up" data-aos-delay="100" data-aos-duration="800">
-      Prefire turns your <code class="px-2 py-1 bg-purple-500/20 rounded-lg border border-purple-500/30">#Preview</code> blocks into snapshot tests, living docs & playbooks — <strong class="text-pink-400">automatically</strong>.
-    </p>
-    
-    <!-- Tag Marquee -->
-    <div class="tag-marquee mt-12 w-full" data-aos="fade-up" data-aos-delay="200">
-      <div class="tag-marquee-inner">
-        <div class="tag-marquee-track" id="tagMarqueeTrack">
-          <span class="tag-badge tag-ios">iOS</span>
-          <span class="tag-badge tag-playbook">playbook</span>
-          <span class="tag-badge tag-previews">previews</span>
-          <span class="tag-badge tag-snapshot">snapshot-testing</span>
-          <span class="tag-badge tag-swift6">Swift 6</span>
-          <span class="tag-badge tag-swiftui">SwiftUI</span>
-          <span class="tag-badge tag-tvos">tvOS</span>
-          <span class="tag-badge tag-uikit">UIKit</span>
-          <span class="tag-badge tag-xcode">Xcode Plugins</span>
-          <!-- Duplicate for seamless loop -->
-          <span class="tag-badge tag-ios">iOS</span>
-          <span class="tag-badge tag-playbook">playbook</span>
-          <span class="tag-badge tag-previews">previews</span>
-          <span class="tag-badge tag-snapshot">snapshot-testing</span>
-          <span class="tag-badge tag-swift6">Swift 6</span>
-          <span class="tag-badge tag-swiftui">SwiftUI</span>
-          <span class="tag-badge tag-tvos">tvOS</span>
-          <span class="tag-badge tag-uikit">UIKit</span>
-          <span class="tag-badge tag-xcode">Xcode Plugins</span>
-        </div>
-      </div>
-    </div>
-    
-    <div class="mt-14 flex flex-col sm:flex-row gap-5 justify-center">
-      <a href="#install" class="group btn-gradient inline-flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg px-10 py-4 rounded-2xl shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105" data-aos="fade-up" data-aos-delay="300">
-        Get Started
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5-5 5M6 12h12"/></svg>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="Prefire home">
+        <span class="brand-mark" aria-hidden="true"><img src="assets/prefire-logo.png" alt=""></span>
+        <span class="brand-copy">Prefire<small data-i18n="brand_subtitle">Previews to confidence</small></span>
       </a>
-      <a href="#why" class="inline-flex items-center justify-center gap-3 glass text-white font-semibold text-lg px-10 py-4 rounded-2xl hover:scale-105 transition-all duration-300" data-aos="fade-up" data-aos-delay="400">
-        Learn More
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- Why -->
-<section id="why" class="py-28 px-6 bg-gradient-to-b from-[#0a0a0f] to-[#13131a]" data-aos="fade-up">
-  <div class="max-w-7xl mx-auto">
-    <h2 class="text-4xl sm:text-6xl font-black text-center mb-6">
-      <span class="gradient-text">Why Prefire?</span>
-    </h2>
-    <p class="text-center text-xl text-gray-400 mb-16 max-w-3xl mx-auto">
-      The fastest way to create snapshot tests and living documentation from your existing SwiftUI previews
-    </p>
-    
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="glass-dark rounded-3xl p-8 card-3d flex items-start gap-5">
-        <span class="text-5xl">📸</span>
-        <div>
-          <h3 class="text-xl font-bold mb-2 text-white">Zero Boilerplate</h3>
-          <p class="text-gray-400">Snapshot tests from your <code class="text-purple-400">#Preview</code> blocks — no extra code needed.</p>
-        </div>
-      </div>
-      
-      <div class="glass-dark rounded-3xl p-8 card-3d flex items-start gap-5">
-        <span class="text-5xl">📚</span>
-        <div>
-          <h3 class="text-xl font-bold mb-2 text-white">Living Docs</h3>
-          <p class="text-gray-400">Documentation that's always in sync with your UI components.</p>
-        </div>
-      </div>
-      
-      <div class="glass-dark rounded-3xl p-8 card-3d flex items-start gap-5">
-        <span class="text-5xl">⚡️</span>
-        <div>
-          <h3 class="text-xl font-bold mb-2 text-white">Ultra-Fast Caching</h3>
-          <p class="text-gray-400">Smart cache system prevents redundant parsing and speeds up builds.</p>
-        </div>
-      </div>
-      
-      <div class="glass-dark rounded-3xl p-8 card-3d flex items-start gap-5">
-        <span class="text-5xl">🧩</span>
-        <div>
-          <h3 class="text-xl font-bold mb-2 text-white">SwiftUI & UIKit</h3>
-          <p class="text-gray-400">Works seamlessly with both SwiftUI and legacy UIKit codebases.</p>
-        </div>
-      </div>
-      
-      <div class="glass-dark rounded-3xl p-8 card-3d flex items-start gap-5">
-        <span class="text-5xl">🔩</span>
-        <div>
-          <h3 class="text-xl font-bold mb-2 text-white">Flexible Integration</h3>
-          <p class="text-gray-400">CLI, SPM plugin, Xcode plugin, or direct CI integration.</p>
-        </div>
-      </div>
-      
-      <div class="glass-dark rounded-3xl p-8 card-3d flex items-start gap-5">
-        <span class="text-5xl">🧠</span>
-        <div>
-          <h3 class="text-xl font-bold mb-2 text-white">Flow Understanding</h3>
-          <p class="text-gray-400">Track user stories, states, variants and complex UI flows.</p>
+      <div class="nav-wrap">
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#result" data-i18n="nav_result">Result</a>
+          <a href="#workflow" data-i18n="nav_workflow">How it works</a>
+          <a href="#install" data-i18n="nav_install">Install</a>
+        </nav>
+        <div class="header-actions">
+          <a class="brand-kit-link" href="/brand/" data-i18n="nav_brand">Brand kit</a>
+          <div class="language-switch" role="group" aria-label="Language selector">
+            <button type="button" data-language-button="en">EN</button>
+            <button type="button" data-language-button="ru">RU</button>
+          </div>
+          <details class="mobile-menu">
+            <summary aria-label="Open navigation">☰</summary>
+            <nav aria-label="Mobile navigation">
+              <a href="#result" data-i18n="nav_result">Result</a>
+              <a href="#workflow" data-i18n="nav_workflow">How it works</a>
+              <a href="#install" data-i18n="nav_install">Install</a>
+              <a href="/brand/" data-i18n="nav_brand">Brand kit</a>
+              <a href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a>
+            </nav>
+          </details>
+          <a class="github-link" href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </header>
 
-<!-- Features -->
-<section id="features" class="py-28 px-6 bg-gradient-to-b from-[#13131a] to-[#1a1a24]" data-aos="fade-up">
-  <div class="max-w-7xl mx-auto">
-    <h2 class="text-4xl sm:text-6xl font-black text-center mb-6">
-      <span class="gradient-text">Key Features</span>
-    </h2>
-    <p class="text-center text-xl text-gray-400 mb-16 max-w-3xl mx-auto">
-      Everything you need for automated snapshot testing and visual documentation
-    </p>
-    
-    <div class="grid md:grid-cols-2 gap-8">
-      <div class="glass-dark p-10 rounded-3xl card-3d flex gap-6 items-start">
-        <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl shadow-lg">
-          🧠
+  <main id="top">
+    <section class="hero">
+      <img class="hero-bg" src="brand/assets/prefire-ember-field.svg" alt="">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow" data-i18n="hero_eyebrow">SwiftUI previews → snapshot tests</span>
+          <h1 data-i18n="hero_title">Previews, ready to test.</h1>
+          <p data-i18n-html="hero_body">Prefire reads <code>#Preview</code> and generates snapshot tests plus an iOS Playbook. No second set of UI states.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#install" data-i18n="hero_primary">Install Prefire</a>
+            <a class="button-link" href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer" data-i18n="hero_secondary">View on GitHub</a>
+          </div>
         </div>
-        <div>
-          <h3 class="text-2xl font-bold mb-3 text-white">Smart Preview Parsing</h3>
-          <p class="text-gray-400 text-lg">Understands <code class="text-purple-400">#Preview</code>, <code class="text-purple-400">@Previewable</code>, flows & variations automatically.</p>
+        <aside class="proof-card" aria-label="Prefire output proof">
+          <div class="proof-top">
+            <span class="proof-label" data-i18n="flow_source">Your preview</span>
+            <span class="status" data-i18n="flow_ready">ready</span>
+          </div>
+          <pre><span class="token-hot">#Preview</span> {
+  LoginView()
+    .<span class="token-method">previewState</span>(.<span class="token-value">loading</span>)
+}</pre>
+          <div class="proof-result">
+            <strong>Snapshot tests + Playbook</strong>
+            <span class="proof-platforms">iOS · tvOS · macOS<br>Playbook · iOS</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="result">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="eyebrow" data-i18n="result_label">One source</span>
+            <h2 data-i18n="result_title">One preview. Two outputs.</h2>
+          </div>
+          <p data-i18n="result_body">The states already in your project become tests and a visual catalog.</p>
+        </div>
+        <div class="result-stage">
+          <div class="result-copy">
+            <div class="result-copy-top">
+              <span class="result-index">01 — 02</span>
+              <h3>Tests and Playbook.</h3>
+              <p data-i18n="result_stage_body">One set of preview states becomes repeatable checks and a browsable interface catalog.</p>
+            </div>
+            <div class="result-specs">
+              <div class="result-spec"><strong>Snapshot tests</strong><span>iOS · tvOS · macOS</span></div>
+              <div class="result-spec"><strong>Playbook</strong><span>iOS</span></div>
+            </div>
+          </div>
+          <div class="result-visual">
+            <div class="snapshot-proof" aria-label="Generated snapshot status">
+              <span>Snapshot tests</span>
+              <div class="snapshot-row"><span>Login / loading</span><strong class="snapshot-status">passed</strong></div>
+              <div class="snapshot-row"><span>Login / ready</span><strong class="snapshot-status">passed</strong></div>
+              <div class="snapshot-row"><span>Login / error</span><strong class="snapshot-status">passed</strong></div>
+            </div>
+            <div class="playbook-proof"><img src="assets/prefire-playbook.gif" alt="Prefire Playbook"></div>
+          </div>
         </div>
       </div>
-      
-      <div class="glass-dark p-10 rounded-3xl card-3d flex gap-6 items-start">
-        <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-3xl shadow-lg">
-          📸
+    </section>
+
+    <section class="section section-dark" id="workflow">
+      <div class="container workflow-stage">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="eyebrow" data-i18n="workflow_label">Three steps</span>
+            <h2 data-i18n="workflow_title">Keep writing previews.</h2>
+          </div>
+          <p data-i18n="workflow_body">Prefire handles the path from source code to generated output.</p>
         </div>
-        <div>
-          <h3 class="text-2xl font-bold mb-3 text-white">Automatic Snapshots</h3>
-          <p class="text-gray-400 text-lg">Generates & executes pixel-perfect tests on every build automatically.</p>
+        <div class="steps">
+          <article class="step"><span class="step-number">01 / PREVIEW</span><h3 data-i18n="step_1_title">Describe the state</h3><p data-i18n-html="step_1_body">Use <code>#Preview</code>, <code>@Previewable</code> or <code>PreviewProvider</code>.</p></article>
+          <article class="step"><span class="step-number">02 / GENERATE</span><h3 data-i18n="step_2_title">Build the target</h3><p data-i18n="step_2_body">The plugin finds previews and generates Swift output.</p></article>
+          <article class="step"><span class="step-number">03 / VERIFY</span><h3 data-i18n="step_3_title">Test or browse</h3><p data-i18n="step_3_body">Run snapshots or open Playbook to inspect the same states.</p></article>
         </div>
+        <img class="confidence-path" src="brand/assets/prefire-grid.svg" alt="Preview to confidence path">
       </div>
-      
-      <div class="glass-dark p-10 rounded-3xl card-3d flex gap-6 items-start">
-        <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-3xl shadow-lg">
-          📚
-        </div>
-        <div>
-          <h3 class="text-2xl font-bold mb-3 text-white">Interactive Playbook</h3>
-          <p class="text-gray-400 text-lg">Beautiful browsable catalog for designers, QA, and stakeholders.</p>
-        </div>
-      </div>
-      
-      <div class="glass-dark p-10 rounded-3xl card-3d flex gap-6 items-start">
-        <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-3xl shadow-lg">
-          ⚙️
-        </div>
-        <div>
-          <h3 class="text-2xl font-bold mb-3 text-white">CLI & CI Ready</h3>
-          <p class="text-gray-400 text-lg">Runs in CI/CD pipelines with zero configuration required.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- Install -->
-<section id="install" class="py-28 px-6 bg-gradient-to-b from-[#1a1a24] to-[#0a0a0f]" data-aos="fade-up">
-  <div class="max-w-6xl mx-auto space-y-10">
-    <h2 class="text-4xl sm:text-6xl font-black text-center">
-      <span class="gradient-text">Installation</span>
-    </h2>
-    <p class="text-center text-xl text-gray-400 max-w-2xl mx-auto">
-      Choose the method that fits your workflow best
-    </p>
-    
-    <div class="flex justify-center gap-4 flex-wrap">
-      <button class="tab-trigger glass text-white px-6 py-3 rounded-2xl font-semibold transition-all duration-300 hover:scale-105" data-target="xcode" data-active="true">
-        Xcode Plugin
-      </button>
-      <button class="tab-trigger glass text-white px-6 py-3 rounded-2xl font-semibold transition-all duration-300 hover:scale-105" data-target="spm">
-        SwiftPM
-      </button>
-      <button class="tab-trigger glass text-white px-6 py-3 rounded-2xl font-semibold transition-all duration-300 hover:scale-105" data-target="cli">
-        CLI
-      </button>
-    </div>
+    <section class="section" id="install">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="eyebrow" data-i18n="install_label">Install</span>
+            <h2 data-i18n="install_title">Choose how Prefire runs.</h2>
+          </div>
+          <p data-i18n="install_body">Use the plugin in Xcode or SwiftPM. Use the CLI for explicit local and CI runs.</p>
+        </div>
+        <div class="install-shell">
+          <div class="install-tabs" role="tablist" aria-label="Installation methods">
+            <button class="install-tab" id="tab-xcode" role="tab" aria-selected="true" aria-controls="panel-xcode"><strong>Xcode</strong><span data-i18n="tab_xcode">Attach the build tool plugin.</span></button>
+            <button class="install-tab" id="tab-swiftpm" role="tab" aria-selected="false" aria-controls="panel-swiftpm" tabindex="-1"><strong>SwiftPM</strong><span data-i18n="tab_swiftpm">Add plugins to package targets.</span></button>
+            <button class="install-tab" id="tab-cli" role="tab" aria-selected="false" aria-controls="panel-cli" tabindex="-1"><strong>CLI</strong><span data-i18n="tab_cli">Run generation directly.</span></button>
+          </div>
+          <div>
+            <section class="tab-panel" id="panel-xcode" role="tabpanel" aria-labelledby="tab-xcode">
+              <h3 data-i18n="panel_xcode_title">Xcode Build Tool Plugin</h3>
+              <p data-i18n="panel_xcode_body">Add Prefire as a package dependency, then attach the test or Playbook plugin to the matching target.</p>
+              <div class="code-block"><pre><span class="token-value">Tests target</span>  → PrefireTestsPlugin
+<span class="token-value">App target</span>    → PrefirePlaybookPlugin</pre></div>
+            </section>
+            <section class="tab-panel" id="panel-swiftpm" role="tabpanel" aria-labelledby="tab-swiftpm" hidden>
+              <h3 data-i18n="panel_swiftpm_title">Swift Package plugins</h3>
+              <p data-i18n="panel_swiftpm_body">Add Prefire once, then attach plugins to the targets that should receive generated output.</p>
+              <div class="code-block"><pre>.package(
+  url: "https://github.com/BarredEwe/Prefire.git",
+  from: "5.8.1"
+)
 
-    <div id="xcode" class="tab-content tab-active glass-dark rounded-3xl p-10 shadow-2xl">
-      <ol class="list-decimal space-y-4 pl-6 text-gray-300 text-lg">
-        <li>Add <code class="px-2 py-1 bg-purple-500/20 rounded-lg border border-purple-500/30 text-purple-300">Prefire</code> via <strong class="text-white">File → Add Packages…</strong></li>
-        <li>Select your <strong class="text-white">unit test target</strong></li>
-        <li>Attach <code class="px-2 py-1 bg-purple-500/20 rounded-lg border border-purple-500/30 text-purple-300">PrefireTestsPlugin</code> under <strong class="text-white">Build Tool Plugins</strong></li>
-        <li>Build the target — snapshot tests are <span class="text-green-400 font-semibold">auto-generated</span></li>
-      </ol>
-    </div>
-
-    <pre id="spm" class="tab-content code-block glass-dark text-gray-100 rounded-3xl p-10 text-sm overflow-auto shadow-2xl font-mono leading-relaxed">
-dependencies: [
-    .package(url: "https://github.com/BarredEwe/Prefire", from: "4.0.0")
-],
-.testTarget(
-    plugins: [
-        .plugin(name: "PrefireTestsPlugin", package: "Prefire")
-    ]
-)</pre>
-
-    <pre id="cli" class="tab-content code-block glass-dark text-gray-100 rounded-3xl p-10 text-sm overflow-auto shadow-2xl font-mono leading-relaxed">
-brew tap barredewe/prefire
-brew install prefire
+.plugin(name: "PrefireTestsPlugin", package: "Prefire")</pre></div>
+            </section>
+            <section class="tab-panel" id="panel-cli" role="tabpanel" aria-labelledby="tab-cli" hidden>
+              <h3 data-i18n="panel_cli_title">CLI</h3>
+              <p data-i18n="panel_cli_body">Install with Homebrew, then generate tests or Playbook models explicitly.</p>
+              <div class="code-block"><pre>brew install BarredEwe/formulae/prefire
 
 prefire tests
-prefire playbook</pre>
-  </div>
-</section>
-
-<!-- Quick Start -->
-<section id="quickstart" class="py-28 px-6 bg-gradient-to-b from-[#0a0a0f] to-[#13131a]" data-aos="fade-up">
-  <div class="max-w-6xl mx-auto">
-    <h2 class="text-4xl sm:text-6xl font-black text-center mb-6">
-      <span class="gradient-text">Quick Start</span>
-    </h2>
-    <p class="text-center text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
-      Get up and running in less than 5 minutes
-    </p>
-    
-    <ol class="glass-dark rounded-3xl shadow-2xl p-12 space-y-6 text-gray-300 text-lg">
-      <li class="flex items-start gap-4">
-        <span class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold shadow-lg">1</span>
-        <p>Add Prefire to your <code class="px-2 py-1 bg-purple-500/20 rounded-lg border border-purple-500/30 text-purple-300">Package.swift</code> (see Installation above)</p>
-      </li>
-      <li class="flex items-start gap-4">
-        <span class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center font-bold shadow-lg">2</span>
-        <p>Create a <code class="px-2 py-1 bg-purple-500/20 rounded-lg border border-purple-500/30 text-purple-300">#Preview</code>, e.g. <code class="text-green-400">#Preview { Button("Submit") }</code></p>
-      </li>
-      <li class="flex items-start gap-4">
-        <span class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 text-white flex items-center justify-center font-bold shadow-lg">3</span>
-        <p>Run the test target — Prefire will generate & run snapshot tests <span class="text-green-400 font-semibold">automatically</span></p>
-      </li>
-    </ol>
-  </div>
-</section>
-
-<!-- How It Works -->
-<section id="how" class="py-28 px-6 bg-gradient-to-b from-[#13131a] to-[#1a1a24]" data-aos="fade-up">
-  <div class="max-w-7xl mx-auto space-y-16">
-    <div class="text-center">
-      <h2 class="text-4xl sm:text-6xl font-black mb-6">
-        <span class="gradient-text">How Prefire Works</span>
-      </h2>
-      <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-        A deep dive into the architecture and workflow
-      </p>
-    </div>
-
-    <div class="grid lg:grid-cols-2 gap-12">
-      <!-- Pipeline -->
-      <div class="space-y-8">
-        <div class="flex items-start gap-5">
-          <span class="section-number">1</span>
-          <div>
-            <h3 class="text-2xl font-bold mb-3 text-white">Parse Source Files</h3>
-            <p class="text-gray-400 text-lg">Scans all Swift files, detecting <code class="text-purple-400">#Preview</code> blocks and <code class="text-purple-400">PreviewProvider</code>s with modifiers like <code class="text-pink-400">.prefireEnabled()</code>.</p>
+prefire playbook</pre></div>
+            </section>
           </div>
         </div>
-        
-        <div class="flex items-start gap-5">
-          <span class="section-number">2</span>
-          <div>
-            <h3 class="text-2xl font-bold mb-3 text-white">Cache Models</h3>
-            <p class="text-gray-400 text-lg">Fingerprints AST & preview bodies (SHA-256 + timestamps) to skip work on unchanged files.</p>
+        <details class="config-disclosure">
+          <summary data-i18n="config_summary">Need custom paths, devices or templates?</summary>
+          <div class="config-content">
+            <p data-i18n-html="config_body">Add <code>.prefire.yml</code> when the defaults no longer match your project. Project-specific control stays in the config.</p>
+            <div class="code-block"><pre>test_configuration:
+  target: PrefireExample
+  simulator_device: "iPhone15,2"
+  required_os: 16
+
+playbook_configuration:
+  preview_default_enabled: true</pre></div>
           </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="container closing-grid">
+        <div>
+          <span class="eyebrow" data-i18n="closing_label">Open source</span>
+          <h2 data-i18n="closing_title">Your previews are already the fixture.</h2>
+          <p data-i18n="closing_body">Let Prefire turn them into something the whole team can verify.</p>
         </div>
-        
-        <div class="flex items-start gap-5">
-          <span class="section-number">3</span>
-          <div>
-            <h3 class="text-2xl font-bold mb-3 text-white">Generate Tests</h3>
-            <p class="text-gray-400 text-lg">Uses <code class="text-purple-400">Stencil</code> templates & your <code class="text-purple-400">.prefire.yml</code> to emit Swift tests.</p>
-          </div>
-        </div>
-        
-        <div class="flex items-start gap-5">
-          <span class="section-number">4</span>
-          <div>
-            <h3 class="text-2xl font-bold mb-3 text-white">Build Playbook</h3>
-            <p class="text-gray-400 text-lg">Creates <code class="text-purple-400">PreviewModels.generated.swift</code> grouping previews by <em>UserStory</em> and <em>State</em>.</p>
-          </div>
+        <div class="closing-actions">
+          <a class="button button-primary" href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer" data-i18n="closing_primary">Open GitHub</a>
+          <a class="button-link" href="https://github.com/BarredEwe/Prefire/releases/latest" target="_blank" rel="noreferrer" data-i18n="closing_secondary">Latest release</a>
         </div>
       </div>
+    </section>
+  </main>
 
-      <!-- Architecture -->
-      <div class="glass-dark rounded-3xl shadow-2xl p-10">
-        <h3 class="text-3xl font-bold mb-8 text-center gradient-text">Internal Architecture</h3>
-        <ul class="space-y-5 text-gray-300 text-lg">
-          <li class="flex items-start gap-3">
-            <span class="text-2xl">🔧</span>
-            <div>
-              <strong class="text-white">PrefireCore</strong> — AST parsing, preview detection & caching layer
-            </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="text-2xl">⚡️</span>
-            <div>
-              <strong class="text-white">PrefireGenerator</strong> — Stencil-based code generator for tests & models
-            </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="text-2xl">💾</span>
-            <div>
-              <strong class="text-white">PrefireCacheManager</strong> — Unified fingerprint & file-cache logic
-            </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="text-2xl">🔌</span>
-            <div>
-              <strong class="text-white">Plugins</strong> — Xcode & SPM integration points
-            </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="text-2xl">🛠</span>
-            <div>
-              <strong class="text-white">prefire CLI</strong> — Manual <code class="text-purple-400">tests</code> / <code class="text-purple-400">playbook</code> commands
-            </div>
-          </li>
-        </ul>
-      </div>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span data-i18n="footer_copy">Prefire · SwiftUI previews to confidence.</span>
+      <div class="footer-links"><a href="/brand/" data-i18n="nav_brand">Brand kit</a><a href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a></div>
     </div>
-  </div>
-</section>
+  </footer>
 
-<!-- Examples -->
-<section id="examples" class="py-28 px-6 bg-gradient-to-b from-[#1a1a24] to-[#0a0a0f]" data-aos="fade-up">
-  <div class="max-w-6xl mx-auto space-y-10">
-    <h2 class="text-4xl sm:text-6xl font-black text-center mb-6">
-      <span class="gradient-text">Usage Examples</span>
-    </h2>
-    <p class="text-center text-xl text-gray-400 mb-12 max-w-3xl mx-auto">
-      Real-world examples of Prefire in action
-    </p>
-    
-    <pre class="code-block glass-dark text-gray-100 rounded-3xl p-10 text-base overflow-auto shadow-2xl font-mono leading-loose">
-<span class="text-pink-400">#Preview</span> {
-  <span class="text-green-400">Text</span>(<span class="text-yellow-300">"Hello"</span>)
-}
-
-<span class="text-pink-400">#Preview</span> {
-  <span class="text-green-400">LoginView</span>()
-    .<span class="text-purple-400">previewUserStory</span>(.<span class="text-blue-400">auth</span>)
-    .<span class="text-purple-400">previewState</span>(.<span class="text-blue-400">loading</span>)
-    .<span class="text-purple-400">snapshot</span>(delay: <span class="text-yellow-300">0.3</span>, precision: <span class="text-yellow-300">0.95</span>)
-}</pre>
-    
-    <p class="text-center text-lg text-gray-400 max-w-2xl mx-auto">
-      Combine <code class="px-2 py-1 bg-purple-500/20 rounded-lg border border-purple-500/30 text-purple-300">.previewUserStory()</code>, 
-      <code class="px-2 py-1 bg-purple-500/20 rounded-lg border border-purple-500/30 text-purple-300">.previewState()</code> & 
-      <code class="px-2 py-1 bg-purple-500/20 rounded-lg border border-purple-500/30 text-purple-300">.snapshot()</code> 
-      to define rich visual flows & quality checks.
-    </p>
-  </div>
-</section>
-
-<!-- Config -->
-<section id="config" class="py-28 px-6 bg-gradient-to-b from-[#0a0a0f] to-[#13131a]" data-aos="fade-up">
-  <div class="max-w-6xl mx-auto space-y-10">
-    <h2 class="text-4xl sm:text-6xl font-black text-center mb-6">
-      <span class="gradient-text">Configuration</span>
-    </h2>
-    <p class="text-center text-xl text-gray-400 max-w-2xl mx-auto">
-      Customize generation with <code class="px-2 py-1 bg-purple-500/20 rounded-lg border border-purple-500/30 text-purple-300">.prefire.yml</code> at your project root
-    </p>
-
-    <details class="glass-dark rounded-3xl p-10 shadow-2xl cursor-pointer hover:scale-[1.01] transition-transform duration-300">
-      <summary class="font-bold text-2xl text-white mb-6 cursor-pointer select-none">📄 Show Example Configuration</summary>
-      <pre class="mt-6 text-sm overflow-auto font-mono leading-relaxed text-gray-300">
-<span class="text-pink-400">test_configuration</span>:
-  <span class="text-purple-400">target</span>: MyApp
-  <span class="text-purple-400">test_file_path</span>: Tests/Generated/PreviewTests.swift
-  <span class="text-purple-400">simulator_device</span>: <span class="text-yellow-300">"iPhone15,2"</span>
-  <span class="text-purple-400">preview_default_enabled</span>: <span class="text-green-400">true</span>
-  <span class="text-purple-400">sources</span>:
-    - {PROJECT_DIR}/Sources/
-  <span class="text-purple-400">snapshot_devices</span>:
-    - iPhone 14
-    - iPad
-  <span class="text-purple-400">imports</span>:
-    - SwiftUI
-    - UIKit
-  <span class="text-purple-400">testable_imports</span>:
-    - MyApp
-
-<span class="text-pink-400">playbook_configuration</span>:
-  <span class="text-purple-400">template_file_path</span>: Templates/PreviewModels.stencil
-  <span class="text-purple-400">preview_default_enabled</span>: <span class="text-green-400">true</span></pre>
-    </details>
-  </div>
-</section>
-
-<!-- Open Source -->
-<section class="py-28 px-6 bg-gradient-to-b from-[#13131a] to-[#1a1a24] relative overflow-hidden">
-  <!-- Background Effects -->
-  <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-    <div class="blob blob-1" style="animation-duration: 20s;"></div>
-    <div class="blob blob-2" style="animation-duration: 25s; animation-delay: 5s;"></div>
-  </div>
-  
-  <div class="max-w-6xl mx-auto text-center relative z-10">
-    <div class="glass-dark rounded-3xl shadow-2xl p-16 backdrop-blur-xl">
-      <h2 class="text-4xl sm:text-6xl font-black mb-8">
-        <span class="gradient-text">Open Source</span>
-      </h2>
-      <p class="text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-        Prefire is <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">fully open source</span> and built by the community. 
-        Contributions, issues and stars are always welcome!
-      </p>
-      
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mb-10">
-        <a href="https://github.com/BarredEwe/Prefire" target="_blank" class="btn-gradient inline-flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg px-10 py-4 rounded-2xl shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577v-2.256c-3.338.725-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.757-1.333-1.757-1.088-.744.084-.729.084-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.835 2.809 1.306 3.495.998.108-.775.42-1.306.762-1.606-2.665-.304-5.466-1.332-5.466-5.931 0-1.309.469-2.382 1.236-3.221-.124-.303-.535-1.527.117-3.176 0 0 1.008-.322 3.3 1.23a11.52 11.52 0 0 1 3-.404c1.02.005 2.045.138 3 .404 2.292-1.552 3.297-1.23 3.297-1.23.653 1.649.242 2.873.118 3.176.77.839 1.235 1.912 1.235 3.221 0 4.609-2.803 5.624-5.475 5.921.431.371.815 1.102.815 2.222v3.293c0 .322.218.694.825.576C20.565 22.092 24 17.592 24 12.297 24 5.67 18.627.297 12 .297z"/></svg>
-          <span>View on GitHub</span>
-        </a>
-        <img src="https://img.shields.io/github/stars/BarredEwe/Prefire?style=for-the-badge&logo=github&color=8b5cf6&labelColor=1a1a24" alt="GitHub stars" class="h-12 hover:scale-110 transition-transform">
-      </div>
-      
-      <p class="text-gray-400 text-lg">
-        PRs, issues and feedback are <span class="font-bold text-pink-400">highly appreciated</span> — or just drop us a ⭐️!
-      </p>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<footer class="bg-[#0a0a0f] border-t border-white/5 text-gray-400 text-sm py-10">
-  <div class="max-w-6xl mx-auto text-center px-6">
-    <p class="text-lg">
-      Made with <span class="text-pink-500 text-xl">❤️</span> by the Prefire team – 
-      <a href="https://github.com/BarredEwe/Prefire" class="text-purple-400 hover:text-purple-300 font-semibold hover:underline transition-colors">View on GitHub</a>
-    </p>
-  </div>
-</footer>
-
-<script>
-  // Tab switching
-  document.querySelectorAll('.tab-trigger').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = btn.dataset.target;
-      document.querySelectorAll('.tab-trigger').forEach(el => {
-        el.dataset.active = (el.dataset.target === target);
-      });
-      document.querySelectorAll('.tab-content').forEach(el => {
-        el.classList.toggle('tab-active', el.id === target);
-      });
-    });
-  });
-  
-  // Sticky header on scroll
-  const header = document.getElementById('header');
-  let lastScroll = 0;
-  
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll > 100) {
-      header.classList.add('header-scrolled');
-    } else {
-      header.classList.remove('header-scrolled');
-    }
-    
-    lastScroll = currentScroll;
-  });
-  
-  // Progress bar
-  const progressBar = document.getElementById('progressBar');
-  
-  window.addEventListener('scroll', () => {
-    const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (window.pageYOffset / windowHeight) * 100;
-    progressBar.style.transform = `scaleX(${scrolled / 100})`;
-  });
-  
-  // Smooth scroll for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    });
-  });
-</script>
-
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-<script>
-  AOS.init({ 
-    once: true,
-    duration: 800,
-    easing: 'ease-out-cubic'
-  });
-</script>
+  <script>
+    const translations={
+      en:{meta_title:"Prefire | Snapshot tests from SwiftUI previews",meta_description:"Generate snapshot tests and an iOS Playbook from the SwiftUI previews already in your project.",brand_subtitle:"Previews to confidence",nav_result:"Result",nav_workflow:"How it works",nav_install:"Install",nav_brand:"Brand kit",hero_eyebrow:"SwiftUI previews → snapshot tests",hero_title:"Previews, ready to test.",hero_body:"Prefire reads <code>#Preview</code> and generates snapshot tests plus an iOS Playbook. No second set of UI states.",hero_primary:"Install Prefire",hero_secondary:"View on GitHub",flow_source:"Your preview",flow_ready:"ready",result_label:"One source",result_title:"One preview. Two outputs.",result_body:"The states already in your project become tests and a visual catalog.",result_stage_body:"One set of preview states becomes repeatable checks and a browsable interface catalog.",workflow_label:"Three steps",workflow_title:"Keep writing previews.",workflow_body:"Prefire handles the path from source code to generated output.",step_1_title:"Describe the state",step_1_body:"Use <code>#Preview</code>, <code>@Previewable</code> or <code>PreviewProvider</code>.",step_2_title:"Build the target",step_2_body:"The plugin finds previews and generates Swift output.",step_3_title:"Test or browse",step_3_body:"Run snapshots or open Playbook to inspect the same states.",install_label:"Install",install_title:"Choose how Prefire runs.",install_body:"Use the plugin in Xcode or SwiftPM. Use the CLI for explicit local and CI runs.",tab_xcode:"Attach the build tool plugin.",tab_swiftpm:"Add plugins to package targets.",tab_cli:"Run generation directly.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Add Prefire as a package dependency, then attach the test or Playbook plugin to the matching target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Add Prefire once, then attach plugins to the targets that should receive generated output.",panel_cli_title:"CLI",panel_cli_body:"Install with Homebrew, then generate tests or Playbook models explicitly.",config_summary:"Need custom paths, devices or templates?",config_body:"Add <code>.prefire.yml</code> when the defaults no longer match your project. Project-specific control stays in the config.",closing_label:"Open source",closing_title:"Your previews are already the fixture.",closing_body:"Let Prefire turn them into something the whole team can verify.",closing_primary:"Open GitHub",closing_secondary:"Latest release",footer_copy:"Prefire · SwiftUI previews to confidence."},
+      ru:{meta_title:"Prefire | Snapshot-тесты из SwiftUI previews",meta_description:"Генерируйте snapshot-тесты и iOS Playbook из SwiftUI previews, которые уже есть в проекте.",brand_subtitle:"От previews к уверенности",nav_result:"Результат",nav_workflow:"Как работает",nav_install:"Установка",nav_brand:"Бренд-кит",hero_eyebrow:"SwiftUI previews → snapshot-тесты",hero_title:"Previews, готовые к тестам.",hero_body:"Prefire читает <code>#Preview</code> и генерирует snapshot-тесты плюс iOS Playbook. Без второго набора UI-состояний.",hero_primary:"Установить Prefire",hero_secondary:"Открыть GitHub",flow_source:"Ваш preview",flow_ready:"готов",result_label:"Один источник",result_title:"Один preview. Два результата.",result_body:"Состояния, которые уже есть в проекте, становятся тестами и визуальным каталогом.",result_stage_body:"Один набор preview-состояний становится повторяемыми проверками и визуальным каталогом интерфейса.",workflow_label:"Три шага",workflow_title:"Продолжайте писать previews.",workflow_body:"Prefire проведёт их от исходного кода до готового результата.",step_1_title:"Опишите состояние",step_1_body:"Используйте <code>#Preview</code>, <code>@Previewable</code> или <code>PreviewProvider</code>.",step_2_title:"Соберите target",step_2_body:"Plugin найдёт previews и сгенерирует Swift-код.",step_3_title:"Тестируйте или смотрите",step_3_body:"Запустите snapshots или откройте Playbook с теми же состояниями.",install_label:"Установка",install_title:"Выберите, как запускать Prefire.",install_body:"Используйте plugin в Xcode или SwiftPM. CLI подойдёт для явных локальных и CI-запусков.",tab_xcode:"Подключите build tool plugin.",tab_swiftpm:"Добавьте plugins к package targets.",tab_cli:"Запускайте генерацию напрямую.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Добавьте Prefire как package dependency и подключите test или Playbook plugin к нужному target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Добавьте Prefire один раз, затем подключите plugins к targets с generated output.",panel_cli_title:"CLI",panel_cli_body:"Установите через Homebrew и запускайте генерацию тестов или Playbook напрямую.",config_summary:"Нужны свои пути, устройства или templates?",config_body:"Добавьте <code>.prefire.yml</code>, когда дефолты перестанут подходить проекту. Проектные детали остаются в конфиге.",closing_label:"Открытый код",closing_title:"Ваши previews — уже готовые fixtures.",closing_body:"Prefire превращает их в результат, который может проверить вся команда.",closing_primary:"Открыть GitHub",closing_secondary:"Последний релиз",footer_copy:"Prefire · От SwiftUI previews к уверенности."}
+    };
+    const localeStorageKey="prefire-language",supportedLocales=["en","ru"],titleElement=document.querySelector("title"),descriptionMeta=document.querySelector('meta[name="description"]');
+    function detectLocale(){const stored=window.localStorage.getItem(localeStorageKey);if(supportedLocales.includes(stored))return stored;return(navigator.language||"en").toLowerCase().startsWith("ru")?"ru":"en"}
+    function applyTranslations(locale){const dictionary=translations[locale];if(!dictionary)return;document.documentElement.lang=locale;titleElement.textContent=dictionary.meta_title;descriptionMeta.setAttribute("content",dictionary.meta_description);document.querySelectorAll("[data-i18n]").forEach(node=>{const value=dictionary[node.dataset.i18n];if(value)node.textContent=value});document.querySelectorAll("[data-i18n-html]").forEach(node=>{const value=dictionary[node.dataset.i18nHtml];if(value)node.innerHTML=value});document.querySelectorAll("[data-language-button]").forEach(button=>{const active=button.dataset.languageButton===locale;button.classList.toggle("is-active",active);button.setAttribute("aria-pressed",String(active))});window.localStorage.setItem(localeStorageKey,locale)}
+    document.querySelectorAll("[data-language-button]").forEach(button=>button.addEventListener("click",()=>applyTranslations(button.dataset.languageButton)));applyTranslations(detectLocale());
+    const tabs=[...document.querySelectorAll('[role="tab"]')];function activateTab(tab){tabs.forEach(item=>{const active=item===tab;item.setAttribute("aria-selected",String(active));item.tabIndex=active?0:-1;document.getElementById(item.getAttribute("aria-controls")).hidden=!active})}tabs.forEach((tab,index)=>{tab.addEventListener("click",()=>activateTab(tab));tab.addEventListener("keydown",event=>{if(!["ArrowLeft","ArrowRight"].includes(event.key))return;event.preventDefault();const next=event.key==="ArrowRight"?(index+1)%tabs.length:(index-1+tabs.length)%tabs.length;activateTab(tabs[next]);tabs[next].focus()})});
+    document.querySelectorAll('.mobile-menu a[href^="#"]').forEach(link=>link.addEventListener("click",()=>link.closest("details").removeAttribute("open")));
+  </script>
 </body>
 </html>

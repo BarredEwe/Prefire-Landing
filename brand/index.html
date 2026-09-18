@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prefire Brand Kit</title>
+  <meta name="description" content="Prefire logo, colors, typography, visual language, motion and downloadable brand assets.">
+  <meta name="theme-color" content="#17181c">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Prefire Brand Kit">
+  <meta property="og:description" content="The visual system behind Prefire: previews to confidence.">
+  <meta property="og:url" content="https://prefire.ru/brand/">
+  <link rel="canonical" href="https://prefire.ru/brand/">
+  <link rel="icon" href="assets/prefire-logo.png">
+  <style>
+    :root {
+      --paper:#f5f0e7;
+      --paper-bright:#fbfaf7;
+      --ink:#17181c;
+      --ink-soft:#343741;
+      --muted:#665f56;
+      --ember:#ff6a35;
+      --ember-deep:#ee3b25;
+      --gold:#ffb629;
+      --plum:#31001e;
+      --magenta:#a0075d;
+      --white:#fff;
+      --line:rgba(23,24,28,.13);
+      --line-dark:rgba(255,255,255,.15);
+      --container:1180px;
+      --radius-xl:32px;
+      --radius-lg:24px;
+      --shadow:0 24px 80px rgba(23,24,28,.13);
+    }
+
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0;
+      min-width:320px;
+      color:var(--ink);
+      background:var(--paper);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+      overflow-x:hidden;
+    }
+    img { display:block; max-width:100%; }
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; }
+    code,.mono { font-family:"SFMono-Regular",Menlo,Consolas,monospace; }
+    :focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
+    .container { width:min(calc(100% - 32px),var(--container)); margin:0 auto; }
+
+    .header {
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(245,240,231,.88);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid var(--line);
+    }
+    .header-inner { min-height:74px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .home-link { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:-.02em; }
+    .mark { width:40px; height:40px; border-radius:13px; overflow:hidden; box-shadow:0 10px 24px rgba(160,7,93,.22); flex:0 0 auto; }
+    .mark img { width:auto; max-width:none; height:40px; }
+    .home-link small { display:block; margin-top:1px; color:var(--muted); font:600 .68rem/1.2 "SFMono-Regular",Menlo,monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .header-actions { display:flex; align-items:center; gap:10px; }
+    .language-switch { display:flex; gap:3px; padding:3px; border:1px solid var(--line); border-radius:999px; background:rgba(23,24,28,.05); }
+    .language-switch button { border:0; border-radius:999px; padding:8px 11px; color:var(--ink-soft); background:transparent; cursor:pointer; }
+    .language-switch button.is-active { color:#fff; background:var(--ink); }
+    .download-link { display:inline-flex; align-items:center; gap:8px; padding:11px 16px; border-radius:999px; color:#fff; background:var(--ink); font-weight:750; }
+    .download-link::before { content:"↓"; color:var(--gold); }
+
+    .hero { position:relative; min-height:calc(100vh - 74px); display:grid; align-items:end; color:#fff; background:var(--ink); overflow:hidden; }
+    .hero::after { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px); background-size:72px 72px; mask-image:linear-gradient(90deg,#000,transparent 86%); pointer-events:none; }
+    .hero-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.78; }
+    .hero-inner { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr); gap:48px; align-items:end; padding:100px 0 72px; }
+    .eyebrow { color:var(--ember); font:750 .76rem/1.2 "SFMono-Regular",Menlo,monospace; letter-spacing:.14em; text-transform:uppercase; }
+    h1,h2,h3,p { margin:0; }
+    h1 { max-width:9ch; font-size:clamp(4rem,9vw,8.5rem); line-height:.84; letter-spacing:-.065em; text-wrap:balance; }
+    h2 { font-size:clamp(2.35rem,5vw,4.7rem); line-height:.96; letter-spacing:-.055em; text-wrap:balance; }
+    h3 { font-size:1.35rem; letter-spacing:-.025em; }
+    .hero-copy { display:grid; gap:26px; }
+    .hero-copy p { max-width:640px; color:rgba(255,255,255,.68); font-size:clamp(1.1rem,2vw,1.35rem); line-height:1.45; }
+    .hero-note { align-self:end; padding:26px; border:1px solid var(--line-dark); border-radius:var(--radius-lg); background:rgba(255,255,255,.055); backdrop-filter:blur(14px); }
+    .hero-note strong { display:block; margin:12px 0 9px; font-size:1.5rem; letter-spacing:-.035em; }
+    .hero-note p { color:rgba(255,255,255,.62); line-height:1.55; }
+
+    .section { padding:112px 0; }
+    .section-soft { background:var(--paper-bright); }
+    .section-dark { color:#fff; background:var(--ink); }
+    .section-plum { color:#fff; background:var(--plum); }
+    .section-head { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.65fr); gap:40px; align-items:end; margin-bottom:52px; }
+    .section-head .title { display:grid; gap:16px; }
+    .section-head > p { color:var(--muted); font-size:1.08rem; line-height:1.65; }
+    .section-dark .section-head > p,.section-plum .section-head > p { color:rgba(255,255,255,.62); }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+    .grid-4 { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+    .card { padding:28px; border:1px solid var(--line); border-radius:var(--radius-lg); background:rgba(255,255,255,.48); }
+    .section-dark .card,.section-plum .card { border-color:var(--line-dark); background:rgba(255,255,255,.045); }
+    .card p { margin-top:14px; color:var(--muted); line-height:1.65; }
+    .section-dark .card p,.section-plum .card p { color:rgba(255,255,255,.62); }
+    .number { display:inline-flex; margin-bottom:36px; color:var(--ember); font:750 .76rem/1 "SFMono-Regular",Menlo,monospace; }
+
+    .voice-table { border-top:1px solid var(--line); }
+    .voice-row { display:grid; grid-template-columns:minmax(170px,.7fr) minmax(0,1.3fr); gap:28px; padding:22px 0; border-bottom:1px solid var(--line); align-items:baseline; }
+    .voice-row del { color:var(--muted); }
+    .voice-row strong { font-size:clamp(1.35rem,2.5vw,2.15rem); letter-spacing:-.04em; }
+
+    .logo-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+    .logo-surface { min-height:270px; padding:36px; border-radius:var(--radius-xl); display:grid; place-items:center; overflow:hidden; }
+    .logo-surface img { width:min(78%,300px); }
+    .logo-surface.paper { background:var(--paper-bright); }
+    .logo-surface.paper img { padding:18px; border-radius:18px; background:var(--ink); }
+    .logo-surface.night { background:var(--ink); }
+    .logo-surface.plum { background:var(--plum); }
+    .logo-caption { margin-top:13px; color:var(--muted); font-size:.78rem; }
+    .logo-rule { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.75fr); gap:22px; margin-top:22px; }
+    .clearspace { min-height:300px; display:grid; place-items:center; border:1px dashed rgba(255,255,255,.32); border-radius:var(--radius-xl); background:var(--ink); position:relative; }
+    .clearspace::before,.clearspace::after { content:"½x"; position:absolute; color:var(--ember); font:700 .75rem "SFMono-Regular",Menlo,monospace; }
+    .clearspace::before { top:18px; left:50%; }
+    .clearspace::after { right:18px; bottom:18px; }
+    .clearspace img { width:min(75%,420px); }
+    .rule-copy { display:grid; align-content:center; gap:18px; padding:30px; border:1px solid var(--line); border-radius:var(--radius-xl); background:rgba(255,255,255,.48); }
+    .rule-copy p { color:var(--muted); line-height:1.65; }
+    .size-row { display:flex; align-items:center; gap:14px; }
+    .size-chip { min-width:92px; padding:12px 16px; border-radius:14px; color:#fff; background:var(--ink); text-align:center; font-weight:800; }
+
+    .swatch { min-height:220px; padding:24px; border-radius:var(--radius-lg); display:flex; flex-direction:column; justify-content:space-between; border:1px solid rgba(0,0,0,.08); }
+    .swatch strong { font-size:1.35rem; letter-spacing:-.035em; }
+    .swatch code { font-size:.8rem; }
+    .swatch.paper { background:var(--paper); }
+    .swatch.night { color:#fff; background:var(--ink); }
+    .swatch.ember { background:var(--ember); }
+    .swatch.gold { background:var(--gold); }
+    .supporting-swatches { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:12px; }
+    .supporting-swatches .swatch { min-height:130px; }
+
+    .type-grid { display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:start; }
+    .type-display { font-size:clamp(3.4rem,7vw,7rem); font-weight:800; line-height:.86; letter-spacing:-.065em; }
+    .type-body { margin-top:30px; max-width:600px; font-size:1.2rem; line-height:1.55; }
+    .code-card { padding:28px; border-radius:var(--radius-lg); color:#fff; background:var(--ink); box-shadow:var(--shadow); overflow:auto; }
+    .code-card pre { margin:0; font:500 1rem/1.75 "SFMono-Regular",Menlo,monospace; }
+    .hot { color:var(--ember); }
+    .ok { color:#7bdba8; }
+    .type-rules { display:grid; gap:10px; margin-top:22px; }
+    .type-rule { display:grid; grid-template-columns:120px 1fr; gap:18px; padding-top:12px; border-top:1px solid var(--line); align-items:baseline; }
+    .type-rule code { color:var(--muted); font-size:.75rem; }
+
+    .graphic-grid { display:grid; grid-template-columns:1.2fr .8fr; gap:24px; }
+    .graphic-hero { min-height:520px; border-radius:var(--radius-xl); overflow:hidden; position:relative; }
+    .graphic-hero > img { width:100%; height:100%; position:absolute; inset:0; object-fit:cover; }
+    .graphic-copy { position:absolute; inset:0; padding:36px; display:flex; flex-direction:column; justify-content:space-between; }
+    .graphic-copy h3 { max-width:8ch; font-size:clamp(2.2rem,4vw,4.2rem); line-height:.93; }
+    .graphic-copy p { max-width:430px; color:rgba(255,255,255,.68); line-height:1.6; }
+    .motifs { display:grid; gap:14px; }
+    .motif { padding:18px; border:1px solid var(--line-dark); border-radius:var(--radius-lg); }
+    .motif img,.motif-sample { width:100%; aspect-ratio:16/7; object-fit:cover; border-radius:16px; margin-bottom:18px; }
+    .motif p { margin-top:9px; color:rgba(255,255,255,.6); line-height:1.55; }
+    .grid-sample { background-image:linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px); background-size:38px 38px; }
+    .pulse-sample { background:radial-gradient(circle at 70% 45%,var(--gold),var(--ember) 16%,rgba(255,106,53,.16) 38%,transparent 62%),var(--ink); }
+
+    .template-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+    .template { min-height:410px; padding:28px; border-radius:var(--radius-xl); display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; }
+    .template.dark { color:#fff; background:var(--ink); }
+    .template.light { background:var(--paper-bright); border:1px solid var(--line); }
+    .template.deep { color:#fff; background:var(--plum); }
+    .template small { opacity:.62; font:700 .68rem/1.2 "SFMono-Regular",Menlo,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    .template h3 { max-width:10ch; font-size:clamp(1.8rem,3vw,2.7rem); line-height:1; }
+    .template-visual { min-height:112px; border-radius:18px; background:center/cover no-repeat url("assets/prefire-grid.svg"); }
+    .template.light .template-visual { padding:18px; color:#fff; background:var(--ink); font:.78rem/1.7 "SFMono-Regular",Menlo,monospace; }
+    .template.deep .template-visual { background:radial-gradient(circle at 72% 40%,var(--gold),var(--ember) 18%,transparent 58%); }
+
+    .download-panel { display:grid; grid-template-columns:1fr auto; gap:32px; align-items:center; padding:42px; border-radius:var(--radius-xl); color:#fff; background:var(--ink); }
+    .download-panel h2 { font-size:clamp(2.2rem,4.5vw,4.5rem); }
+    .download-panel p { margin-top:16px; max-width:670px; color:rgba(255,255,255,.62); line-height:1.65; }
+    .asset-links { display:grid; gap:10px; min-width:220px; }
+    .asset-links a { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:13px 16px; border:1px solid var(--line-dark); border-radius:14px; background:rgba(255,255,255,.05); }
+    .asset-links a::after { content:"↓"; color:var(--gold); }
+    .footer { padding:30px 0 44px; color:var(--muted); background:var(--paper-bright); }
+    .footer-inner { display:flex; justify-content:space-between; gap:18px; padding-top:24px; border-top:1px solid var(--line); }
+
+    [data-reveal] { opacity:0; transform:translateY(18px); transition:opacity 420ms ease,transform 420ms ease; }
+    [data-reveal].is-visible { opacity:1; transform:none; }
+
+    @media (max-width:900px) {
+      .hero-inner,.section-head,.logo-rule,.type-grid,.graphic-grid,.download-panel { grid-template-columns:1fr; }
+      .hero { min-height:auto; }
+      .hero-inner { padding:90px 0 54px; }
+      .hero-note { max-width:620px; }
+      .grid-3,.logo-grid,.template-grid { grid-template-columns:1fr; }
+      .grid-4,.supporting-swatches { grid-template-columns:repeat(2,1fr); }
+      .logo-surface { min-height:220px; }
+      .download-panel { align-items:start; }
+      .asset-links { min-width:0; }
+    }
+
+    @media (max-width:620px) {
+      .container { width:min(calc(100% - 24px),var(--container)); }
+      .header-inner { min-height:66px; }
+      .home-link span:last-child { display:none; }
+      .download-link { display:none; }
+      .hero { min-height:calc(100svh - 66px); }
+      .hero-inner { padding:72px 0 38px; }
+      h1 { font-size:clamp(3.6rem,20vw,5.2rem); }
+      .section { padding:78px 0; }
+      .section-head { margin-bottom:34px; }
+      .grid-4,.supporting-swatches { grid-template-columns:1fr; }
+      .swatch { min-height:150px; }
+      .supporting-swatches .swatch { min-height:110px; }
+      .voice-row { grid-template-columns:1fr; gap:8px; }
+      .clearspace { min-height:230px; }
+      .graphic-hero { min-height:440px; }
+      .template { min-height:360px; }
+      .download-panel { padding:28px; }
+      .footer-inner { flex-direction:column; }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      html { scroll-behavior:auto; }
+      *,*::before,*::after { animation:none!important; transition:none!important; }
+      [data-reveal] { opacity:1; transform:none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a class="home-link" href="../">
+        <span class="mark" aria-hidden="true"><img src="assets/prefire-logo.png" alt=""></span>
+        <span>Prefire <small data-i18n="brand_label">Brand system</small></span>
+      </a>
+      <div class="header-actions">
+        <div class="language-switch" role="group" aria-label="Language selector">
+          <button type="button" data-language-button="en">EN</button>
+          <button type="button" data-language-button="ru">RU</button>
+        </div>
+        <a class="download-link" href="prefire-brand-kit.pdf" download data-i18n="download_pdf">Download PDF</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <img class="hero-bg" src="assets/prefire-ember-field.svg" alt="">
+      <div class="container hero-inner">
+        <div class="hero-copy" data-reveal>
+          <span class="eyebrow">Prefire brand kit / 1.0</span>
+          <h1>Preview.<br>Prove.<br>Ship.</h1>
+          <p data-i18n="hero_body">A visual system for the tool that turns SwiftUI previews into confidence before release.</p>
+        </div>
+        <aside class="hero-note" data-reveal>
+          <span class="eyebrow" data-i18n="hero_note_label">Core line</span>
+          <strong>SwiftUI previews to confidence.</strong>
+          <p data-i18n="hero_note_body">Warm enough to feel alive. Precise enough to sit next to Xcode.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="meaning">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="title"><span class="eyebrow" data-i18n="meaning_label">01 / Meaning</span><h2 data-i18n="meaning_title">Hot, precise, dependable.</h2></div>
+          <p data-i18n="meaning_body">Prefire removes the tension between “the interface looks ready” and “we know it did not break”. The fire is the final warm-up before release, not visual noise.</p>
+        </div>
+        <div class="grid-3">
+          <article class="card" data-reveal><span class="number">01</span><h3 data-i18n="principle_1_title">Hot, not loud</h3><p data-i18n="principle_1_body">Fire marks action and verification. It stays focused instead of taking over every surface.</p></article>
+          <article class="card" data-reveal><span class="number">02</span><h3 data-i18n="principle_2_title">Precise, not cold</h3><p data-i18n="principle_2_body">Code, grids and status labels create clarity. Paper and light keep it human.</p></article>
+          <article class="card" data-reveal><span class="number">03</span><h3 data-i18n="principle_3_title">Fast, not fragile</h3><p data-i18n="principle_3_body">Motion follows the path from preview to test. The language never promises magic.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="voice">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="title"><span class="eyebrow" data-i18n="voice_label">02 / Voice</span><h2 data-i18n="voice_title">Like an engineer who saves your time.</h2></div>
+          <p data-i18n="voice_body">Calm, concrete and verifiable. Swift terms remain Swift terms. The result comes first, then the mechanism and its limits.</p>
+        </div>
+        <div class="voice-table" data-reveal>
+          <div class="voice-row"><del>Magic testing</del><strong data-i18n="voice_1">Snapshots from your existing previews</strong></div>
+          <div class="voice-row"><del>Zero effort</del><strong data-i18n="voice_2">No second fixture layer</strong></div>
+          <div class="voice-row"><del>Works everywhere</del><strong data-i18n="voice_3">iOS, tvOS and macOS — with clear limits</strong></div>
+          <div class="voice-row"><del>Revolutionary</del><strong data-i18n="voice_4">Connect. Generate. Verify.</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="logo">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="title"><span class="eyebrow" data-i18n="logo_label">03 / Logo</span><h2 data-i18n="logo_title">Fire + word.</h2></div>
+          <p data-i18n="logo_body">The horizontal lockup is the default. The flame stays inside its rounded square and the proportions never change.</p>
+        </div>
+        <div class="logo-grid">
+          <div data-reveal><div class="logo-surface paper"><img src="assets/prefire-logo.png" alt="Prefire logo on paper"></div><p class="logo-caption mono">01 / paper + night plate</p></div>
+          <div data-reveal><div class="logo-surface night"><img src="assets/prefire-logo.png" alt="Prefire logo on night"></div><p class="logo-caption mono">02 / night</p></div>
+          <div data-reveal><div class="logo-surface plum"><img src="assets/prefire-logo.png" alt="Prefire logo on deep plum"></div><p class="logo-caption mono">03 / deep plum</p></div>
+        </div>
+        <div class="logo-rule">
+          <div class="clearspace" data-reveal><img src="assets/prefire-logo.png" alt="Prefire logo clear space example"></div>
+          <div class="rule-copy" data-reveal>
+            <span class="eyebrow" data-i18n="clearspace_label">Clear space</span>
+            <h3 data-i18n="clearspace_title">At least half the mark height.</h3>
+            <p data-i18n="clearspace_body">Use the standalone mark only when the name is already present in the surrounding context. External communication defaults to the full lockup.</p>
+            <div class="size-row"><span class="size-chip">24 px</span><span data-i18n="screen_min">minimum lockup height on screen</span></div>
+            <div class="size-row"><span class="size-chip">7 mm</span><span data-i18n="print_min">minimum lockup height in print</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="color">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="title"><span class="eyebrow" data-i18n="color_label">04 / Color</span><h2 data-i18n="color_title">Signal warmth. Tool calm.</h2></div>
+          <p data-i18n="color_body">Paper and Night carry the large surfaces. Ember and Gold mark action, progress and success — never long-running copy.</p>
+        </div>
+        <div class="grid-4">
+          <div class="swatch paper" data-reveal><strong>Paper</strong><code>#F5F0E7</code></div>
+          <div class="swatch night" data-reveal><strong>Night</strong><code>#17181C</code></div>
+          <div class="swatch ember" data-reveal><strong>Ember</strong><code>#FF6A35</code></div>
+          <div class="swatch gold" data-reveal><strong>Gold</strong><code>#FFB629</code></div>
+        </div>
+        <div class="supporting-swatches">
+          <div class="swatch" style="color:#fff;background:var(--plum)" data-reveal><strong>Deep Plum</strong><code>#31001E</code></div>
+          <div class="swatch" style="color:#fff;background:var(--magenta)" data-reveal><strong>Legacy Magenta</strong><code>#A0075D</code></div>
+          <div class="swatch" style="color:#fff;background:var(--ink-soft)" data-reveal><strong>Ink Soft</strong><code>#343741</code></div>
+          <div class="swatch" style="color:#fff;background:var(--muted)" data-reveal><strong>Muted</strong><code>#665F56</code></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="type">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="title"><span class="eyebrow" data-i18n="type_label">05 / Typography</span><h2 data-i18n="type_title">System + code.</h2></div>
+          <p data-i18n="type_body">The Apple system stack feels native beside Xcode and adds no external dependency. The monospaced layer explains mechanics.</p>
+        </div>
+        <div class="type-grid">
+          <div data-reveal>
+            <div class="type-display">Build trust<br>before build.</div>
+            <p class="type-body" data-i18n="type_sample">Prefire turns previews into snapshot tests, Playbook and living documentation — without another set of UI states.</p>
+            <div class="type-rules">
+              <div class="type-rule"><code>DISPLAY / 64</code><strong data-i18n="type_rule_1">One decisive idea</strong></div>
+              <div class="type-rule"><code>BODY / 17</code><span data-i18n="type_rule_2">Explanation and documentation</span></div>
+              <div class="type-rule"><code>LABEL / 12</code><span class="mono">STATUS / PLATFORM / VERSION</span></div>
+            </div>
+          </div>
+          <div class="code-card" data-reveal><pre><span class="hot">#Preview</span>("Checkout / loading") {
+  CheckoutView()
+    .previewState(.loading)
+}
+
+<span class="ok">// snapshot passed</span></pre></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="graphics">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="title"><span class="eyebrow" data-i18n="graphics_label">06 / Graphic language</span><h2>Ember field + confidence path.</h2></div>
+          <p data-i18n="graphics_body">Use the warm field for atmosphere and the state path to explain the product. Pick one leading device per surface.</p>
+        </div>
+        <div class="graphic-grid">
+          <article class="graphic-hero" data-reveal>
+            <img src="assets/prefire-ember-field.svg" alt="Prefire ember field">
+            <div class="graphic-copy"><span class="eyebrow">atmosphere</span><div><h3>Heat before release.</h3><p data-i18n="ember_body">A cover, conference backdrop or restrained promo layer — never a replacement for product proof.</p></div></div>
+          </article>
+          <div class="motifs">
+            <article class="motif" data-reveal><img src="assets/prefire-grid.svg" alt="Prefire confidence path"><h3>Confidence path</h3><p data-i18n="path_body">Connects preview, generator, snapshot and confidence as one visible flow.</p></article>
+            <article class="motif" data-reveal><div class="motif-sample grid-sample"></div><h3>Preview grid</h3><p data-i18n="grid_body">A field of UI variants. Keep generous empty space around it.</p></article>
+            <article class="motif" data-reveal><div class="motif-sample pulse-sample"></div><h3>Ember pulse</h3><p data-i18n="pulse_body">One light source marks the active check or primary action.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="templates">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="title"><span class="eyebrow" data-i18n="templates_label">07 / Templates</span><h2 data-i18n="templates_title">One surface, one idea.</h2></div>
+          <p data-i18n="templates_body">README, release notes, social posts and talks use the same ingredients: a direct headline, a small piece of real code or UI and one hot accent.</p>
+        </div>
+        <div class="template-grid">
+          <article class="template dark" data-reveal><small>Release / 5.x</small><h3>Snapshots from the previews you already trust.</h3><div class="template-visual"></div></article>
+          <article class="template light" data-reveal><small>Docs / workflow</small><h3><span class="hot">#Preview</span> is already your fixture.</h3><div class="template-visual">#Preview {<br>&nbsp;&nbsp;CheckoutView()<br>}</div></article>
+          <article class="template deep" data-reveal><small>Conference / 16:9</small><h3>Visual confidence before release.</h3><div class="template-visual"></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="download-panel" data-reveal>
+          <div><span class="eyebrow" data-i18n="download_label">Ready to use</span><h2 data-i18n="download_title">Take the system with you.</h2><p data-i18n="download_body">The PDF contains the full reference. CSS and JSON files expose the same tokens for product and site work.</p></div>
+          <div class="asset-links">
+            <a href="prefire-brand-kit.pdf" download>Brand kit · PDF</a>
+            <a href="prefire-tokens.css" download>Tokens · CSS</a>
+            <a href="prefire-tokens.json" download>Tokens · JSON</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner"><span>Prefire brand system · 2026</span><a href="../" data-i18n="back_home">Back to Prefire</a></div>
+  </footer>
+
+  <script>
+    const translations = {
+      en: {
+        meta_title:"Prefire Brand Kit", meta_description:"Prefire logo, colors, typography, visual language, motion and downloadable brand assets.", brand_label:"Brand system", download_pdf:"Download PDF",
+        hero_body:"A visual system for the tool that turns SwiftUI previews into confidence before release.", hero_note_label:"Core line", hero_note_body:"Warm enough to feel alive. Precise enough to sit next to Xcode.",
+        meaning_label:"01 / Meaning", meaning_title:"Hot, precise, dependable.", meaning_body:"Prefire removes the tension between “the interface looks ready” and “we know it did not break”. The fire is the final warm-up before release, not visual noise.",
+        principle_1_title:"Hot, not loud", principle_1_body:"Fire marks action and verification. It stays focused instead of taking over every surface.", principle_2_title:"Precise, not cold", principle_2_body:"Code, grids and status labels create clarity. Paper and light keep it human.", principle_3_title:"Fast, not fragile", principle_3_body:"Motion follows the path from preview to test. The language never promises magic.",
+        voice_label:"02 / Voice", voice_title:"Like an engineer who saves your time.", voice_body:"Calm, concrete and verifiable. Swift terms remain Swift terms. The result comes first, then the mechanism and its limits.", voice_1:"Snapshots from your existing previews", voice_2:"No second fixture layer", voice_3:"iOS, tvOS and macOS — with clear limits", voice_4:"Connect. Generate. Verify.",
+        logo_label:"03 / Logo", logo_title:"Fire + word.", logo_body:"The horizontal lockup is the default. The flame stays inside its rounded square and the proportions never change.", clearspace_label:"Clear space", clearspace_title:"At least half the mark height.", clearspace_body:"Use the standalone mark only when the name is already present in the surrounding context. External communication defaults to the full lockup.", screen_min:"minimum lockup height on screen", print_min:"minimum lockup height in print",
+        color_label:"04 / Color", color_title:"Signal warmth. Tool calm.", color_body:"Paper and Night carry the large surfaces. Ember and Gold mark action, progress and success — never long-running copy.",
+        type_label:"05 / Typography", type_title:"System + code.", type_body:"The Apple system stack feels native beside Xcode and adds no external dependency. The monospaced layer explains mechanics.", type_sample:"Prefire turns previews into snapshot tests, Playbook and living documentation — without another set of UI states.", type_rule_1:"One decisive idea", type_rule_2:"Explanation and documentation",
+        graphics_label:"06 / Graphic language", graphics_body:"Use the warm field for atmosphere and the state path to explain the product. Pick one leading device per surface.", ember_body:"A cover, conference backdrop or restrained promo layer — never a replacement for product proof.", path_body:"Connects preview, generator, snapshot and confidence as one visible flow.", grid_body:"A field of UI variants. Keep generous empty space around it.", pulse_body:"One light source marks the active check or primary action.",
+        templates_label:"07 / Templates", templates_title:"One surface, one idea.", templates_body:"README, release notes, social posts and talks use the same ingredients: a direct headline, a small piece of real code or UI and one hot accent.",
+        download_label:"Ready to use", download_title:"Take the system with you.", download_body:"The PDF contains the full reference. CSS and JSON files expose the same tokens for product and site work.", back_home:"Back to Prefire"
+      },
+      ru: {
+        meta_title:"Бренд-кит Prefire", meta_description:"Логотип, цвета, типографика, графический язык и скачиваемые бренд-материалы Prefire.", brand_label:"Бренд-система", download_pdf:"Скачать PDF",
+        hero_body:"Визуальная система инструмента, который превращает SwiftUI previews в уверенность перед релизом.", hero_note_label:"Основная фраза", hero_note_body:"Достаточно тёплый, чтобы быть живым. Достаточно точный, чтобы стоять рядом с Xcode.",
+        meaning_label:"01 / Смысл", meaning_title:"Горячий, точный, надёжный.", meaning_body:"Prefire снимает напряжение между «интерфейс выглядит готовым» и «мы уверены, что он не сломался». Огонь — финальный прогрев перед релизом, а не визуальный шум.",
+        principle_1_title:"Горячий, не шумный", principle_1_body:"Огонь обозначает действие и проверку. Он остаётся сфокусированным и не захватывает все поверхности.", principle_2_title:"Точный, не холодный", principle_2_body:"Код, сетки и статусы создают ясность. Бумага и свет возвращают человечность.", principle_3_title:"Быстрый, не хрупкий", principle_3_body:"Движение следует пути от preview к тесту. Язык никогда не обещает магию.",
+        voice_label:"02 / Голос", voice_title:"Как инженер, который экономит время.", voice_body:"Спокойно, конкретно и проверяемо. Термины Swift остаются терминами Swift. Сначала результат, затем механизм и его ограничения.", voice_1:"Snapshots из ваших previews", voice_2:"Без второго слоя fixtures", voice_3:"iOS, tvOS и macOS — с явными ограничениями", voice_4:"Подключили. Сгенерировали. Проверили.",
+        logo_label:"03 / Логотип", logo_title:"Огонь + слово.", logo_body:"Горизонтальный lockup — основная версия. Огонь остаётся внутри скруглённого квадрата, а пропорции не меняются.", clearspace_label:"Охранное поле", clearspace_title:"Минимум половина высоты знака.", clearspace_body:"Используйте отдельный знак, только если название уже присутствует в контексте. Для внешней коммуникации по умолчанию берите полный lockup.", screen_min:"минимальная высота lockup на экране", print_min:"минимальная высота lockup в печати",
+        color_label:"04 / Цвет", color_title:"Тепло сигнала. Спокойствие инструмента.", color_body:"Paper и Night держат большие поверхности. Ember и Gold обозначают действие, прогресс и успех — но не длинный текст.",
+        type_label:"05 / Типографика", type_title:"Система + код.", type_body:"Системный стек Apple выглядит нативно рядом с Xcode и не добавляет внешнюю зависимость. Моноширинный слой объясняет механику.", type_sample:"Prefire превращает previews в snapshot-тесты, Playbook и живую документацию — без второго набора UI-состояний.", type_rule_1:"Одна решительная мысль", type_rule_2:"Пояснение и документация",
+        graphics_label:"06 / Фирменная графика", graphics_body:"Тёплое поле отвечает за атмосферу, а путь состояний объясняет продукт. На одной поверхности выбирайте один главный приём.", ember_body:"Обложка, фон выступления или сдержанный промо-слой — но не замена продуктовому доказательству.", path_body:"Связывает preview, generator, snapshot и confidence в один видимый путь.", grid_body:"Поле вариантов интерфейса. Оставляйте вокруг много пустоты.", pulse_body:"Один источник света обозначает активную проверку или главное действие.",
+        templates_label:"07 / Шаблоны", templates_title:"Одна поверхность — одна идея.", templates_body:"README, release notes, соцсети и выступления используют одни ингредиенты: прямой заголовок, небольшой фрагмент настоящего кода или UI и один горячий акцент.",
+        download_label:"Готово к использованию", download_title:"Заберите систему с собой.", download_body:"В PDF лежит полная версия. CSS и JSON содержат те же токены для продукта и сайта.", back_home:"Вернуться к Prefire"
+      }
+    };
+
+    const localeStorageKey = "prefire-language";
+    const supportedLocales = ["en", "ru"];
+
+    function detectLocale() {
+      const stored = window.localStorage.getItem(localeStorageKey);
+      if (supportedLocales.includes(stored)) return stored;
+      return (navigator.language || "en").toLowerCase().startsWith("ru") ? "ru" : "en";
+    }
+
+    function applyTranslations(locale) {
+      const dictionary = translations[locale];
+      if (!dictionary) return;
+      document.documentElement.lang = locale;
+      document.title = dictionary.meta_title;
+      document.querySelector('meta[name="description"]').setAttribute("content", dictionary.meta_description);
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        const value = dictionary[node.dataset.i18n];
+        if (value) node.textContent = value;
+      });
+      document.querySelectorAll("[data-language-button]").forEach((button) => {
+        const active = button.dataset.languageButton === locale;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+      window.localStorage.setItem(localeStorageKey, locale);
+    }
+
+    document.querySelectorAll("[data-language-button]").forEach((button) => button.addEventListener("click", () => applyTranslations(button.dataset.languageButton)));
+    applyTranslations(detectLocale());
+
+    const revealObserver = "IntersectionObserver" in window
+      ? new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("is-visible"); revealObserver.unobserve(entry.target); } }), { threshold: 0.12 })
+      : null;
+    document.querySelectorAll("[data-reveal]").forEach((node) => revealObserver ? revealObserver.observe(node) : node.classList.add("is-visible"));
+  </script>
+</body>
+</html>

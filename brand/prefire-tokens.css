@@ -1,0 +1,20 @@
+:root {
+  --prefire-paper: #f5f0e7;
+  --prefire-paper-bright: #fbfaf7;
+  --prefire-ink: #17181c;
+  --prefire-ink-soft: #343741;
+  --prefire-muted: #665f56;
+  --prefire-ember: #ff6a35;
+  --prefire-ember-deep: #ee3b25;
+  --prefire-gold: #ffb629;
+  --prefire-plum: #31001e;
+  --prefire-magenta: #a0075d;
+  --prefire-white: #ffffff;
+  --prefire-line-light: rgba(23, 24, 28, 0.12);
+  --prefire-line-dark: rgba(255, 255, 255, 0.16);
+  --prefire-gradient: linear-gradient(135deg, #ffb629 0%, #ff6a35 45%, #ee3b25 100%);
+  --prefire-font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+  --prefire-font-mono: "SFMono-Regular", Menlo, Consolas, monospace;
+  --prefire-radius-card: 24px;
+  --prefire-radius-panel: 32px;
+}
