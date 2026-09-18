@@ -85,16 +85,29 @@
       letter-spacing:.08em;
       text-transform:uppercase;
     }
-    .nav-wrap,.site-nav,.header-actions { display:flex; align-items:center; }
-    .nav-wrap { gap:28px; }
-    .site-nav { gap:24px; color:var(--ink-soft); font-size:.92rem; }
-    .site-nav a,.brand-kit-link { padding:9px 0; border-bottom:1px solid transparent; }
-    .site-nav a:hover,.site-nav a:focus-visible,.brand-kit-link:hover,.brand-kit-link:focus-visible {
-      color:var(--ink);
-      border-color:var(--ember);
+    .nav-wrap,.header-actions { display:flex; align-items:center; }
+    .header-actions { gap:10px; }
+    .brand-kit-link {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      color:var(--ink-soft);
+      background:rgba(255,255,255,.42);
+      font:720 .72rem/1 "SFMono-Regular",Menlo,monospace;
+      letter-spacing:.07em;
+      text-transform:uppercase;
     }
-    .header-actions { gap:15px; }
-    .brand-kit-link { color:var(--ink-soft); font-size:.92rem; }
+    .brand-kit-link::before {
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:3px;
+      background:linear-gradient(135deg,var(--gold),var(--ember));
+    }
+    .brand-kit-link:hover,.brand-kit-link:focus-visible { color:var(--ink); border-color:rgba(23,24,28,.28); }
     .language-switch {
       display:flex;
       gap:2px;
@@ -431,10 +444,12 @@
     .step p { max-width:300px; margin-top:13px; color:rgba(255,255,255,.58); line-height:1.58; }
     .step code { color:#fff; }
     .confidence-path {
-      width:100%;
-      margin-top:28px;
-      border-radius:var(--radius-xl);
+      width:min(100%,720px);
+      margin:32px auto 0;
+      border:1px solid var(--line-dark);
+      border-radius:var(--radius-lg);
       background:var(--ink);
+      box-shadow:0 24px 70px rgba(0,0,0,.2);
       overflow:hidden;
     }
 
@@ -550,7 +565,6 @@
     .footer-links { display:flex; flex-wrap:wrap; gap:18px; color:#fff; }
 
     @media (max-width:1040px) {
-      .site-nav { display:none; }
       .hero-inner { grid-template-columns:1fr; gap:56px; }
       .proof-card { max-width:680px; }
       .result-stage { grid-template-columns:1fr; }
@@ -615,11 +629,6 @@
         <span class="brand-copy">Prefire<small data-i18n="brand_subtitle">Previews to confidence</small></span>
       </a>
       <div class="nav-wrap">
-        <nav class="site-nav" aria-label="Primary">
-          <a href="#result" data-i18n="nav_result">Result</a>
-          <a href="#workflow" data-i18n="nav_workflow">How it works</a>
-          <a href="#install" data-i18n="nav_install">Install</a>
-        </nav>
         <div class="header-actions">
           <a class="brand-kit-link" href="/brand/" data-i18n="nav_brand">Brand kit</a>
           <div class="language-switch" role="group" aria-label="Language selector">
