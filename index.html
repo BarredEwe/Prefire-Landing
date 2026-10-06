@@ -164,7 +164,6 @@
 
     .hero {
       position:relative;
-      min-height:calc(100svh - var(--header-height));
       display:grid;
       align-items:start;
       overflow:hidden;
@@ -208,7 +207,7 @@
       grid-template-columns:minmax(0,1.18fr) minmax(330px,.72fr);
       gap:70px;
       align-items:center;
-      padding:72px 0 58px;
+      padding:72px 0 88px;
     }
     .hero-copy { display:grid; gap:25px; }
     .eyebrow {
@@ -493,6 +492,36 @@
       background:var(--ink);
     }
     .code-block pre { margin:0; min-width:max-content; font-size:.86rem; line-height:1.7; }
+    .users-grid {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      border-top:1px solid var(--line);
+    }
+    .user-card {
+      display:grid;
+      align-content:start;
+      gap:12px;
+      min-height:230px;
+      padding:30px 26px 30px 0;
+      transition:color .2s ease;
+    }
+    .user-card+.user-card { padding-left:26px; border-left:1px solid var(--line); }
+    .user-card .step-number { margin-bottom:10px; color:var(--ember); }
+    .user-card h3 { display:flex; justify-content:space-between; gap:12px; }
+    .user-card h3::after { content:"↗"; color:var(--ember); font-size:1rem; }
+    .user-card p { color:var(--muted); line-height:1.55; }
+    .user-card:hover h3,.user-card:focus-visible h3 { color:var(--ember); }
+    .users-note {
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      gap:14px 32px;
+      padding-top:24px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      line-height:1.55;
+    }
+    .users-note a { color:var(--ink); font-weight:720; text-decoration:underline; text-decoration-color:var(--ember); text-underline-offset:3px; }
     .config-disclosure {
       margin-top:20px;
       overflow:hidden;
@@ -578,8 +607,11 @@
       .steps { grid-template-columns:1fr; }
       .step { min-height:0; padding:28px 0; }
       .step+.step { padding-left:0; border-left:0; border-top:1px solid var(--line-dark); }
-      .step-number { margin-bottom:28px; }
+      .step .step-number { margin-bottom:28px; }
       .install-shell,.config-content { grid-template-columns:1fr; }
+      .users-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .user-card:nth-child(odd) { padding-left:0; border-left:0; }
+      .user-card:nth-child(n+3) { border-top:1px solid var(--line); }
       .install-tabs { grid-template-columns:repeat(3,1fr); border-top:0; gap:8px; }
       .install-tab { padding:15px; border:1px solid var(--line); border-radius:14px; }
       .install-tab span { display:none; }
@@ -613,6 +645,9 @@
       .install-tab span { display:block; }
       .tab-panel { min-height:0; padding:22px; }
       .config-content { padding-inline:0; }
+      .users-grid { grid-template-columns:1fr; }
+      .user-card,.user-card+.user-card { min-height:0; padding:24px 0; border-left:0; }
+      .user-card+.user-card { border-top:1px solid var(--line); }
       .closing { padding:78px 0; }
       .footer-inner { align-items:flex-start; flex-direction:column; }
     }
@@ -642,6 +677,7 @@
               <a href="#result" data-i18n="nav_result">Result</a>
               <a href="#workflow" data-i18n="nav_workflow">How it works</a>
               <a href="#install" data-i18n="nav_install">Install</a>
+              <a href="#users" data-i18n="nav_users">Users</a>
               <a href="/brand/" data-i18n="nav_brand">Brand kit</a>
               <a href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a>
             </nav>
@@ -792,6 +828,28 @@ playbook_configuration:
       </div>
     </section>
 
+    <section class="section section-soft" id="users">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="eyebrow" data-i18n="users_label">In production</span>
+            <h2 data-i18n="users_title">Already on the job.</h2>
+          </div>
+          <p data-i18n="users_body">Open-source apps that turn their previews into tests with Prefire.</p>
+        </div>
+        <div class="users-grid">
+          <a class="user-card" href="https://github.com/Provenance-Emu/Provenance" target="_blank" rel="noreferrer"><span class="step-number">iOS · tvOS</span><h3>Provenance</h3><p data-i18n="user_provenance">Multi-emulator frontend. Snapshot tests for its SwiftUI package.</p></a>
+          <a class="user-card" href="https://github.com/linagora/twake-on-matrix" target="_blank" rel="noreferrer"><span class="step-number">LINAGORA</span><h3>Twake on Matrix</h3><p data-i18n="user_twake">Secure Matrix messenger. Previews in the iOS notification extension.</p></a>
+          <a class="user-card" href="https://github.com/alexey1312/reachy-mini-swift" target="_blank" rel="noreferrer"><span class="step-number">macOS · iOS</span><h3>Reachy Mini Swift</h3><p data-i18n="user_reachy">Native client for the Reachy Mini robot. Preview-driven snapshot tests.</p></a>
+          <a class="user-card" href="https://github.com/broadwaylamb/Smithereen-iOS" target="_blank" rel="noreferrer"><span class="step-number">iOS</span><h3>Smithereen</h3><p data-i18n="user_smithereen">iOS client for a federated social network.</p></a>
+        </div>
+        <div class="users-note">
+          <span data-i18n-html="users_note">Integrates with <a href="https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests" target="_blank" rel="noreferrer">Screenshotbot</a> and is the plugin example in the <a href="https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md" target="_blank" rel="noreferrer">XcodeGen docs</a>.</span>
+          <span data-i18n-html="users_cta">Using Prefire? <a href="https://github.com/BarredEwe/Prefire/edit/main/README.md" target="_blank" rel="noreferrer">Add your project</a></span>
+        </div>
+      </div>
+    </section>
+
     <section class="closing">
       <div class="container closing-grid">
         <div>
@@ -816,8 +874,8 @@ playbook_configuration:
 
   <script>
     const translations={
-      en:{meta_title:"Prefire | Snapshot tests from SwiftUI previews",meta_description:"Generate snapshot tests and an iOS Playbook from the SwiftUI previews already in your project.",brand_subtitle:"Previews to confidence",nav_result:"Result",nav_workflow:"How it works",nav_install:"Install",nav_brand:"Brand kit",hero_eyebrow:"SwiftUI previews → snapshot tests",hero_title:"Previews, ready to test.",hero_body:"Prefire reads <code>#Preview</code> and generates snapshot tests plus an iOS Playbook. No second set of UI states.",hero_primary:"Install Prefire",hero_secondary:"View on GitHub",flow_source:"Your preview",flow_ready:"ready",result_label:"One source",result_title:"One preview. Two outputs.",result_body:"The states already in your project become tests and a visual catalog.",result_stage_body:"One set of preview states becomes repeatable checks and a browsable interface catalog.",workflow_label:"Three steps",workflow_title:"Keep writing previews.",workflow_body:"Prefire handles the path from source code to generated output.",step_1_title:"Describe the state",step_1_body:"Use <code>#Preview</code>, <code>@Previewable</code> or <code>PreviewProvider</code>.",step_2_title:"Build the target",step_2_body:"The plugin finds previews and generates Swift output.",step_3_title:"Test or browse",step_3_body:"Run snapshots or open Playbook to inspect the same states.",install_label:"Install",install_title:"Choose how Prefire runs.",install_body:"Use the plugin in Xcode or SwiftPM. Use the CLI for explicit local and CI runs.",tab_xcode:"Attach the build tool plugin.",tab_swiftpm:"Add plugins to package targets.",tab_cli:"Run generation directly.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Add Prefire as a package dependency, then attach the test or Playbook plugin to the matching target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Add Prefire once, then attach plugins to the targets that should receive generated output.",panel_cli_title:"CLI",panel_cli_body:"Install with Homebrew, then generate tests or Playbook models explicitly.",config_summary:"Need custom paths, devices or templates?",config_body:"Add <code>.prefire.yml</code> when the defaults no longer match your project. Project-specific control stays in the config.",closing_label:"Open source",closing_title:"Your previews are already the fixture.",closing_body:"Let Prefire turn them into something the whole team can verify.",closing_primary:"Open GitHub",closing_secondary:"Latest release",footer_copy:"Prefire · SwiftUI previews to confidence."},
-      ru:{meta_title:"Prefire | Snapshot-тесты из SwiftUI previews",meta_description:"Генерируйте snapshot-тесты и iOS Playbook из SwiftUI previews, которые уже есть в проекте.",brand_subtitle:"От previews к уверенности",nav_result:"Результат",nav_workflow:"Как работает",nav_install:"Установка",nav_brand:"Бренд-кит",hero_eyebrow:"SwiftUI previews → snapshot-тесты",hero_title:"Previews, готовые к тестам.",hero_body:"Prefire читает <code>#Preview</code> и генерирует snapshot-тесты плюс iOS Playbook. Без второго набора UI-состояний.",hero_primary:"Установить Prefire",hero_secondary:"Открыть GitHub",flow_source:"Ваш preview",flow_ready:"готов",result_label:"Один источник",result_title:"Один preview. Два результата.",result_body:"Состояния, которые уже есть в проекте, становятся тестами и визуальным каталогом.",result_stage_body:"Один набор preview-состояний становится повторяемыми проверками и визуальным каталогом интерфейса.",workflow_label:"Три шага",workflow_title:"Продолжайте писать previews.",workflow_body:"Prefire проведёт их от исходного кода до готового результата.",step_1_title:"Опишите состояние",step_1_body:"Используйте <code>#Preview</code>, <code>@Previewable</code> или <code>PreviewProvider</code>.",step_2_title:"Соберите target",step_2_body:"Plugin найдёт previews и сгенерирует Swift-код.",step_3_title:"Тестируйте или смотрите",step_3_body:"Запустите snapshots или откройте Playbook с теми же состояниями.",install_label:"Установка",install_title:"Выберите, как запускать Prefire.",install_body:"Используйте plugin в Xcode или SwiftPM. CLI подойдёт для явных локальных и CI-запусков.",tab_xcode:"Подключите build tool plugin.",tab_swiftpm:"Добавьте plugins к package targets.",tab_cli:"Запускайте генерацию напрямую.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Добавьте Prefire как package dependency и подключите test или Playbook plugin к нужному target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Добавьте Prefire один раз, затем подключите plugins к targets с generated output.",panel_cli_title:"CLI",panel_cli_body:"Установите через Homebrew и запускайте генерацию тестов или Playbook напрямую.",config_summary:"Нужны свои пути, устройства или templates?",config_body:"Добавьте <code>.prefire.yml</code>, когда дефолты перестанут подходить проекту. Проектные детали остаются в конфиге.",closing_label:"Открытый код",closing_title:"Ваши previews — уже готовые fixtures.",closing_body:"Prefire превращает их в результат, который может проверить вся команда.",closing_primary:"Открыть GitHub",closing_secondary:"Последний релиз",footer_copy:"Prefire · От SwiftUI previews к уверенности."}
+      en:{meta_title:"Prefire | Snapshot tests from SwiftUI previews",meta_description:"Generate snapshot tests and an iOS Playbook from the SwiftUI previews already in your project.",brand_subtitle:"Previews to confidence",nav_result:"Result",nav_workflow:"How it works",nav_install:"Install",nav_brand:"Brand kit",hero_eyebrow:"SwiftUI previews → snapshot tests",hero_title:"Previews, ready to test.",hero_body:"Prefire reads <code>#Preview</code> and generates snapshot tests plus an iOS Playbook. No second set of UI states.",hero_primary:"Install Prefire",hero_secondary:"View on GitHub",flow_source:"Your preview",flow_ready:"ready",result_label:"One source",result_title:"One preview. Two outputs.",result_body:"The states already in your project become tests and a visual catalog.",result_stage_body:"One set of preview states becomes repeatable checks and a browsable interface catalog.",workflow_label:"Three steps",workflow_title:"Keep writing previews.",workflow_body:"Prefire handles the path from source code to generated output.",step_1_title:"Describe the state",step_1_body:"Use <code>#Preview</code>, <code>@Previewable</code> or <code>PreviewProvider</code>.",step_2_title:"Build the target",step_2_body:"The plugin finds previews and generates Swift output.",step_3_title:"Test or browse",step_3_body:"Run snapshots or open Playbook to inspect the same states.",install_label:"Install",install_title:"Choose how Prefire runs.",install_body:"Use the plugin in Xcode or SwiftPM. Use the CLI for explicit local and CI runs.",tab_xcode:"Attach the build tool plugin.",tab_swiftpm:"Add plugins to package targets.",tab_cli:"Run generation directly.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Add Prefire as a package dependency, then attach the test or Playbook plugin to the matching target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Add Prefire once, then attach plugins to the targets that should receive generated output.",panel_cli_title:"CLI",panel_cli_body:"Install with Homebrew, then generate tests or Playbook models explicitly.",config_summary:"Need custom paths, devices or templates?",config_body:"Add <code>.prefire.yml</code> when the defaults no longer match your project. Project-specific control stays in the config.",closing_label:"Open source",closing_title:"Your previews are already the fixture.",closing_body:"Let Prefire turn them into something the whole team can verify.",closing_primary:"Open GitHub",closing_secondary:"Latest release",footer_copy:"Prefire · SwiftUI previews to confidence.",users_label:"In production",users_title:"Already on the job.",users_body:"Open-source apps that turn their previews into tests with Prefire.",user_provenance:"Multi-emulator frontend. Snapshot tests for its SwiftUI package.",user_twake:"Secure Matrix messenger. Previews in the iOS notification extension.",user_reachy:"Native client for the Reachy Mini robot. Preview-driven snapshot tests.",user_smithereen:"iOS client for a federated social network.",users_note:"Integrates with <a href=\"https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests\" target=\"_blank\" rel=\"noreferrer\">Screenshotbot</a> and is the plugin example in the <a href=\"https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md\" target=\"_blank\" rel=\"noreferrer\">XcodeGen docs</a>.",users_cta:"Using Prefire? <a href=\"https://github.com/BarredEwe/Prefire/edit/main/README.md\" target=\"_blank\" rel=\"noreferrer\">Add your project</a>",nav_users:"Users"},
+      ru:{meta_title:"Prefire | Snapshot-тесты из SwiftUI previews",meta_description:"Генерируйте snapshot-тесты и iOS Playbook из SwiftUI previews, которые уже есть в проекте.",brand_subtitle:"От previews к уверенности",nav_result:"Результат",nav_workflow:"Как работает",nav_install:"Установка",nav_brand:"Бренд-кит",hero_eyebrow:"SwiftUI previews → snapshot-тесты",hero_title:"Previews, готовые к тестам.",hero_body:"Prefire читает <code>#Preview</code> и генерирует snapshot-тесты плюс iOS Playbook. Без второго набора UI-состояний.",hero_primary:"Установить Prefire",hero_secondary:"Открыть GitHub",flow_source:"Ваш preview",flow_ready:"готов",result_label:"Один источник",result_title:"Один preview. Два результата.",result_body:"Состояния, которые уже есть в проекте, становятся тестами и визуальным каталогом.",result_stage_body:"Один набор preview-состояний становится повторяемыми проверками и визуальным каталогом интерфейса.",workflow_label:"Три шага",workflow_title:"Продолжайте писать previews.",workflow_body:"Prefire проведёт их от исходного кода до готового результата.",step_1_title:"Опишите состояние",step_1_body:"Используйте <code>#Preview</code>, <code>@Previewable</code> или <code>PreviewProvider</code>.",step_2_title:"Соберите target",step_2_body:"Plugin найдёт previews и сгенерирует Swift-код.",step_3_title:"Тестируйте или смотрите",step_3_body:"Запустите snapshots или откройте Playbook с теми же состояниями.",install_label:"Установка",install_title:"Выберите, как запускать Prefire.",install_body:"Используйте plugin в Xcode или SwiftPM. CLI подойдёт для явных локальных и CI-запусков.",tab_xcode:"Подключите build tool plugin.",tab_swiftpm:"Добавьте plugins к package targets.",tab_cli:"Запускайте генерацию напрямую.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Добавьте Prefire как package dependency и подключите test или Playbook plugin к нужному target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Добавьте Prefire один раз, затем подключите plugins к targets с generated output.",panel_cli_title:"CLI",panel_cli_body:"Установите через Homebrew и запускайте генерацию тестов или Playbook напрямую.",config_summary:"Нужны свои пути, устройства или templates?",config_body:"Добавьте <code>.prefire.yml</code>, когда дефолты перестанут подходить проекту. Проектные детали остаются в конфиге.",closing_label:"Открытый код",closing_title:"Ваши previews — уже готовые fixtures.",closing_body:"Prefire превращает их в результат, который может проверить вся команда.",closing_primary:"Открыть GitHub",closing_secondary:"Последний релиз",footer_copy:"Prefire · От SwiftUI previews к уверенности.",users_label:"В работе",users_title:"Уже в деле.",users_body:"Open-source приложения, которые превращают previews в тесты с помощью Prefire.",user_provenance:"Мульти-эмулятор. Snapshot-тесты для SwiftUI-пакета.",user_twake:"Защищённый Matrix-мессенджер. Previews в iOS notification extension.",user_reachy:"Нативный клиент для робота Reachy Mini. Snapshot-тесты из previews.",user_smithereen:"iOS-клиент федеративной соцсети.",users_note:"Есть интеграция со <a href=\"https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests\" target=\"_blank\" rel=\"noreferrer\">Screenshotbot</a>, а в <a href=\"https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md\" target=\"_blank\" rel=\"noreferrer\">документации XcodeGen</a> Prefire — пример build tool plugin.",users_cta:"Используете Prefire? <a href=\"https://github.com/BarredEwe/Prefire/edit/main/README.md\" target=\"_blank\" rel=\"noreferrer\">Добавьте свой проект</a>",nav_users:"Кто использует"}
     };
     const localeStorageKey="prefire-language",supportedLocales=["en","ru"],titleElement=document.querySelector("title"),descriptionMeta=document.querySelector('meta[name="description"]');
     function detectLocale(){const stored=window.localStorage.getItem(localeStorageKey);if(supportedLocales.includes(stored))return stored;return(navigator.language||"en").toLowerCase().startsWith("ru")?"ru":"en"}
