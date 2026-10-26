@@ -3,584 +3,565 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prefire: SwiftUI previews as tests, Playbook and AI renders</title>
-  <meta name="description" content="Prefire turns SwiftUI #Preview blocks into snapshot tests, an iOS Playbook and PNG renders that Claude Code, Cursor and Codex can see through an MCP server.">
-  <meta name="theme-color" content="#17181c">
+  <title>Prefire: snapshot tests from SwiftUI previews</title>
+  <meta name="description" content="Prefire reads SwiftUI #Preview blocks and generates snapshot tests, an iOS Playbook and PNG renders for AI agents like Claude Code, Cursor and Codex.">
+  <meta name="theme-color" content="#0c0a0b">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Prefire: SwiftUI previews as tests, Playbook and AI renders">
-  <meta property="og:description" content="Prefire turns SwiftUI #Preview blocks into snapshot tests, an iOS Playbook and PNG renders that Claude Code, Cursor and Codex can see through an MCP server.">
+  <meta property="og:title" content="Prefire: snapshot tests from SwiftUI previews">
+  <meta property="og:description" content="Prefire reads SwiftUI #Preview blocks and generates snapshot tests, an iOS Playbook and PNG renders for AI agents like Claude Code, Cursor and Codex.">
   <meta property="og:url" content="https://prefire.ru/">
   <meta property="og:image" content="https://prefire.ru/assets/prefire-logo.png">
   <link rel="canonical" href="https://prefire.ru/">
   <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
   <link rel="icon" type="image/png" href="assets/prefire-icon.png">
   <link rel="apple-touch-icon" href="assets/prefire-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --paper:#f5f0e7;
-      --paper-bright:#fbfaf7;
-      --ink:#17181c;
-      --ink-soft:#343741;
-      --muted:#665f56;
+      --bg:#0c0a0b;
+      --bg-raised:#131012;
+      --bg-inset:#09080a;
+      --line:rgba(255,255,255,.08);
+      --line-strong:rgba(255,255,255,.16);
+      --text:#ededeb;
+      --text-2:#a7a1a5;
+      --text-3:#6e686c;
       --ember:#ff6a35;
-      --ember-hover:#ff8152;
-      --ember-text:#c2410c;
+      --ember-soft:rgba(255,106,53,.14);
       --plum:#31001e;
-      --panel:#1f2026;
-      --on-dark:#fff;
-      --on-dark-muted:rgba(255,255,255,.68);
-      --on-dark-faint:rgba(255,255,255,.5);
-      --line:rgba(23,24,28,.13);
-      --line-dark:rgba(255,255,255,.15);
-      --header-bg:rgba(245,240,231,.92);
-      --code-text:#f8f3eb;
-      --code-keyword:#ffb629;
-      --code-method:#ff8ac5;
-      --code-value:#9ae2b9;
-      --code-comment:rgba(255,255,255,.45);
-      --font-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
-      --font-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-      --font-mono:"SFMono-Regular",Menlo,Consolas,monospace;
-      --container:1180px;
-      --header-height:68px;
-      --radius-lg:22px;
-      --radius-md:14px;
-      --radius-sm:10px;
+      --ok:#5fd492;
+      --code-keyword:#ff8a5c;
+      --code-type:#ffc27a;
+      --code-method:#e4a3ff;
+      --code-string:#9ae2b9;
+      --code-comment:#6e686c;
+      --font-sans:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      --font-mono:"Geist Mono","SFMono-Regular",Menlo,Consolas,monospace;
+      --container:1160px;
+      --header-height:56px;
+      --radius:12px;
+      --radius-sm:8px;
     }
     * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; overflow-x:clip; }
+    html { scroll-behavior:smooth; overflow-x:clip; color-scheme:dark; }
     body {
       margin:0;
       min-width:320px;
       overflow-x:clip;
-      color:var(--ink);
-      background:var(--paper);
-      font:400 1rem/1.55 var(--font-body);
+      color:var(--text);
+      background:var(--bg);
+      font:400 15px/1.6 var(--font-sans);
+      -webkit-font-smoothing:antialiased;
     }
     img { display:block; max-width:100%; height:auto; }
     a { color:inherit; text-decoration:none; }
-    button,summary { font:inherit; }
-    code,pre { font-family:var(--font-mono); }
-    code { overflow-wrap:anywhere; }
-    h1,h2,h3,p,dl,dd,figure { margin:0; }
-    h1,h2,h3 { font-family:var(--font-display); overflow-wrap:break-word; min-width:0; }
-    :focus-visible { outline:3px solid var(--ember); outline-offset:3px; }
+    button { font:inherit; color:inherit; }
+    code,pre,kbd { font-family:var(--font-mono); }
+    h1,h2,h3,p,dl,dd,figure,pre { margin:0; }
+    h1,h2,h3 { font-weight:600; overflow-wrap:break-word; min-width:0; }
+    :focus-visible { outline:2px solid var(--ember); outline-offset:2px; }
+    ::selection { background:var(--ember); color:var(--bg); }
     .container { width:min(calc(100% - 32px),var(--container)); margin:0 auto; }
-    [id] { scroll-margin-top:calc(var(--header-height) + 16px); }
-    .skip-link { position:absolute; left:16px; top:-60px; z-index:50; padding:10px 14px; border-radius:var(--radius-sm); color:var(--on-dark); background:var(--ink); }
-    .skip-link:focus-visible { top:12px; }
-    .text-link { font-weight:650; text-decoration:underline; text-decoration-color:var(--ember); text-decoration-thickness:2px; text-underline-offset:4px; }
-    .text-link:hover { text-decoration-color:currentColor; }
+    .frame { border-left:1px solid var(--line); border-right:1px solid var(--line); }
+    [id] { scroll-margin-top:calc(var(--header-height) + 8px); }
+    .skip-link { position:absolute; left:16px; top:-60px; z-index:50; padding:8px 12px; border-radius:var(--radius-sm); background:var(--text); color:var(--bg); }
+    .skip-link:focus-visible { top:10px; }
+    .muted { color:var(--text-2); }
+    .link { color:var(--text); text-decoration:underline; text-decoration-color:var(--line-strong); text-underline-offset:3px; }
+    .link:hover { text-decoration-color:var(--ember); }
 
-    .site-header { position:sticky; top:0; z-index:30; border-bottom:1px solid var(--line); background:var(--header-bg); backdrop-filter:blur(14px); }
-    .header-inner { min-height:var(--header-height); display:flex; align-items:center; justify-content:space-between; gap:20px; }
-    .brand { display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-size:1.12rem; font-weight:760; letter-spacing:-.02em; }
-    .brand-mark { width:34px; height:34px; overflow:hidden; border-radius:10px; }
-    .brand-mark img { width:auto; max-width:none; height:34px; }
-    .main-nav { display:flex; align-items:center; gap:26px; color:var(--ink-soft); font-size:.95rem; }
-    .main-nav a:hover { color:var(--ink); }
-    .header-actions { display:flex; align-items:center; gap:10px; }
-    .language-switch { display:flex; gap:2px; padding:3px; border:1px solid var(--line); border-radius:var(--radius-md); }
-    .language-switch button { border:0; border-radius:var(--radius-sm); padding:6px 10px; color:var(--ink-soft); background:transparent; font-size:.88rem; cursor:pointer; }
-    .language-switch button:hover { color:var(--ink); }
-    .language-switch button.is-active { color:var(--on-dark); background:var(--ink); }
-    .github-link { padding:9px 15px; border-radius:var(--radius-md); color:var(--on-dark); background:var(--ink); font-weight:650; font-size:.95rem; }
-    .github-link:hover { background:var(--ink-soft); }
-    .mobile-menu { display:none; position:relative; }
-    .mobile-menu summary { width:40px; height:40px; display:grid; place-items:center; border:1px solid var(--line); border-radius:var(--radius-md); cursor:pointer; list-style:none; }
-    .mobile-menu summary::-webkit-details-marker { display:none; }
-    .mobile-menu nav { position:absolute; top:calc(100% + 10px); right:0; min-width:200px; display:grid; padding:8px; border:1px solid var(--line); border-radius:var(--radius-md); background:var(--paper-bright); }
-    .mobile-menu nav a { padding:10px 12px; border-radius:var(--radius-sm); }
-    .mobile-menu nav a:hover { background:var(--paper); }
+    /* header */
+    .site-header { position:sticky; top:0; z-index:30; border-bottom:1px solid var(--line); background:rgba(12,10,11,.82); backdrop-filter:blur(12px); }
+    .header-inner { height:var(--header-height); display:flex; align-items:center; gap:28px; padding:0 20px; }
+    .brand { display:flex; align-items:center; gap:9px; font-weight:600; letter-spacing:-.01em; }
+    .brand-mark { width:24px; height:24px; overflow:hidden; border-radius:6px; }
+    .brand-mark img { width:auto; max-width:none; height:24px; }
+    .main-nav { display:flex; gap:22px; color:var(--text-2); font-size:14px; }
+    .main-nav a:hover { color:var(--text); }
+    .header-actions { display:flex; align-items:center; gap:8px; margin-left:auto; }
+    .language-switch { display:flex; border:1px solid var(--line); border-radius:var(--radius-sm); overflow:hidden; }
+    .language-switch button { border:0; padding:5px 9px; color:var(--text-3); background:transparent; font:500 12px/1 var(--font-mono); cursor:pointer; }
+    .language-switch button:hover { color:var(--text); }
+    .language-switch button.is-active { color:var(--text); background:var(--line); }
+    .github-link { display:inline-flex; align-items:center; gap:8px; padding:6px 11px; border:1px solid var(--line-strong); border-radius:var(--radius-sm); font-size:13px; font-weight:500; }
+    .github-link:hover { border-color:var(--text-3); background:var(--bg-raised); }
+    .github-link svg { width:15px; height:15px; fill:currentColor; }
+    .github-stars { color:var(--text-2); font-family:var(--font-mono); font-size:12px; }
+    .github-stars:empty { display:none; }
 
-    .button { min-height:48px; display:inline-flex; align-items:center; justify-content:center; padding:0 22px; border-radius:var(--radius-md); font-weight:700; transition:background-color .15s ease,transform .1s ease; }
-    .button:active { transform:translateY(1px); }
-    .button-primary { color:var(--ink); background:var(--ember); }
-    .button-primary:hover { background:var(--ember-hover); }
+    /* hero */
+    .hero { padding:88px 20px 56px; }
+    .release { display:inline-flex; gap:8px; padding:4px 10px 4px 4px; border:1px solid var(--line); border-radius:999px; color:var(--text-2); font-size:13px; }
+    .release:hover { border-color:var(--line-strong); color:var(--text); }
+    .release { align-items:center; max-width:100%; border-radius:14px; line-height:1.4; }
+    .release b { flex:0 0 auto; padding:1px 8px; border-radius:999px; background:var(--ember-soft); color:var(--ember); font:500 12px/1.6 var(--font-mono); }
+    h1 { max-width:15ch; margin-top:24px; font-size:clamp(40px,6.4vw,72px); line-height:1.02; letter-spacing:-.045em; }
+    .hero-lede { max-width:56ch; margin-top:20px; color:var(--text-2); font-size:18px; line-height:1.55; }
+    .hero-lede code { color:var(--text); font-size:.92em; }
+    .hero-actions { display:flex; flex-wrap:wrap; align-items:center; gap:12px 20px; margin-top:32px; }
+    .install-cmd { display:inline-flex; align-items:center; gap:14px; max-width:100%; padding:0 6px 0 16px; height:46px; border:1px solid var(--line-strong); border-radius:var(--radius); background:var(--bg-raised); font:400 14px/1 var(--font-mono); }
+    .install-cmd code { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+    .install-cmd code::before { content:"$ "; color:var(--text-3); }
+    .copy-button { flex:0 0 auto; padding:7px 10px; border:1px solid var(--line); border-radius:var(--radius-sm); background:transparent; color:var(--text-2); font:500 12px/1 var(--font-sans); cursor:pointer; }
+    .copy-button:hover { color:var(--text); border-color:var(--line-strong); }
+    .copy-button.is-copied { color:var(--ok); }
+    .hero-actions .link { font-size:14px; }
 
-    .hero { position:relative; overflow:hidden; color:var(--on-dark); background:var(--ink); isolation:isolate; }
-    .hero-bg { position:absolute; inset:0; z-index:-1; width:100%; height:100%; object-fit:cover; opacity:.85; }
-    .hero-inner { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.8fr); gap:64px; align-items:center; padding:88px 0 96px; }
-    .hero-copy { display:grid; gap:24px; justify-items:start; }
-    h1 { max-width:9ch; font-size:clamp(3.6rem,8vw,7.2rem); line-height:.9; letter-spacing:-.06em; font-weight:800; }
-    .hero-copy>p { max-width:34ch; color:var(--on-dark-muted); font-size:clamp(1.08rem,1.6vw,1.25rem); }
-    .hero-copy>p code { color:var(--on-dark); }
-    .hero-actions { display:flex; align-items:center; flex-wrap:wrap; gap:14px 24px; margin-top:6px; }
-    .hero-actions .text-link { color:var(--on-dark); }
-    .source-panel { padding:24px 26px; border:1px solid var(--line-dark); border-radius:var(--radius-lg); background:var(--panel); }
-    .source-panel>span { color:var(--on-dark-faint); font-size:.88rem; }
-    .source-panel pre { margin:12px 0 20px; color:var(--code-text); font-size:.95rem; line-height:1.7; overflow:auto; }
-    .k { color:var(--code-keyword); }
-    .m { color:var(--code-method); }
-    .v { color:var(--code-value); }
-    .c { color:var(--code-comment); }
-    .source-panel ul { display:grid; gap:8px; margin:0; padding:18px 0 0; border-top:1px solid var(--line-dark); list-style:none; color:var(--on-dark-muted); font-size:.95rem; }
-    .source-panel li strong { color:var(--on-dark); font-weight:650; }
+    /* product panel */
+    .panel { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--bg-inset); }
+    .pane { min-width:0; display:flex; flex-direction:column; }
+    .pane+.pane { border-left:1px solid var(--line); }
+    .pane-bar { display:flex; align-items:stretch; height:40px; border-bottom:1px solid var(--line); font:400 12.5px/1 var(--font-mono); color:var(--text-3); }
+    .pane-bar>span,.pane-tab { display:flex; align-items:center; padding:0 16px; }
+    .pane-bar>span { color:var(--text-2); border-right:1px solid var(--line); }
+    .pane-tab { border:0; border-right:1px solid var(--line); background:transparent; color:var(--text-3); font:inherit; cursor:pointer; }
+    .pane-tab:hover { color:var(--text); }
+    .pane-tab[aria-selected="true"] { color:var(--text); background:var(--bg); box-shadow:inset 0 -1px 0 var(--ember); }
+    .code { padding:20px; overflow:auto; font-size:13px; line-height:1.75; color:var(--text); }
+    .code .ln { display:inline-block; width:2.2em; color:var(--text-3); user-select:none; }
+    .kw { color:var(--code-keyword); }
+    .ty { color:var(--code-type); }
+    .fn { color:var(--code-method); }
+    .st { color:var(--code-string); }
+    .cm { color:var(--code-comment); }
+    .hl { display:block; margin:0 -20px; padding:0 20px; background:var(--ember-soft); }
+    .pane-body { flex:1; min-height:0; }
+    .pane-body[hidden] { display:none; }
+    .shots { display:grid; grid-template-columns:repeat(2,minmax(0,210px)); justify-content:center; gap:28px; padding:28px 20px; }
+    .shots figure { display:grid; gap:10px; }
+    .shots img { width:100%; border:1px solid var(--line); border-radius:22px; }
+    .shots figcaption,.render-pair figcaption { display:flex; justify-content:space-between; gap:12px; color:var(--text-3); font:400 12px/1.4 var(--font-mono); }
+    .shots figcaption b,.render-pair figcaption b { color:var(--text-2); font-weight:500; }
+    .playbook-shot { display:flex; justify-content:center; padding:28px 20px; }
+    .playbook-shot img { width:220px; border:1px solid var(--line); border-radius:22px; }
+    .pane-note { padding:12px 20px; border-top:1px solid var(--line); color:var(--text-3); font-size:13px; }
 
-    .section { padding:clamp(80px,10vw,120px) 0; }
-    .section-bright { background:var(--paper-bright); }
-    .section-head { max-width:720px; display:grid; gap:16px; margin-bottom:56px; }
-    .ai-copy .section-head { margin-bottom:0; }
-    h2 { font-size:clamp(2.4rem,4.6vw,4.2rem); line-height:.98; letter-spacing:-.05em; font-weight:780; text-wrap:balance; }
-    .section-head p { max-width:56ch; color:var(--muted); font-size:1.08rem; }
-    h3 { font-size:clamp(1.6rem,2.4vw,2.1rem); line-height:1.08; letter-spacing:-.035em; font-weight:740; }
+    /* sections */
+    .section { padding:88px 20px; border-bottom:1px solid var(--line); }
+    .section-head { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:24px 48px; align-items:end; margin-bottom:40px; }
+    .kicker { display:block; margin-bottom:12px; color:var(--ember); font:500 13px/1 var(--font-mono); }
+    h2 { font-size:clamp(28px,3.6vw,40px); line-height:1.1; letter-spacing:-.035em; }
+    .section-head p { color:var(--text-2); font-size:16px; max-width:52ch; }
 
-    .output { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(32px,6vw,88px); align-items:center; padding:48px 0; border-top:1px solid var(--line); }
-    .output:last-child { padding-bottom:0; }
-    .output:nth-child(even) .output-media { order:-1; }
-    .output-copy { display:grid; gap:14px; max-width:46ch; }
-    .output-copy p { color:var(--muted); font-size:1.05rem; }
-    .output-copy .platforms { color:var(--ink-soft); font-size:.92rem; }
-    .output-media { display:flex; justify-content:center; }
-    .output-media img { border-radius:var(--radius-lg); }
-    .media-phone { width:min(100%,260px); padding:10px; border-radius:30px; background:var(--ink); }
-    .media-phone img { border-radius:22px; }
-    .media-wide { width:min(100%,460px); }
+    .split { display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:32px; align-items:start; }
+    .split>* { min-width:0; }
+    .terminal { border:1px solid var(--line); border-radius:var(--radius); background:var(--bg-inset); overflow:hidden; }
+    .terminal-bar { display:flex; justify-content:space-between; padding:10px 16px; border-bottom:1px solid var(--line); color:var(--text-3); font:400 12px/1 var(--font-mono); }
+    .terminal pre { padding:18px 16px; overflow:auto; font-size:12.5px; line-height:1.8; color:var(--text-2); }
+    .terminal .prompt { color:var(--text-3); }
+    .terminal .cmd { color:var(--text); }
+    .terminal .ok { color:var(--ok); }
+    .render-stack { display:grid; gap:28px; }
+    .flags { display:grid; border-top:1px solid var(--line); }
+    .flags-grid { grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:32px; }
+    .flags div { display:grid; grid-template-columns:minmax(0,180px) minmax(0,1fr); gap:16px; padding:12px 0; border-bottom:1px solid var(--line); font-size:14px; }
+    .flags dt { font:400 13px/1.6 var(--font-mono); color:var(--text); }
+    .flags dd { color:var(--text-2); }
 
-    .ai-layout { display:grid; grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr); gap:clamp(32px,6vw,80px); align-items:start; }
-    .ai-copy { display:grid; gap:28px; }
-    .ai-copy>p { color:var(--muted); font-size:1.05rem; max-width:52ch; }
-    .tools { display:grid; border-top:1px solid var(--line); }
-    .tools div { display:grid; grid-template-columns:150px minmax(0,1fr); gap:16px; padding:16px 0; border-bottom:1px solid var(--line); }
-    .tools dt code { color:var(--ember-text); font-weight:700; font-size:.92rem; }
-    .tools dd { color:var(--muted); }
-    .ai-media { display:grid; gap:18px; }
-    .code-block { max-width:100%; padding:20px 22px; overflow:auto; border-radius:var(--radius-md); color:var(--code-text); background:var(--ink); }
-    .code-block pre { margin:0; min-width:max-content; font-size:.88rem; line-height:1.7; }
-    .renders { display:grid; grid-template-columns:minmax(0,.55fr) minmax(0,1fr); gap:14px; align-items:end; padding:24px; border-radius:var(--radius-lg); background:var(--plum); }
-    .renders figure { display:grid; gap:10px; }
-    .renders img { width:100%; border-radius:var(--radius-sm); }
-    .renders figcaption { color:var(--on-dark-faint); font-size:.85rem; }
+    .agent-tabs { display:flex; flex-wrap:wrap; border-bottom:1px solid var(--line); }
+    .agent-tab { padding:10px 14px; border:0; background:transparent; color:var(--text-3); font-size:14px; cursor:pointer; box-shadow:inset 0 -1px 0 transparent; }
+    .agent-tab:hover { color:var(--text); }
+    .agent-tab[aria-selected="true"] { color:var(--text); box-shadow:inset 0 -2px 0 var(--ember); }
+    .agent-panel { padding:18px 0 0; }
+    .agent-panel[hidden] { display:none; }
+    .snippet { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:14px 14px 14px 16px; border:1px solid var(--line); border-radius:var(--radius); background:var(--bg-raised); }
+    .snippet pre { overflow:auto; font-size:13px; line-height:1.7; }
+    .agent-panel p { margin-top:12px; color:var(--text-2); font-size:14px; }
+    .ai-side { display:grid; gap:16px; }
+    .render-pair { display:grid; grid-template-columns:minmax(0,.48fr) minmax(0,1fr); gap:16px; align-items:end; padding:20px; border:1px solid var(--line); border-radius:var(--radius); background:linear-gradient(180deg,var(--plum),var(--bg-inset)); }
+    .render-pair figure { display:grid; gap:8px; }
+    .render-pair img { width:100%; border:1px solid var(--line); border-radius:10px; }
+    .tools { width:100%; border-collapse:collapse; font-size:14px; }
+    .tools th,.tools td { padding:11px 0; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    .tools th { width:170px; font:400 13px/1.6 var(--font-mono); color:var(--text); }
+    .tools td { color:var(--text-2); }
 
-    .install-shell { display:grid; grid-template-columns:260px minmax(0,1fr); gap:28px; }
-    .install-shell>div { min-width:0; }
-    .install-tabs { display:grid; align-content:start; border-top:1px solid var(--line); }
-    .install-tab { width:100%; padding:16px 0; border:0; border-bottom:1px solid var(--line); color:var(--ink-soft); background:transparent; text-align:left; cursor:pointer; }
-    .install-tab strong { display:block; font-size:1.05rem; font-weight:650; }
-    .install-tab span { color:var(--muted); font-size:.9rem; }
-    .install-tab:hover { color:var(--ink); }
-    .install-tab[aria-selected="true"] { color:var(--ink); box-shadow:inset 3px 0 0 var(--ember); padding-left:16px; }
-    .tab-panel { padding:30px; border:1px solid var(--line); border-radius:var(--radius-lg); background:var(--paper-bright); }
-    .tab-panel[hidden] { display:none; }
-    .tab-panel h3 { font-size:1.4rem; }
-    .tab-panel p { max-width:60ch; margin:10px 0 22px; color:var(--muted); }
-    .tab-panel .panel-links { display:flex; gap:20px; margin:20px 0 0; }
-    .config-disclosure { margin-top:24px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-    .config-disclosure summary { display:flex; justify-content:space-between; gap:20px; padding:20px 0; cursor:pointer; list-style:none; font-weight:650; }
-    .config-disclosure summary::-webkit-details-marker { display:none; }
-    .config-disclosure summary::after { content:"+"; color:var(--ember-text); font-size:1.3rem; line-height:1; }
-    .config-disclosure[open] summary::after { content:"−"; }
-    .config-content { display:grid; grid-template-columns:minmax(0,.7fr) minmax(0,1fr); gap:30px; padding:0 0 24px; }
-    .config-content p { color:var(--muted); }
+    .specs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border-top:1px solid var(--line); }
+    .spec { display:grid; grid-template-columns:minmax(0,170px) minmax(0,1fr); gap:16px; padding:16px 0; border-bottom:1px solid var(--line); }
+    .spec:nth-child(odd) { padding-right:32px; }
+    .spec:nth-child(even) { padding-left:32px; border-left:1px solid var(--line); }
+    .spec dt { color:var(--text-3); font-size:14px; }
+    .spec dd { color:var(--text); font-size:14px; }
+    .spec dd code { color:var(--text); font-size:13px; }
 
-    .users-list { margin:0; padding:0; list-style:none; border-top:1px solid var(--line); }
-    .users-list a { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,.6fr) minmax(0,1.5fr); gap:24px; align-items:baseline; padding:22px 0; border-bottom:1px solid var(--line); }
-    .users-list strong { font-family:var(--font-display); font-size:1.3rem; letter-spacing:-.02em; font-weight:700; }
-    .users-list span { color:var(--muted); }
-    .users-list a:hover strong { color:var(--ember-text); }
-    .users-note { display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px 32px; padding-top:24px; color:var(--muted); }
-    .users-note a { color:var(--ink); }
+    .install-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .install-card { display:flex; flex-direction:column; gap:10px; padding:20px; border:1px solid var(--line); border-radius:var(--radius); background:var(--bg-raised); }
+    .install-card h3 { font-size:16px; letter-spacing:-.01em; }
+    .install-card p { color:var(--text-2); font-size:14px; }
+    .install-card pre { margin-top:auto; padding:14px; overflow:auto; border-radius:var(--radius-sm); background:var(--bg-inset); font-size:12.5px; line-height:1.7; }
 
-    .closing { position:relative; overflow:hidden; padding:96px 0; color:var(--on-dark); background:var(--plum); isolation:isolate; }
-    .closing-bg { position:absolute; inset:0; z-index:-1; width:100%; height:100%; object-fit:cover; opacity:.55; }
-    .closing-grid { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:40px; align-items:end; }
-    .closing h2 { max-width:16ch; }
-    .closing p { max-width:52ch; margin-top:16px; color:var(--on-dark-muted); }
-    .closing-actions { display:flex; align-items:center; flex-wrap:wrap; gap:14px 24px; }
-    .closing-actions .text-link { color:var(--on-dark); }
-    .footer { padding:24px 0 36px; color:var(--on-dark-faint); background:var(--ink); font-size:.92rem; }
-    .footer-inner { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px 24px; }
-    .footer-links { display:flex; flex-wrap:wrap; gap:20px; color:var(--on-dark); }
-    .footer-links a:hover { color:var(--ember); }
-    .footer-thanks { padding-top:14px; }
-    .footer-thanks a { color:var(--on-dark-muted); text-decoration:underline; text-underline-offset:3px; }
-    .footer-thanks a:hover { color:var(--on-dark); }
+    .footer { padding:40px 20px 48px; color:var(--text-3); font-size:13px; }
+    .footer-inner { display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px 32px; }
+    .footer-links { display:flex; flex-wrap:wrap; gap:20px; color:var(--text-2); }
+    .footer-links a:hover,.footer a.link:hover { color:var(--text); }
+    .footer p+p { margin-top:8px; }
 
-    @media (max-width:1000px) {
-      .hero-inner,.ai-layout { grid-template-columns:minmax(0,1fr); gap:48px; }
-      .source-panel { max-width:560px; }
+    @media (max-width:960px) {
+      .main-nav { display:none; }
+      .panel,.split,.section-head { grid-template-columns:minmax(0,1fr); }
+      .pane+.pane { border-left:0; border-top:1px solid var(--line); }
     }
-    @media (max-width:820px) {
-      .main-nav,.github-link { display:none; }
-      .mobile-menu { display:block; }
-      .output { grid-template-columns:minmax(0,1fr); gap:32px; }
-      .output:nth-child(even) .output-media { order:0; }
-      .install-shell,.config-content,.closing-grid { grid-template-columns:minmax(0,1fr); }
-      .install-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; border-top:0; }
-      .install-tab,.install-tab[aria-selected="true"] { padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius-md); box-shadow:none; }
-      .install-tab span { display:none; }
-      .install-tab[aria-selected="true"] { color:var(--on-dark); border-color:var(--ink); background:var(--ink); }
-      .users-list a { grid-template-columns:minmax(0,1fr) auto; gap:4px 16px; }
-      .users-list a span:last-child { grid-column:1 / -1; }
+    @media (max-width:720px) {
+      .specs,.install-grid,.flags-grid { grid-template-columns:minmax(0,1fr); }
+      .spec:nth-child(odd),.spec:nth-child(even) { padding:14px 0; border-left:0; }
+      .spec,.flags div { grid-template-columns:minmax(0,1fr); gap:2px; }
+      .tools th { width:auto; display:block; padding-bottom:0; border-bottom:0; }
+      .tools td { display:block; padding-top:2px; }
     }
     @media (max-width:560px) {
-      .hero-inner { padding:56px 0 64px; }
-      h1 { font-size:clamp(3.2rem,16vw,4.4rem); }
-      .tools div { grid-template-columns:minmax(0,1fr); gap:4px; }
-      .renders { padding:16px; }
-      .tab-panel { padding:20px; }
-      .closing { padding:72px 0; }
+      .header-inner,.hero,.section,.footer { padding-left:16px; padding-right:16px; }
+      .hero { padding-top:56px; }
+      .hero-lede { font-size:16px; }
+      .install-cmd { width:100%; font-size:12.5px; }
+      .github-link span:first-of-type { display:none; }
+      .shots { gap:14px; padding:20px 16px; }
+      .shots img { border-radius:14px; }
+      .section { padding-top:64px; padding-bottom:64px; }
+      .pane-tab,.pane-bar>span { padding:0 12px; }
     }
-    @media (prefers-reduced-motion:reduce) {
-      html { scroll-behavior:auto; }
-      .button { transition:none; }
-    }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
   </style>
 </head>
 <body>
   <a class="skip-link" href="#top" data-i18n="skip">Skip to content</a>
   <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#top" aria-label="Prefire home">
-        <span class="brand-mark" aria-hidden="true"><img src="assets/prefire-logo.png" alt=""></span>
-        Prefire
-      </a>
+    <div class="container frame header-inner">
+      <a class="brand" href="#top" aria-label="Prefire home"><span class="brand-mark" aria-hidden="true"><img src="assets/prefire-logo.png" alt=""></span>Prefire</a>
       <nav class="main-nav" aria-label="Main">
-        <a href="#outputs" data-i18n="nav_outputs">What you get</a>
+        <a href="#how" data-i18n="nav_how">How it works</a>
         <a href="#ai" data-i18n="nav_ai">AI agents</a>
+        <a href="#details" data-i18n="nav_details">Details</a>
         <a href="#install" data-i18n="nav_install">Install</a>
-        <a href="#users" data-i18n="nav_users">Users</a>
+        <a href="https://github.com/BarredEwe/Prefire/tree/main/Documentation" target="_blank" rel="noreferrer" data-i18n="nav_docs">Docs</a>
       </nav>
       <div class="header-actions">
         <div class="language-switch" role="group" aria-label="Language">
           <button type="button" data-language-button="en">EN</button>
           <button type="button" data-language-button="ru">RU</button>
         </div>
-        <details class="mobile-menu">
-          <summary aria-label="Menu">☰</summary>
-          <nav aria-label="Mobile">
-            <a href="#outputs" data-i18n="nav_outputs">What you get</a>
-            <a href="#ai" data-i18n="nav_ai">AI agents</a>
-            <a href="#install" data-i18n="nav_install">Install</a>
-            <a href="#users" data-i18n="nav_users">Users</a>
-            <a href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a>
-          </nav>
-        </details>
-        <a class="github-link" href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a>
+        <a class="github-link" href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span>GitHub</span><span class="github-stars" data-stars></span>
+        </a>
       </div>
     </div>
   </header>
 
   <main id="top">
-    <section class="hero">
-      <img class="hero-bg" src="brand/assets/prefire-ember-field.svg" alt="">
-      <div class="container hero-inner">
-        <div class="hero-copy">
-          <h1 data-i18n="hero_title">Previews, ready to test.</h1>
-          <p data-i18n-html="hero_body">Prefire turns your <code>#Preview</code> blocks into snapshot tests, a Playbook and images your AI agent can see.</p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#install" data-i18n="hero_primary">Install Prefire</a>
-            <a class="text-link" href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer" data-i18n="hero_secondary">Source on GitHub</a>
-          </div>
+    <div class="container frame">
+      <section class="hero">
+        <a class="release" href="https://github.com/BarredEwe/Prefire/blob/main/Documentation/AI.md" target="_blank" rel="noreferrer"><b>6.3</b><span data-i18n="release">prefire render and an MCP server for AI agents</span></a>
+        <h1 data-i18n="hero_title">Snapshot tests from your SwiftUI previews.</h1>
+        <p class="hero-lede" data-i18n-html="hero_body">Prefire reads <code>#Preview</code> and generates snapshot tests, a Playbook catalog and PNG renders your AI agent can look at. You don't write a line of test code.</p>
+        <div class="hero-actions">
+          <div class="install-cmd"><code>brew install barredewe/prefire/prefire</code><button class="copy-button" type="button" data-copy="brew install barredewe/prefire/prefire" data-i18n="copy">Copy</button></div>
+          <a class="link" href="#install" data-i18n="hero_spm">or add the Swift package</a>
         </div>
-        <aside class="source-panel" aria-label="Example">
-          <span data-i18n="source_label">One preview in your code</span>
-          <pre><span class="k">#Preview</span> {
-  LoginView()
-    .<span class="m">previewState</span>(.<span class="v">loading</span>)
+      </section>
+
+      <section class="panel" id="how" aria-label="Example">
+        <div class="pane">
+          <div class="pane-bar"><span>TestView.swift</span></div>
+          <pre class="code"><span class="ln">46</span><span class="kw">struct</span> <span class="ty">TestView_Previews</span>: <span class="ty">PreviewProvider</span>, <span class="ty">PrefireProvider</span> {
+<span class="ln">47</span>    <span class="kw">static var</span> previews: <span class="kw">some</span> <span class="ty">View</span> {
+<span class="ln">48</span>        <span class="ty">TestView</span>(isLoading: <span class="kw">false</span>)
+<span class="ln">49</span>            .<span class="fn">previewUserStory</span>(.testStory)
+<span class="ln">50</span>            .<span class="fn">snapshot</span>(delay: <span class="st">0.5</span>, precision: <span class="st">0.7</span>)
+<span class="ln">51</span>
+<span class="hl"><span class="ln">52</span>        <span class="ty">TestView</span>(isLoading: <span class="kw">true</span>)</span><span class="hl"><span class="ln">53</span>            .<span class="fn">previewUserStory</span>(.testStory)</span><span class="hl"><span class="ln">54</span>            .<span class="fn">previewState</span>(.loading)</span><span class="ln">55</span>    }
+<span class="ln">56</span>}</pre>
+        </div>
+        <div class="pane">
+          <div class="pane-bar" role="tablist" aria-label="Output">
+            <button class="pane-tab" type="button" role="tab" id="out-renders" aria-selected="true" aria-controls="out-renders-panel" data-i18n="tab_renders">Renders</button>
+            <button class="pane-tab" type="button" role="tab" id="out-test" aria-selected="false" aria-controls="out-test-panel" tabindex="-1" data-i18n="tab_test">Generated test</button>
+            <button class="pane-tab" type="button" role="tab" id="out-playbook" aria-selected="false" aria-controls="out-playbook-panel" tabindex="-1">Playbook</button>
+          </div>
+          <div class="pane-body" id="out-renders-panel" role="tabpanel" aria-labelledby="out-renders">
+            <div class="shots">
+              <figure><img src="assets/render-testview-default.png" width="585" height="1266" alt="TestView, default state, rendered on iPhone 16 Pro in dark mode"><figcaption><b>default</b><span>iPhone 16 Pro</span></figcaption></figure>
+              <figure><img src="assets/render-testview-loading.png" width="585" height="1266" alt="TestView, loading state, rendered on iPhone 16 Pro in dark mode"><figcaption><b>loading</b><span>iPhone 16 Pro</span></figcaption></figure>
+            </div>
+            <p class="pane-note" data-i18n="note_renders">Rendered by prefire render from the example project. Snapshot tests compare these images on every run.</p>
+          </div>
+          <div class="pane-body" id="out-test-panel" role="tabpanel" aria-labelledby="out-test" hidden>
+            <pre class="code"><span class="cm">// TestViewTests.generated.swift, written by PrefireTestsPlugin</span>
+<span class="kw">@MainActor class</span> <span class="ty">TestViewTests</span>: <span class="ty">XCTestCase</span> {
+    <span class="kw">private let</span> session = <span class="ty">PrefireSnapshotSession</span>(
+        simulatorDevice: <span class="st">"iPhone18,1"</span>,
+        osVersion: <span class="st">26</span>,
+        devices: [<span class="st">"iPhone 15"</span>, <span class="st">"iPad"</span>],
+        waitDefaults: <span class="ty">SnapshotWaitDefaults</span>()
+    )
+
+    <span class="kw">func</span> <span class="fn">test_testView</span>() {
+        <span class="fn">assertSnapshots</span>(of: <span class="ty">TestView_Previews</span>._allPreviews)
+    }
 }</pre>
-          <ul>
-            <li data-i18n-html="source_1"><strong>A snapshot test</strong> on every device you list</li>
-            <li data-i18n-html="source_2"><strong>A Playbook screen</strong> in the loading state</li>
-            <li data-i18n-html="source_3"><strong>A PNG</strong> for Claude Code, Cursor or Codex</li>
-          </ul>
-        </aside>
-      </div>
-    </section>
+            <p class="pane-note" data-i18n="note_test">Regenerated on every build. Nothing to commit or keep in sync.</p>
+          </div>
+          <div class="pane-body" id="out-playbook-panel" role="tabpanel" aria-labelledby="out-playbook" hidden>
+            <div class="playbook-shot"><img src="assets/prefire-playbook.gif" width="320" height="693" alt="Playbook catalog scrolling through components and user stories" loading="lazy"></div>
+            <p class="pane-note" data-i18n="note_playbook">The same previews as a browsable catalog inside your app, grouped by user story.</p>
+          </div>
+        </div>
+      </section>
 
-    <section class="section section-bright" id="outputs">
-      <div class="container">
+      <section class="section" id="render">
         <div class="section-head">
-          <h2 data-i18n="outputs_title">One preview, three results.</h2>
-          <p data-i18n="outputs_body">You already describe UI states in previews. Prefire reuses them, so nothing has to be written twice.</p>
+          <div><span class="kicker">prefire render</span><h2 data-i18n="render_title">Any preview, any device, from the terminal.</h2></div>
+          <p data-i18n="render_body">Prefire builds the app once and writes every preview you ask for as a PNG with a JSON record. No Xcode window, works on CI.</p>
         </div>
-        <div class="outputs">
-          <article class="output">
-            <div class="output-copy">
-              <h3 data-i18n="snap_title">Snapshot tests</h3>
-              <p data-i18n="snap_body">Each preview becomes a test on the devices you pick. Prefire compares it with the reference image through swift-snapshot-testing, so a changed padding fails the build, not the release.</p>
-              <span class="platforms" data-i18n="snap_platforms">iOS, tvOS and macOS</span>
-            </div>
-            <div class="output-media"><img class="media-wide" src="assets/states.webp" width="700" height="679" alt="TestView snapshots in the default and loading states" loading="lazy"></div>
-          </article>
-          <article class="output">
-            <div class="output-copy">
-              <h3>Playbook</h3>
-              <p data-i18n="playbook_body">A catalog of every component and user story in the app, with their states and render times. Designers and QA open it on a phone instead of asking for a build of each screen.</p>
-              <span class="platforms">iOS</span>
-            </div>
-            <div class="output-media"><div class="media-phone"><img src="assets/prefire-playbook.gif" width="320" height="693" alt="Prefire Playbook scrolling through components" loading="lazy"></div></div>
-          </article>
-          <article class="output">
-            <div class="output-copy">
-              <h3 data-i18n="render_title">Renders for AI agents</h3>
-              <p data-i18n-html="render_body"><code>prefire render</code> builds the app and saves previews as PNG, on any iPhone or iPad, light or dark. The MCP server hands the same images to your agent.</p>
-              <span class="platforms">Claude Code, Cursor, Codex, VS Code</span>
-            </div>
-            <div class="output-media"><div class="media-phone"><img src="assets/render-testview.png" width="585" height="1266" alt="The same TestView, rendered by prefire render on iPhone 16 Pro in dark mode" loading="lazy"></div></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="ai">
-      <div class="container ai-layout">
-        <div class="ai-copy">
-          <div class="section-head">
-            <h2 data-i18n="ai_title">Let your agent see SwiftUI.</h2>
-            <p data-i18n="ai_body">An agent that edits a view has no idea how it looks. With Prefire it renders the previews it changed and checks them before calling the task done.</p>
+        <div class="render-stack">
+          <div class="terminal">
+            <div class="terminal-bar"><span>zsh</span><span>Example/</span></div>
+<pre><span class="prompt">$</span> <span class="cmd">prefire render TestView_Previews --device "iPhone 16 Pro" --color-scheme dark</span>
+<span class="ok">✅</span> test_testView()-iPhone 16 Pro (iPhone 16 Pro): .prefire/render/test_testView__-iPhone_16_Pro.png
+<span class="ok">✅</span> test_testView()-iPhone 16 Pro (iPhone 16 Pro): .prefire/render/test_testView__-iPhone_16_Pro-2.png
+<span class="ok">✅</span> test_testView()-iPhone 16 Pro (iPhone 16 Pro): .prefire/render/test_testView__-iPhone_16_Pro-3.png
+Manifest: .prefire/render/manifest.json</pre>
           </div>
-          <dl class="tools">
-            <div><dt><code>list_previews</code></dt><dd data-i18n="tool_list">Previews of the project with their file and line.</dd></div>
-            <div><dt><code>render_previews</code></dt><dd data-i18n="tool_render">Builds the app and returns PNGs for the devices, color scheme and Dynamic Type asked for.</dd></div>
-            <div><dt><code>build_board</code></dt><dd data-i18n="tool_board">An HTML board of the last render, grouped by user story.</dd></div>
+          <dl class="flags flags-grid">
+            <div><dt>--device</dt><dd data-i18n="flag_device">iPhone or iPad to render on, with its real safe area. Repeatable.</dd></div>
+            <div><dt>--color-scheme</dt><dd>light, dark</dd></div>
+            <div><dt>--dynamic-type</dt><dd>xSmall … accessibility5</dd></div>
+            <div><dt>--list</dt><dd data-i18n="flag_list">Previews with their file and line, as JSON.</dd></div>
+            <div><dt>prefire board</dt><dd data-i18n="flag_board">An HTML board of the last render, grouped by user story.</dd></div>
           </dl>
-          <p data-i18n="ai_why">Xcode can render a preview too, but only while Xcode runs, one canvas at a time. Prefire renders many previews in one build, from a terminal or on CI.</p>
         </div>
-        <div class="ai-media">
-          <div class="code-block"><pre><span class="c"># the call behind the images below</span>
-<span class="m">render_previews</span>(
-  previews: [<span class="v">"AuthView_Preview"</span>],
-  devices: [<span class="v">"iPhone 16 Pro"</span>, <span class="v">"iPad"</span>],
-  color_scheme: <span class="v">"dark"</span>
+      </section>
+
+      <section class="section" id="ai">
+        <div class="section-head">
+          <div><span class="kicker">prefire mcp</span><h2 data-i18n="ai_title">Your agent sees the UI it just changed.</h2></div>
+          <p data-i18n="ai_body">Claude Code, Cursor and Codex call Prefire over MCP, get the PNGs back in the conversation and check the layout before they call the task done.</p>
+        </div>
+        <div class="split">
+          <div>
+            <div class="agent-tabs" role="tablist" aria-label="Agent">
+              <button class="agent-tab" type="button" role="tab" id="ag-claude" aria-selected="true" aria-controls="ag-claude-panel">Claude Code</button>
+              <button class="agent-tab" type="button" role="tab" id="ag-cursor" aria-selected="false" aria-controls="ag-cursor-panel" tabindex="-1">Cursor</button>
+              <button class="agent-tab" type="button" role="tab" id="ag-codex" aria-selected="false" aria-controls="ag-codex-panel" tabindex="-1">Codex</button>
+              <button class="agent-tab" type="button" role="tab" id="ag-vscode" aria-selected="false" aria-controls="ag-vscode-panel" tabindex="-1">VS Code</button>
+            </div>
+            <div class="agent-panel" id="ag-claude-panel" role="tabpanel" aria-labelledby="ag-claude">
+              <div class="snippet"><pre>claude mcp add prefire -- prefire mcp</pre><button class="copy-button" type="button" data-copy="claude mcp add prefire -- prefire mcp" data-i18n="copy">Copy</button></div>
+              <p data-i18n-html="ag_claude_note">Or install the plugin with a skill that tells Claude when to render: <code>/plugin marketplace add BarredEwe/Prefire</code>, then <code>/plugin install prefire@prefire</code>.</p>
+            </div>
+            <div class="agent-panel" id="ag-cursor-panel" role="tabpanel" aria-labelledby="ag-cursor" hidden>
+              <div class="snippet"><pre>{ "command": "prefire", "args": ["mcp"] }</pre></div>
+              <p data-i18n-html="ag_cursor_note"><a class="link" href="https://cursor.com/en/install-mcp?name=prefire&amp;config=eyJjb21tYW5kIjoicHJlZmlyZSIsImFyZ3MiOlsibWNwIl19" target="_blank" rel="noreferrer">Add to Cursor</a> in one click, or paste the config above into MCP settings.</p>
+            </div>
+            <div class="agent-panel" id="ag-codex-panel" role="tabpanel" aria-labelledby="ag-codex" hidden>
+              <div class="snippet"><pre>codex mcp add prefire -- prefire mcp</pre><button class="copy-button" type="button" data-copy="codex mcp add prefire -- prefire mcp" data-i18n="copy">Copy</button></div>
+            </div>
+            <div class="agent-panel" id="ag-vscode-panel" role="tabpanel" aria-labelledby="ag-vscode" hidden>
+              <div class="snippet"><pre>code --add-mcp '{"name":"prefire","command":"prefire","args":["mcp"]}'</pre><button class="copy-button" type="button" data-copy="code --add-mcp '{&quot;name&quot;:&quot;prefire&quot;,&quot;command&quot;:&quot;prefire&quot;,&quot;args&quot;:[&quot;mcp&quot;]}'" data-i18n="copy">Copy</button></div>
+            </div>
+            <table class="tools" style="margin-top:28px">
+              <tr><th>list_previews</th><td data-i18n="tool_list">Previews of the project with file and line.</td></tr>
+              <tr><th>render_previews</th><td data-i18n="tool_render">Builds and returns PNGs for the devices, color scheme and Dynamic Type asked for.</td></tr>
+              <tr><th>build_board</th><td data-i18n="tool_board">HTML board of the last render.</td></tr>
+            </table>
+            <p class="muted" style="margin-top:20px;font-size:14px" data-i18n-html="ai_setup">Needs <code>render_configuration</code> in <code>.prefire.yml</code>. Setup in the <a class="link" href="https://github.com/BarredEwe/Prefire/blob/main/Documentation/AI.md" target="_blank" rel="noreferrer">AI guide</a>.</p>
+          </div>
+          <div class="ai-side">
+            <div class="snippet"><pre><span class="fn">render_previews</span>(
+  previews: [<span class="st">"AuthView_Preview"</span>],
+  devices: [<span class="st">"iPhone 16 Pro"</span>, <span class="st">"iPad"</span>],
+  color_scheme: <span class="st">"dark"</span>
 )</pre></div>
-          <div class="renders">
-            <figure><img src="assets/render-iphone.png" width="585" height="1266" alt="AuthView rendered on iPhone 16 Pro, dark" loading="lazy"><figcaption>iPhone 16 Pro</figcaption></figure>
-            <figure><img src="assets/render-ipad.png" width="1000" height="750" alt="AuthView rendered on iPad, dark" loading="lazy"><figcaption>iPad</figcaption></figure>
+            <div class="render-pair">
+              <figure><img src="assets/render-iphone.png" width="585" height="1266" alt="AuthView rendered on iPhone 16 Pro, dark" loading="lazy"><figcaption><b>iPhone 16 Pro</b></figcaption></figure>
+              <figure><img src="assets/render-ipad.png" width="1000" height="750" alt="AuthView rendered on iPad, dark" loading="lazy"><figcaption><b>iPad</b><span data-i18n="ipad_note">the form stretches edge to edge</span></figcaption></figure>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section section-bright" id="install">
-      <div class="container">
+      <section class="section" id="details">
+        <div class="section-head">
+          <h2 data-i18n="details_title">Details.</h2>
+          <p data-i18n-html="details_body">Everything else is in the <a class="link" href="https://github.com/BarredEwe/Prefire/blob/main/README.md" target="_blank" rel="noreferrer">README</a> and the <a class="link" href="https://github.com/BarredEwe/Prefire/blob/main/Documentation/Configuration.md" target="_blank" rel="noreferrer">configuration reference</a>.</p>
+        </div>
+        <dl class="specs">
+          <div class="spec"><dt data-i18n="spec_sources">Previews</dt><dd><code>#Preview</code>, <code>@Previewable</code>, <code>PreviewProvider</code>, <span data-i18n="spec_param">parameterized previews</span></dd></div>
+          <div class="spec"><dt>UIKit, AppKit</dt><dd><code>UIView</code>, <code>UIViewController</code>, <code>NSView</code>, <code>NSViewController</code></dd></div>
+          <div class="spec"><dt data-i18n="spec_platforms">Snapshot tests</dt><dd>iOS, tvOS, macOS</dd></div>
+          <div class="spec"><dt>Playbook</dt><dd>iOS</dd></div>
+          <div class="spec"><dt data-i18n="spec_engine">Comparison</dt><dd>swift-snapshot-testing</dd></div>
+          <div class="spec"><dt data-i18n="spec_wait">Async views</dt><dd><code>.snapshot(waitForIdle: true)</code>, <code>.snapshot(waitUntil:)</code></dd></div>
+          <div class="spec"><dt data-i18n="spec_flows">Flows and states</dt><dd><code>.previewUserStory()</code>, <code>.previewState()</code></dd></div>
+          <div class="spec"><dt data-i18n="spec_cache">Caching</dt><dd data-i18n="spec_cache_v">Parsed types and preview bodies, keyed by SHA-256</dd></div>
+          <div class="spec"><dt data-i18n="spec_runs">Runs in</dt><dd data-i18n="spec_runs_v">Xcode build phase, SwiftPM plugin, CLI, CI</dd></div>
+          <div class="spec"><dt data-i18n="spec_templates">Output</dt><dd data-i18n="spec_templates_v">Stencil templates you can replace</dd></div>
+          <div class="spec"><dt data-i18n="spec_req">Requires</dt><dd>Swift 6, Xcode 16, iOS 14+, macOS 13+</dd></div>
+          <div class="spec"><dt data-i18n="spec_license">License</dt><dd>Apache 2.0</dd></div>
+        </dl>
+      </section>
+
+      <section class="section" id="install">
         <div class="section-head">
           <h2 data-i18n="install_title">Install.</h2>
-          <p data-i18n="install_body">A plugin for Xcode or SwiftPM generates the tests on build. The CLI runs the same from a terminal or CI, and serves previews to AI agents.</p>
+          <p data-i18n-html="install_body">Pick one. Fine-tune with <code>.prefire.yml</code> later, the defaults work without it.</p>
         </div>
-        <div class="install-shell">
-          <div class="install-tabs" role="tablist" aria-label="Installation methods">
-            <button class="install-tab" id="tab-xcode" role="tab" aria-selected="true" aria-controls="panel-xcode"><strong>Xcode</strong><span>Build tool plugin</span></button>
-            <button class="install-tab" id="tab-swiftpm" role="tab" aria-selected="false" aria-controls="panel-swiftpm" tabindex="-1"><strong>SwiftPM</strong><span>Package plugins</span></button>
-            <button class="install-tab" id="tab-cli" role="tab" aria-selected="false" aria-controls="panel-cli" tabindex="-1"><strong>CLI</strong><span>Homebrew</span></button>
-            <button class="install-tab" id="tab-ai" role="tab" aria-selected="false" aria-controls="panel-ai" tabindex="-1"><strong data-i18n="tab_ai_title">AI agents</strong><span data-i18n="tab_ai">MCP server</span></button>
-          </div>
-          <div>
-            <section class="tab-panel" id="panel-xcode" role="tabpanel" aria-labelledby="tab-xcode">
-              <h3>Xcode build tool plugin</h3>
-              <p data-i18n="panel_xcode_body">Add the Prefire package to the project, then add the plugin to the target that needs it in Build Phases.</p>
-              <div class="code-block"><pre><span class="v">Tests target</span>   PrefireTestsPlugin
-<span class="v">App target</span>     PrefirePlaybookPlugin</pre></div>
-            </section>
-            <section class="tab-panel" id="panel-swiftpm" role="tabpanel" aria-labelledby="tab-swiftpm" hidden>
-              <h3>Swift Package plugins</h3>
-              <p data-i18n="panel_swiftpm_body">Add the dependency once and the plugin to the snapshot test target.</p>
-              <div class="code-block"><pre>.package(
-  url: "https://github.com/BarredEwe/Prefire.git",
-  from: "6.4.0"
+        <div class="install-grid">
+          <div class="install-card">
+            <h3>Swift Package Manager</h3>
+            <p data-i18n="inst_spm">Add the plugin to the snapshot test target.</p>
+<pre>.package(
+    url: <span class="st">"https://github.com/BarredEwe/Prefire.git"</span>,
+    from: <span class="st">"6.4.0"</span>
 )
 
-.plugin(name: "PrefireTestsPlugin", package: "Prefire")</pre></div>
-            </section>
-            <section class="tab-panel" id="panel-cli" role="tabpanel" aria-labelledby="tab-cli" hidden>
-              <h3>CLI</h3>
-              <p data-i18n="panel_cli_body">Install with Homebrew and run generation or rendering yourself.</p>
-              <div class="code-block"><pre>brew tap barredewe/prefire
-brew install prefire
+.testTarget(
+    plugins: [
+        .plugin(name: <span class="st">"PrefireTestsPlugin"</span>, package: <span class="st">"Prefire"</span>)
+    ]
+)</pre>
+          </div>
+          <div class="install-card">
+            <h3>Xcode</h3>
+            <p data-i18n="inst_xcode">Add the package, then the plugins in the target's Build Phases.</p>
+<pre><span class="cm">// test target</span>
+PrefireTestsPlugin
+<span class="cm">// app target, for Playbook</span>
+PrefirePlaybookPlugin</pre>
+          </div>
+          <div class="install-card">
+            <h3>Homebrew</h3>
+            <p data-i18n="inst_brew">The CLI: tests, Playbook, render and the MCP server.</p>
+<pre>brew install barredewe/prefire/prefire
 
 prefire tests
-prefire playbook
-prefire render "Sign in" --device iPad --color-scheme dark</pre></div>
-            </section>
-            <section class="tab-panel" id="panel-ai" role="tabpanel" aria-labelledby="tab-ai" hidden>
-              <h3 data-i18n="panel_ai_title">MCP server</h3>
-              <p data-i18n-html="panel_ai_body">Install the CLI, add <code>render_configuration</code> to <code>.prefire.yml</code>, then connect the server from the project folder.</p>
-              <div class="code-block"><pre><span class="c"># Claude Code</span>
-claude mcp add prefire -- prefire mcp
-<span class="c"># or the plugin with a skill</span>
-/plugin marketplace add BarredEwe/Prefire
-/plugin install prefire@prefire
-
-<span class="c"># Codex</span>
-codex mcp add prefire -- prefire mcp
-
-<span class="c"># VS Code</span>
-code --add-mcp '{"name":"prefire","command":"prefire","args":["mcp"]}'</pre></div>
-              <p class="panel-links"><a class="text-link" href="https://cursor.com/en/install-mcp?name=prefire&amp;config=eyJjb21tYW5kIjoicHJlZmlyZSIsImFyZ3MiOlsibWNwIl19" target="_blank" rel="noreferrer" data-i18n="panel_ai_cursor">Add to Cursor</a><a class="text-link" href="https://github.com/BarredEwe/Prefire/blob/main/Documentation/AI.md" target="_blank" rel="noreferrer" data-i18n="panel_ai_guide">AI guide</a></p>
-            </section>
+prefire render --list</pre>
+          </div>
+          <div class="install-card">
+            <h3>Mint</h3>
+            <p data-i18n="inst_mint">The same CLI through Mint. Beta.</p>
+<pre>mint install BarredEwe/Prefire</pre>
           </div>
         </div>
-        <details class="config-disclosure">
-          <summary data-i18n="config_summary">Custom paths, devices or templates</summary>
-          <div class="config-content">
-            <p data-i18n-html="config_body">Add <code>.prefire.yml</code> when the defaults stop fitting the project. <code>render_configuration</code> tells <code>prefire render</code> and the MCP server which scheme to build.</p>
-            <div class="code-block"><pre>test_configuration:
-  target: PrefireExample
-  simulator_device: "iPhone15,2"
-  required_os: 16
-
-playbook_configuration:
-  preview_default_enabled: true
-
-render_configuration:
-  scheme: PrefireExample
-  test_target: PrefireExampleTests</pre></div>
-          </div>
-        </details>
-      </div>
-    </section>
-
-    <section class="section" id="users">
-      <div class="container">
-        <div class="section-head">
-          <h2 data-i18n="users_title">Who uses it.</h2>
-          <p data-i18n="users_body">Open-source apps that test their previews with Prefire.</p>
-        </div>
-        <ul class="users-list">
-          <li><a href="https://github.com/Provenance-Emu/Provenance" target="_blank" rel="noreferrer"><strong>Provenance</strong><span>iOS, tvOS</span><span data-i18n="user_provenance">Multi-emulator frontend. Snapshot tests for its SwiftUI package.</span></a></li>
-          <li><a href="https://github.com/linagora/twake-on-matrix" target="_blank" rel="noreferrer"><strong>Twake on Matrix</strong><span>LINAGORA</span><span data-i18n="user_twake">Secure Matrix messenger. Previews in the iOS notification extension.</span></a></li>
-          <li><a href="https://github.com/alexey1312/reachy-mini-swift" target="_blank" rel="noreferrer"><strong>Reachy Mini Swift</strong><span>macOS, iOS</span><span data-i18n="user_reachy">Native client for the Reachy Mini robot. Snapshot tests from previews.</span></a></li>
-          <li><a href="https://github.com/broadwaylamb/Smithereen-iOS" target="_blank" rel="noreferrer"><strong>Smithereen</strong><span>iOS</span><span data-i18n="user_smithereen">iOS client for a federated social network.</span></a></li>
-        </ul>
-        <div class="users-note">
-          <span data-i18n-html="users_note">Works with <a class="text-link" href="https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests" target="_blank" rel="noreferrer">Screenshotbot</a>, and is the plugin example in the <a class="text-link" href="https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md" target="_blank" rel="noreferrer">XcodeGen docs</a>.</span>
-          <span data-i18n-html="users_cta">Using Prefire? <a class="text-link" href="https://github.com/BarredEwe/Prefire/edit/main/README.md" target="_blank" rel="noreferrer">Add your project</a></span>
-        </div>
-      </div>
-    </section>
-
-    <section class="closing">
-      <img class="closing-bg" src="brand/assets/prefire-ember-field.svg" alt="">
-      <div class="container closing-grid">
-        <div>
-          <h2 data-i18n="closing_title">Your previews are already written.</h2>
-          <p data-i18n="closing_body">Prefire is free and open source under Apache 2.0. A star on GitHub helps other iOS developers find it.</p>
-        </div>
-        <div class="closing-actions">
-          <a class="button button-primary" href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer" data-i18n="closing_primary">Star on GitHub</a>
-          <a class="text-link" href="https://github.com/BarredEwe/Prefire/releases/latest" target="_blank" rel="noreferrer" data-i18n="closing_secondary">Latest release</a>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
-  <footer class="footer">
-    <div class="container footer-inner">
-      <span data-i18n="footer_copy">Prefire, open source under Apache 2.0.</span>
-      <div class="footer-links"><a href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a><a href="/brand/" data-i18n="nav_brand">Brand kit</a><a href="/llms.txt">llms.txt</a></div>
+  <footer class="footer container frame">
+    <div class="footer-inner">
+      <div>
+        <p data-i18n="footer_copy">Prefire is open source under Apache 2.0.</p>
+        <p><span data-i18n="footer_thanks">Thanks for the support to</span> <a class="link" href="https://t.me/exploitex" target="_blank" rel="noreferrer">Эксплойт</a> <span data-i18n="footer_and">and</span> <a class="link" href="https://t.me/codecamp" target="_blank" rel="noreferrer">CodeCamp</a>.</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/BarredEwe/Prefire/releases" target="_blank" rel="noreferrer" data-i18n="footer_releases">Releases</a>
+        <a href="https://github.com/BarredEwe/Prefire/tree/main/Example" target="_blank" rel="noreferrer" data-i18n="footer_example">Example project</a>
+        <a href="/brand/" data-i18n="nav_brand">Brand kit</a>
+        <a href="/llms.txt">llms.txt</a>
+      </div>
     </div>
-    <p class="container footer-thanks"><span data-i18n="footer_thanks">Thanks for the support to</span> <a href="https://t.me/exploitex" target="_blank" rel="noreferrer">Эксплойт</a> <span data-i18n="footer_and">and</span> <a href="https://t.me/codecamp" target="_blank" rel="noreferrer">CodeCamp</a></p>
   </footer>
 
   <script>
     const translations={
       en:{
-        meta_title:"Prefire: SwiftUI previews as tests, Playbook and AI renders",
-        meta_description:"Prefire turns SwiftUI #Preview blocks into snapshot tests, an iOS Playbook and PNG renders that Claude Code, Cursor and Codex can see through an MCP server.",
-        skip:"Skip to content",nav_outputs:"What you get",nav_ai:"AI agents",nav_install:"Install",nav_users:"Users",nav_brand:"Brand kit",
-        hero_title:"Previews, ready to test.",
-        hero_body:"Prefire turns your <code>#Preview</code> blocks into snapshot tests, a Playbook and images your AI agent can see.",
-        hero_primary:"Install Prefire",hero_secondary:"Source on GitHub",
-        source_label:"One preview in your code",
-        source_1:"<strong>A snapshot test</strong> on every device you list",
-        source_2:"<strong>A Playbook screen</strong> in the loading state",
-        source_3:"<strong>A PNG</strong> for Claude Code, Cursor or Codex",
-        outputs_title:"One preview, three results.",
-        outputs_body:"You already describe UI states in previews. Prefire reuses them, so nothing has to be written twice.",
-        snap_title:"Snapshot tests",
-        snap_body:"Each preview becomes a test on the devices you pick. Prefire compares it with the reference image through swift-snapshot-testing, so a changed padding fails the build, not the release.",
-        snap_platforms:"iOS, tvOS and macOS",
-        playbook_body:"A catalog of every component and user story in the app, with their states and render times. Designers and QA open it on a phone instead of asking for a build of each screen.",
-        render_title:"Renders for AI agents",
-        render_body:"<code>prefire render</code> builds the app and saves previews as PNG, on any iPhone or iPad, light or dark. The MCP server hands the same images to your agent.",
-        ai_title:"Let your agent see SwiftUI.",
-        ai_body:"An agent that edits a view has no idea how it looks. With Prefire it renders the previews it changed and checks them before calling the task done.",
-        tool_list:"Previews of the project with their file and line.",
-        tool_render:"Builds the app and returns PNGs for the devices, color scheme and Dynamic Type asked for.",
-        tool_board:"An HTML board of the last render, grouped by user story.",
-        ai_why:"Xcode can render a preview too, but only while Xcode runs, one canvas at a time. Prefire renders many previews in one build, from a terminal or on CI.",
+        meta_title:"Prefire: snapshot tests from SwiftUI previews",
+        meta_description:"Prefire reads SwiftUI #Preview blocks and generates snapshot tests, an iOS Playbook and PNG renders for AI agents like Claude Code, Cursor and Codex.",
+        skip:"Skip to content",nav_how:"How it works",nav_ai:"AI agents",nav_details:"Details",nav_install:"Install",nav_docs:"Docs",nav_brand:"Brand kit",
+        release:"prefire render and an MCP server for AI agents",
+        hero_title:"Snapshot tests from your SwiftUI previews.",
+        hero_body:"Prefire reads <code>#Preview</code> and generates snapshot tests, a Playbook catalog and PNG renders your AI agent can look at. You don't write a line of test code.",
+        copy:"Copy",copied:"Copied",hero_spm:"or add the Swift package",
+        tab_renders:"Renders",tab_test:"Generated test",
+        note_renders:"Rendered by prefire render from the example project. Snapshot tests compare these images on every run.",
+        note_test:"Regenerated on every build. Nothing to commit or keep in sync.",
+        note_playbook:"The same previews as a browsable catalog inside your app, grouped by user story.",
+        render_title:"Any preview, any device, from the terminal.",
+        render_body:"Prefire builds the app once and writes every preview you ask for as a PNG with a JSON record. No Xcode window, works on CI.",
+        flag_device:"iPhone or iPad to render on, with its real safe area. Repeatable.",
+        flag_list:"Previews with their file and line, as JSON.",
+        flag_board:"An HTML board of the last render, grouped by user story.",
+        ai_title:"Your agent sees the UI it just changed.",
+        ai_body:"Claude Code, Cursor and Codex call Prefire over MCP, get the PNGs back in the conversation and check the layout before they call the task done.",
+        ag_claude_note:"Or install the plugin with a skill that tells Claude when to render: <code>/plugin marketplace add BarredEwe/Prefire</code>, then <code>/plugin install prefire@prefire</code>.",
+        ag_cursor_note:"<a class=\"link\" href=\"https://cursor.com/en/install-mcp?name=prefire&amp;config=eyJjb21tYW5kIjoicHJlZmlyZSIsImFyZ3MiOlsibWNwIl19\" target=\"_blank\" rel=\"noreferrer\">Add to Cursor</a> in one click, or paste the config above into MCP settings.",
+        tool_list:"Previews of the project with file and line.",
+        tool_render:"Builds and returns PNGs for the devices, color scheme and Dynamic Type asked for.",
+        tool_board:"HTML board of the last render.",
+        ai_setup:"Needs <code>render_configuration</code> in <code>.prefire.yml</code>. Setup in the <a class=\"link\" href=\"https://github.com/BarredEwe/Prefire/blob/main/Documentation/AI.md\" target=\"_blank\" rel=\"noreferrer\">AI guide</a>.",
+        ipad_note:"the form stretches edge to edge",
+        details_title:"Details.",
+        details_body:"Everything else is in the <a class=\"link\" href=\"https://github.com/BarredEwe/Prefire/blob/main/README.md\" target=\"_blank\" rel=\"noreferrer\">README</a> and the <a class=\"link\" href=\"https://github.com/BarredEwe/Prefire/blob/main/Documentation/Configuration.md\" target=\"_blank\" rel=\"noreferrer\">configuration reference</a>.",
+        spec_sources:"Previews",spec_param:"parameterized previews",spec_platforms:"Snapshot tests",spec_engine:"Comparison",spec_wait:"Async views",spec_flows:"Flows and states",
+        spec_cache:"Caching",spec_cache_v:"Parsed types and preview bodies, keyed by SHA-256",
+        spec_runs:"Runs in",spec_runs_v:"Xcode build phase, SwiftPM plugin, CLI, CI",
+        spec_templates:"Output",spec_templates_v:"Stencil templates you can replace",
+        spec_req:"Requires",spec_license:"License",
         install_title:"Install.",
-        install_body:"A plugin for Xcode or SwiftPM generates the tests on build. The CLI runs the same from a terminal or CI, and serves previews to AI agents.",
-        tab_ai_title:"AI agents",tab_ai:"MCP server",
-        panel_xcode_body:"Add the Prefire package to the project, then add the plugin to the target that needs it in Build Phases.",
-        panel_swiftpm_body:"Add the dependency once and the plugin to the snapshot test target.",
-        panel_cli_body:"Install with Homebrew and run generation or rendering yourself.",
-        panel_ai_title:"MCP server",
-        panel_ai_body:"Install the CLI, add <code>render_configuration</code> to <code>.prefire.yml</code>, then connect the server from the project folder.",
-        panel_ai_cursor:"Add to Cursor",panel_ai_guide:"AI guide",
-        config_summary:"Custom paths, devices or templates",
-        config_body:"Add <code>.prefire.yml</code> when the defaults stop fitting the project. <code>render_configuration</code> tells <code>prefire render</code> and the MCP server which scheme to build.",
-        users_title:"Who uses it.",
-        users_body:"Open-source apps that test their previews with Prefire.",
-        user_provenance:"Multi-emulator frontend. Snapshot tests for its SwiftUI package.",
-        user_twake:"Secure Matrix messenger. Previews in the iOS notification extension.",
-        user_reachy:"Native client for the Reachy Mini robot. Snapshot tests from previews.",
-        user_smithereen:"iOS client for a federated social network.",
-        users_note:"Works with <a class=\"text-link\" href=\"https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests\" target=\"_blank\" rel=\"noreferrer\">Screenshotbot</a>, and is the plugin example in the <a class=\"text-link\" href=\"https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md\" target=\"_blank\" rel=\"noreferrer\">XcodeGen docs</a>.",
-        users_cta:"Using Prefire? <a class=\"text-link\" href=\"https://github.com/BarredEwe/Prefire/edit/main/README.md\" target=\"_blank\" rel=\"noreferrer\">Add your project</a>",
-        closing_title:"Your previews are already written.",
-        closing_body:"Prefire is free and open source under Apache 2.0. A star on GitHub helps other iOS developers find it.",
-        closing_primary:"Star on GitHub",closing_secondary:"Latest release",
-        footer_copy:"Prefire, open source under Apache 2.0.",footer_thanks:"Thanks for the support to",footer_and:"and"
+        install_body:"Pick one. Fine-tune with <code>.prefire.yml</code> later, the defaults work without it.",
+        inst_spm:"Add the plugin to the snapshot test target.",
+        inst_xcode:"Add the package, then the plugins in the target's Build Phases.",
+        inst_brew:"The CLI: tests, Playbook, render and the MCP server.",
+        inst_mint:"The same CLI through Mint. Beta.",
+        footer_copy:"Prefire is open source under Apache 2.0.",footer_thanks:"Thanks for the support to",footer_and:"and",footer_releases:"Releases",footer_example:"Example project"
       },
       ru:{
-        meta_title:"Prefire: SwiftUI previews как тесты, Playbook и рендеры для AI",
-        meta_description:"Prefire превращает SwiftUI #Preview в snapshot-тесты, iOS Playbook и PNG-рендеры, которые Claude Code, Cursor и Codex видят через MCP-сервер.",
-        skip:"К содержимому",nav_outputs:"Что получите",nav_ai:"AI-агенты",nav_install:"Установка",nav_users:"Кто использует",nav_brand:"Бренд-кит",
-        hero_title:"Previews, готовые к тестам.",
-        hero_body:"Prefire делает из ваших <code>#Preview</code> snapshot-тесты, Playbook и картинки, которые видит AI-агент.",
-        hero_primary:"Установить Prefire",hero_secondary:"Исходники на GitHub",
-        source_label:"Один preview в вашем коде",
-        source_1:"<strong>Snapshot-тест</strong> на каждом устройстве из списка",
-        source_2:"<strong>Экран в Playbook</strong> в состоянии загрузки",
-        source_3:"<strong>PNG</strong> для Claude Code, Cursor или Codex",
-        outputs_title:"Один preview, три результата.",
-        outputs_body:"UI-состояния вы уже описываете в previews. Prefire берёт их оттуда, второй раз писать ничего не нужно.",
-        snap_title:"Snapshot-тесты",
-        snap_body:"Каждый preview становится тестом на выбранных устройствах. Prefire сравнивает его с эталоном через swift-snapshot-testing: съехавший отступ ломает сборку, а не релиз.",
-        snap_platforms:"iOS, tvOS и macOS",
-        playbook_body:"Каталог всех компонентов и user story приложения с состояниями и временем рендера. Дизайнеры и QA открывают его на телефоне и не просят сборку под каждый экран.",
-        render_title:"Рендеры для AI-агентов",
-        render_body:"<code>prefire render</code> собирает приложение и сохраняет previews в PNG на любом iPhone или iPad, в светлой или тёмной теме. MCP-сервер отдаёт эти же картинки агенту.",
-        ai_title:"Покажите агенту SwiftUI.",
-        ai_body:"Агент правит view и не знает, как оно выглядит. С Prefire он рендерит изменённые previews и смотрит на них, прежде чем сказать, что задача готова.",
+        meta_title:"Prefire: snapshot-тесты из SwiftUI previews",
+        meta_description:"Prefire читает SwiftUI #Preview и генерирует snapshot-тесты, iOS Playbook и PNG-рендеры для AI-агентов: Claude Code, Cursor, Codex.",
+        skip:"К содержимому",nav_how:"Как работает",nav_ai:"AI-агенты",nav_details:"Подробности",nav_install:"Установка",nav_docs:"Документация",nav_brand:"Бренд-кит",
+        release:"prefire render и MCP-сервер для AI-агентов",
+        hero_title:"Snapshot-тесты из ваших SwiftUI previews.",
+        hero_body:"Prefire читает <code>#Preview</code> и генерирует snapshot-тесты, каталог Playbook и PNG-рендеры, которые может посмотреть ваш AI-агент. Тестовый код писать не нужно.",
+        copy:"Копировать",copied:"Скопировано",hero_spm:"или подключите Swift-пакет",
+        tab_renders:"Рендеры",tab_test:"Сгенерированный тест",
+        note_renders:"Отрендерено через prefire render из example-проекта. Snapshot-тесты сравнивают эти картинки при каждом запуске.",
+        note_test:"Генерируется заново при каждой сборке. Коммитить и синхронизировать нечего.",
+        note_playbook:"Те же previews как каталог внутри приложения, сгруппированный по user story.",
+        render_title:"Любой preview на любом устройстве из терминала.",
+        render_body:"Prefire один раз собирает приложение и сохраняет нужные previews в PNG с JSON-описанием. Без окна Xcode, работает в CI.",
+        flag_device:"iPhone или iPad для рендера, с настоящей safe area. Можно несколько.",
+        flag_list:"Previews с файлом и строкой, в JSON.",
+        flag_board:"HTML-доска последнего рендера, по user story.",
+        ai_title:"Агент видит UI, который только что поменял.",
+        ai_body:"Claude Code, Cursor и Codex вызывают Prefire через MCP, получают PNG прямо в диалог и проверяют вёрстку, прежде чем сказать, что задача готова.",
+        ag_claude_note:"Или поставьте плагин со скиллом, который подсказывает Claude, когда рендерить: <code>/plugin marketplace add BarredEwe/Prefire</code>, затем <code>/plugin install prefire@prefire</code>.",
+        ag_cursor_note:"<a class=\"link\" href=\"https://cursor.com/en/install-mcp?name=prefire&amp;config=eyJjb21tYW5kIjoicHJlZmlyZSIsImFyZ3MiOlsibWNwIl19\" target=\"_blank\" rel=\"noreferrer\">Добавить в Cursor</a> в один клик или вставить конфиг выше в настройки MCP.",
         tool_list:"Previews проекта с файлом и строкой.",
-        tool_render:"Собирает приложение и возвращает PNG на нужных устройствах, в нужной теме и с нужным Dynamic Type.",
-        tool_board:"HTML-доска последнего рендера, сгруппированная по user story.",
-        ai_why:"Xcode тоже умеет рендерить preview, но только пока он запущен и по одному canvas за раз. Prefire рендерит много previews за одну сборку, из терминала или в CI.",
+        tool_render:"Собирает и возвращает PNG на нужных устройствах, в нужной теме и с нужным Dynamic Type.",
+        tool_board:"HTML-доска последнего рендера.",
+        ai_setup:"Нужен <code>render_configuration</code> в <code>.prefire.yml</code>. Настройка — в <a class=\"link\" href=\"https://github.com/BarredEwe/Prefire/blob/main/Documentation/AI.md\" target=\"_blank\" rel=\"noreferrer\">гайде по AI</a>.",
+        ipad_note:"форма растянута на всю ширину",
+        details_title:"Подробности.",
+        details_body:"Всё остальное — в <a class=\"link\" href=\"https://github.com/BarredEwe/Prefire/blob/main/README.md\" target=\"_blank\" rel=\"noreferrer\">README</a> и <a class=\"link\" href=\"https://github.com/BarredEwe/Prefire/blob/main/Documentation/Configuration.md\" target=\"_blank\" rel=\"noreferrer\">справочнике по конфигурации</a>.",
+        spec_sources:"Previews",spec_param:"параметризованные previews",spec_platforms:"Snapshot-тесты",spec_engine:"Сравнение",spec_wait:"Асинхронные view",spec_flows:"Флоу и состояния",
+        spec_cache:"Кэш",spec_cache_v:"Разобранные типы и тела previews, по SHA-256",
+        spec_runs:"Где работает",spec_runs_v:"Build phase в Xcode, SwiftPM-плагин, CLI, CI",
+        spec_templates:"Генерация",spec_templates_v:"Stencil-шаблоны, можно заменить своими",
+        spec_req:"Требования",spec_license:"Лицензия",
         install_title:"Установка.",
-        install_body:"Plugin для Xcode или SwiftPM генерирует тесты при сборке. CLI делает то же из терминала или CI и отдаёт previews AI-агентам.",
-        tab_ai_title:"AI-агенты",tab_ai:"MCP-сервер",
-        panel_xcode_body:"Добавьте пакет Prefire в проект и подключите plugin к нужному target в Build Phases.",
-        panel_swiftpm_body:"Добавьте зависимость один раз, а plugin подключите к target со snapshot-тестами.",
-        panel_cli_body:"Установите через Homebrew и запускайте генерацию или рендер сами.",
-        panel_ai_title:"MCP-сервер",
-        panel_ai_body:"Установите CLI, добавьте <code>render_configuration</code> в <code>.prefire.yml</code> и подключите сервер из папки проекта.",
-        panel_ai_cursor:"Добавить в Cursor",panel_ai_guide:"Гайд по AI",
-        config_summary:"Свои пути, устройства или шаблоны",
-        config_body:"Добавьте <code>.prefire.yml</code>, когда дефолты перестанут подходить проекту. <code>render_configuration</code> говорит <code>prefire render</code> и MCP-серверу, какую схему собирать.",
-        users_title:"Кто использует.",
-        users_body:"Open-source приложения, которые тестируют previews через Prefire.",
-        user_provenance:"Мульти-эмулятор. Snapshot-тесты для SwiftUI-пакета.",
-        user_twake:"Защищённый Matrix-мессенджер. Previews в iOS notification extension.",
-        user_reachy:"Нативный клиент для робота Reachy Mini. Snapshot-тесты из previews.",
-        user_smithereen:"iOS-клиент федеративной соцсети.",
-        users_note:"Работает со <a class=\"text-link\" href=\"https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests\" target=\"_blank\" rel=\"noreferrer\">Screenshotbot</a>, а в <a class=\"text-link\" href=\"https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md\" target=\"_blank\" rel=\"noreferrer\">документации XcodeGen</a> Prefire — пример build tool plugin.",
-        users_cta:"Используете Prefire? <a class=\"text-link\" href=\"https://github.com/BarredEwe/Prefire/edit/main/README.md\" target=\"_blank\" rel=\"noreferrer\">Добавьте свой проект</a>",
-        closing_title:"Previews у вас уже написаны.",
-        closing_body:"Prefire бесплатный, с открытым кодом под Apache 2.0. Звезда на GitHub помогает другим iOS-разработчикам его найти.",
-        closing_primary:"Поставить звезду",closing_secondary:"Последний релиз",
-        footer_copy:"Prefire, открытый код под Apache 2.0.",footer_thanks:"При информационной поддержке",footer_and:"и"
+        install_body:"Выберите один способ. <code>.prefire.yml</code> можно добавить потом, без него работают дефолты.",
+        inst_spm:"Подключите плагин к target со snapshot-тестами.",
+        inst_xcode:"Добавьте пакет, затем плагины в Build Phases нужного target.",
+        inst_brew:"CLI: тесты, Playbook, render и MCP-сервер.",
+        inst_mint:"Тот же CLI через Mint. Бета.",
+        footer_copy:"Prefire — open source под Apache 2.0.",footer_thanks:"При информационной поддержке",footer_and:"и",footer_releases:"Релизы",footer_example:"Example-проект"
       }
     };
-    const localeStorageKey="prefire-language",supportedLocales=["en","ru"],titleElement=document.querySelector("title"),descriptionMeta=document.querySelector('meta[name="description"]');
-    function readStoredLocale(){try{return window.localStorage.getItem(localeStorageKey)}catch{return null}}
-    function storeLocale(locale){try{window.localStorage.setItem(localeStorageKey,locale)}catch{}}
-    function detectLocale(){const stored=readStoredLocale();if(supportedLocales.includes(stored))return stored;return(navigator.language||"en").toLowerCase().startsWith("ru")?"ru":"en"}
-    function applyTranslations(locale){const dictionary=translations[locale];if(!dictionary)return;document.documentElement.lang=locale;titleElement.textContent=dictionary.meta_title;descriptionMeta.setAttribute("content",dictionary.meta_description);document.querySelectorAll("[data-i18n]").forEach(node=>{const value=dictionary[node.dataset.i18n];if(value)node.textContent=value});document.querySelectorAll("[data-i18n-html]").forEach(node=>{const value=dictionary[node.dataset.i18nHtml];if(value)node.innerHTML=value});document.querySelectorAll("[data-language-button]").forEach(button=>{const active=button.dataset.languageButton===locale;button.classList.toggle("is-active",active);button.setAttribute("aria-pressed",String(active))});storeLocale(locale)}
-    document.querySelectorAll("[data-language-button]").forEach(button=>button.addEventListener("click",()=>applyTranslations(button.dataset.languageButton)));applyTranslations(detectLocale());
-    const tabs=[...document.querySelectorAll('[role="tab"]')];function activateTab(tab){tabs.forEach(item=>{const active=item===tab;item.setAttribute("aria-selected",String(active));item.tabIndex=active?0:-1;document.getElementById(item.getAttribute("aria-controls")).hidden=!active})}tabs.forEach((tab,index)=>{tab.addEventListener("click",()=>activateTab(tab));tab.addEventListener("keydown",event=>{if(!["ArrowLeft","ArrowRight"].includes(event.key))return;event.preventDefault();const next=event.key==="ArrowRight"?(index+1)%tabs.length:(index-1+tabs.length)%tabs.length;activateTab(tabs[next]);tabs[next].focus()})});
-    document.querySelectorAll('.mobile-menu a[href^="#"]').forEach(link=>link.addEventListener("click",()=>link.closest("details").removeAttribute("open")));
+    const localeKey="prefire-language",locales=["en","ru"];let currentLocale="en";
+    function readLocale(){try{return localStorage.getItem(localeKey)}catch{return null}}
+    function saveLocale(l){try{localStorage.setItem(localeKey,l)}catch{}}
+    function detectLocale(){const s=readLocale();if(locales.includes(s))return s;return(navigator.language||"en").toLowerCase().startsWith("ru")?"ru":"en"}
+    function applyLocale(locale){const d=translations[locale];if(!d)return;currentLocale=locale;document.documentElement.lang=locale;document.title=d.meta_title;document.querySelector('meta[name="description"]').setAttribute("content",d.meta_description);document.querySelectorAll("[data-i18n]").forEach(n=>{const v=d[n.dataset.i18n];if(v)n.textContent=v});document.querySelectorAll("[data-i18n-html]").forEach(n=>{const v=d[n.dataset.i18nHtml];if(v)n.innerHTML=v});document.querySelectorAll("[data-language-button]").forEach(b=>{const a=b.dataset.languageButton===locale;b.classList.toggle("is-active",a);b.setAttribute("aria-pressed",String(a))});saveLocale(locale)}
+    document.querySelectorAll("[data-language-button]").forEach(b=>b.addEventListener("click",()=>applyLocale(b.dataset.languageButton)));applyLocale(detectLocale());
+
+    function setupTabs(list){const tabs=[...list.querySelectorAll('[role="tab"]')];function activate(tab){tabs.forEach(t=>{const a=t===tab;t.setAttribute("aria-selected",String(a));t.tabIndex=a?0:-1;document.getElementById(t.getAttribute("aria-controls")).hidden=!a})}tabs.forEach((tab,i)=>{tab.addEventListener("click",()=>activate(tab));tab.addEventListener("keydown",e=>{if(!["ArrowLeft","ArrowRight"].includes(e.key))return;e.preventDefault();const n=tabs[(i+(e.key==="ArrowRight"?1:tabs.length-1))%tabs.length];activate(n);n.focus()})})}
+    document.querySelectorAll('[role="tablist"]').forEach(setupTabs);
+
+    document.querySelectorAll("[data-copy]").forEach(button=>button.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(button.dataset.copy);button.textContent=translations[currentLocale].copied;button.classList.add("is-copied");setTimeout(()=>{button.textContent=translations[currentLocale].copy;button.classList.remove("is-copied")},1600)}catch{}}));
+
+    fetch("https://api.github.com/repos/BarredEwe/Prefire").then(r=>r.ok?r.json():null).then(data=>{if(!data||typeof data.stargazers_count!=="number")return;const n=data.stargazers_count;document.querySelectorAll("[data-stars]").forEach(el=>el.textContent=n>=1000?(n/1000).toFixed(1).replace(/\.0$/,"")+"k":String(n))}).catch(()=>{});
   </script>
 </body>
 </html>
