@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prefire | Snapshot tests from SwiftUI previews</title>
-  <meta name="description" content="Generate snapshot tests and an iOS Playbook from the SwiftUI previews already in your project.">
+  <title>Prefire | SwiftUI previews for tests, Playbook and AI agents</title>
+  <meta name="description" content="Snapshot tests, an iOS Playbook and AI-ready renders from the SwiftUI previews already in your project. Claude Code, Cursor and Codex see your UI through an MCP server.">
   <meta name="theme-color" content="#17181c">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Prefire | Snapshot tests from SwiftUI previews">
-  <meta property="og:description" content="Generate snapshot tests and an iOS Playbook from the SwiftUI previews already in your project.">
+  <meta property="og:title" content="Prefire | SwiftUI previews for tests, Playbook and AI agents">
+  <meta property="og:description" content="Snapshot tests, an iOS Playbook and AI-ready renders from the SwiftUI previews already in your project. Claude Code, Cursor and Codex see your UI through an MCP server.">
+  <meta property="og:image" content="https://prefire.ru/assets/prefire-logo.png">
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
   <meta property="og:url" content="https://prefire.ru/">
   <link rel="canonical" href="https://prefire.ru/">
   <link rel="icon" type="image/png" href="assets/prefire-icon.png">
@@ -483,6 +485,8 @@
     }
     .tab-panel[hidden] { display:none; }
     .tab-panel p { max-width:620px; margin:13px 0 28px; color:var(--muted); line-height:1.58; }
+    .tab-panel .panel-links { margin:20px 0 0; }
+    .panel-links a { color:var(--ink); font-weight:720; text-decoration:underline; text-decoration-color:var(--ember); text-underline-offset:3px; }
     .code-block {
       max-width:100%;
       padding:24px;
@@ -597,11 +601,102 @@
     .footer-thanks a { color:rgba(255,255,255,.78); text-decoration:underline; text-decoration-color:rgba(255,255,255,.28); text-underline-offset:3px; }
     .footer-thanks a:hover,.footer-thanks a:focus-visible { color:#fff; text-decoration-color:var(--ember); }
 
+    .ai-stage {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      overflow:hidden;
+      border-radius:var(--radius-xl);
+      color:#fff;
+      background:var(--ink);
+      box-shadow:var(--shadow);
+    }
+    .ai-stage>* { min-width:0; }
+    .agent-session {
+      display:grid;
+      align-content:start;
+      gap:18px;
+      padding:clamp(28px,4vw,48px);
+    }
+    .agent-line { display:grid; gap:8px; font:600 .84rem/1.6 "SFMono-Regular",Menlo,monospace; }
+    .agent-line>span {
+      color:rgba(255,255,255,.45);
+      font-size:.66rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .agent-prompt { color:#fff; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif; font-size:1.02rem; font-weight:600; line-height:1.5; }
+    .agent-call {
+      padding:16px 18px;
+      overflow:auto;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      color:rgba(255,255,255,.82);
+      background:rgba(255,255,255,.04);
+      white-space:pre;
+    }
+    .agent-result { display:flex; align-items:center; gap:9px; color:#9ae2b9; }
+    .agent-result::before { content:""; width:7px; height:7px; border-radius:50%; background:#62d694; box-shadow:0 0 13px rgba(98,214,148,.6); }
+    .agent-reply { color:rgba(255,255,255,.66); font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif; font-size:.98rem; line-height:1.55; }
+    .render-visual {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:22px;
+      padding:40px 32px;
+      background:
+        linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px),
+        radial-gradient(circle at 30% 80%,rgba(255,106,53,.3),transparent 40%),
+        var(--plum);
+      background-size:56px 56px,56px 56px,auto,auto;
+    }
+    .render-shot { display:grid; gap:12px; justify-items:center; }
+    .render-shot figcaption { color:rgba(255,255,255,.55); font:650 .66rem/1.3 "SFMono-Regular",Menlo,monospace; text-align:center; }
+    .device {
+      position:relative;
+      display:grid;
+      align-content:center;
+      gap:9px;
+      padding:22px 16px;
+      border:5px solid #26272d;
+      background:#0d0e11;
+      box-shadow:0 26px 60px rgba(0,0,0,.4);
+    }
+    .device-phone { width:150px; height:300px; border-radius:30px; }
+    .device-pad { width:230px; height:300px; border-radius:20px; padding-inline:44px; }
+    .device-phone::before { content:""; position:absolute; top:9px; left:50%; width:44px; height:12px; border-radius:8px; background:#26272d; transform:translateX(-50%); }
+    .ui-title { margin-bottom:8px; height:12px; width:70%; border-radius:6px; background:rgba(255,255,255,.9); }
+    .ui-sub { height:7px; width:90%; margin-bottom:10px; border-radius:4px; background:rgba(255,255,255,.28); }
+    .ui-field { height:28px; border:1px solid rgba(255,255,255,.14); border-radius:8px; background:rgba(255,255,255,.06); }
+    .ui-button { height:32px; margin-top:6px; border-radius:9px; background:linear-gradient(135deg,var(--gold),var(--ember)); }
+    .ai-grid {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      margin-top:22px;
+      border-top:1px solid var(--line);
+    }
+    .ai-tool { display:grid; align-content:start; gap:10px; padding:28px 26px 28px 0; }
+    .ai-tool+.ai-tool { padding-left:26px; border-left:1px solid var(--line); }
+    .ai-tool code { color:var(--ember); font-weight:700; }
+    .ai-tool p { color:var(--muted); line-height:1.55; }
+    .ai-why {
+      display:grid;
+      grid-template-columns:minmax(0,.7fr) minmax(0,1fr);
+      gap:30px;
+      padding:26px 0 0;
+      border-top:1px solid var(--line);
+    }
+    .ai-why h3 { font-size:1.2rem; }
+    .ai-why ul { display:grid; gap:9px; margin:0; padding:0; list-style:none; color:var(--muted); line-height:1.5; }
+    .ai-why li { display:flex; gap:10px; }
+    .ai-why li::before { content:"→"; color:var(--ember); }
+
     @media (max-width:1040px) {
       .hero-inner { grid-template-columns:1fr; gap:56px; }
       .proof-card { max-width:680px; }
       .result-stage { grid-template-columns:1fr; }
       .result-copy { min-height:380px; }
+      .ai-stage { grid-template-columns:1fr; }
     }
     @media (max-width:820px) {
       .brand-kit-link,.github-link { display:none; }
@@ -615,7 +710,10 @@
       .users-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .user-card:nth-child(odd) { padding-left:0; border-left:0; }
       .user-card:nth-child(n+3) { border-top:1px solid var(--line); }
-      .install-tabs { grid-template-columns:repeat(3,1fr); border-top:0; gap:8px; }
+      .install-tabs { grid-template-columns:repeat(2,1fr); border-top:0; gap:8px; }
+      .ai-grid,.ai-why { grid-template-columns:1fr; }
+      .ai-tool,.ai-tool+.ai-tool { padding:22px 0; border-left:0; }
+      .ai-tool+.ai-tool { border-top:1px solid var(--line); }
       .install-tab { padding:15px; border:1px solid var(--line); border-radius:14px; }
       .install-tab span { display:none; }
       .install-tab[aria-selected="true"] { color:#fff; border-color:var(--ink); background:var(--ink); }
@@ -644,6 +742,10 @@
       .result-visual { min-height:650px; grid-template-columns:1fr; padding:24px; }
       .snapshot-proof { align-self:end; }
       .playbook-proof { width:min(100%,250px); }
+      .render-visual { gap:12px; padding:28px 12px; }
+      .device-phone { width:104px; height:210px; padding:18px 10px; border-radius:24px; }
+      .device-pad { width:150px; height:210px; padding-inline:22px; }
+      .render-shot figcaption { max-width:150px; }
       .install-tabs { grid-template-columns:1fr; }
       .install-tab span { display:block; }
       .tab-panel { min-height:0; padding:22px; }
@@ -678,6 +780,7 @@
             <summary aria-label="Open navigation">☰</summary>
             <nav aria-label="Mobile navigation">
               <a href="#result" data-i18n="nav_result">Result</a>
+              <a href="#ai" data-i18n="nav_ai">AI agents</a>
               <a href="#workflow" data-i18n="nav_workflow">How it works</a>
               <a href="#install" data-i18n="nav_install">Install</a>
               <a href="#users" data-i18n="nav_users">Users</a>
@@ -696,11 +799,12 @@
       <img class="hero-bg" src="brand/assets/prefire-ember-field.svg" alt="">
       <div class="container hero-inner">
         <div class="hero-copy">
-          <span class="eyebrow" data-i18n="hero_eyebrow">SwiftUI previews → snapshot tests</span>
+          <span class="eyebrow" data-i18n="hero_eyebrow">SwiftUI previews → tests · Playbook · AI</span>
           <h1 data-i18n="hero_title">Previews, ready to test.</h1>
-          <p data-i18n-html="hero_body">Prefire reads <code>#Preview</code> and generates snapshot tests plus an iOS Playbook. No second set of UI states.</p>
+          <p data-i18n-html="hero_body">Prefire reads <code>#Preview</code> and turns it into snapshot tests, an iOS Playbook and PNG renders your AI agent can see. No second set of UI states.</p>
           <div class="hero-actions">
             <a class="button button-primary" href="#install" data-i18n="hero_primary">Install Prefire</a>
+            <a class="button-link" href="#ai" data-i18n="hero_ai">For AI agents</a>
             <a class="button-link" href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer" data-i18n="hero_secondary">View on GitHub</a>
           </div>
         </div>
@@ -714,8 +818,8 @@
     .<span class="token-method">previewState</span>(.<span class="token-value">loading</span>)
 }</pre>
           <div class="proof-result">
-            <strong>Snapshot tests + Playbook</strong>
-            <span class="proof-platforms">iOS · tvOS · macOS<br>Playbook · iOS</span>
+            <strong>Tests + Playbook + AI</strong>
+            <span class="proof-platforms">iOS · tvOS · macOS<br>MCP · Claude Code · Cursor · Codex</span>
           </div>
         </aside>
       </div>
@@ -726,20 +830,21 @@
         <div class="section-head">
           <div class="section-title">
             <span class="eyebrow" data-i18n="result_label">One source</span>
-            <h2 data-i18n="result_title">One preview. Two outputs.</h2>
+            <h2 data-i18n="result_title">One preview. Three outputs.</h2>
           </div>
-          <p data-i18n="result_body">The states already in your project become tests and a visual catalog.</p>
+          <p data-i18n="result_body">The states already in your project become tests, a visual catalog and images an agent can read.</p>
         </div>
         <div class="result-stage">
           <div class="result-copy">
             <div class="result-copy-top">
-              <span class="result-index">01 — 02</span>
-              <h3>Tests and Playbook.</h3>
-              <p data-i18n="result_stage_body">One set of preview states becomes repeatable checks and a browsable interface catalog.</p>
+              <span class="result-index">01 — 03</span>
+              <h3 data-i18n="result_stage_title">Tests, Playbook, renders.</h3>
+              <p data-i18n="result_stage_body">One set of preview states becomes repeatable checks, a browsable interface catalog and PNG renders for agents and CI.</p>
             </div>
             <div class="result-specs">
               <div class="result-spec"><strong>Snapshot tests</strong><span>iOS · tvOS · macOS</span></div>
               <div class="result-spec"><strong>Playbook</strong><span>iOS</span></div>
+              <div class="result-spec"><strong>AI renders</strong><span>prefire render · prefire mcp</span></div>
             </div>
           </div>
           <div class="result-visual">
@@ -751,6 +856,54 @@
             </div>
             <div class="playbook-proof"><img src="assets/prefire-playbook.gif" alt="Prefire Playbook"></div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ai">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="eyebrow" data-i18n="ai_label">New in 6.3 · AI agents</span>
+            <h2 data-i18n="ai_title">Let your agent see SwiftUI.</h2>
+          </div>
+          <p data-i18n="ai_body">An agent that edits a view can't see the result. Prefire builds the app and hands the previews back as images, on any iPhone or iPad, light or dark, without Xcode Previews.</p>
+        </div>
+        <div class="ai-stage">
+          <div class="agent-session">
+            <div class="agent-line"><span data-i18n="ai_you">You</span><p class="agent-prompt" data-i18n="ai_prompt">Make the sign-in button bigger and check it in dark mode on iPhone and iPad.</p></div>
+            <div class="agent-line"><span>Claude Code · prefire mcp</span><div class="agent-call"><span class="token-method">render_previews</span>(
+  previews: [<span class="token-value">"Sign in"</span>],
+  devices: [<span class="token-value">"iPhone 16 Pro"</span>, <span class="token-value">"iPad"</span>],
+  color_scheme: <span class="token-value">"dark"</span>
+)</div></div>
+            <div class="agent-line"><span class="agent-result" data-i18n="ai_result">2 images rendered</span></div>
+            <p class="agent-reply" data-i18n="ai_reply">The button fits on both devices. On iPad the form stretches too wide, so I capped it at 420 pt and rendered again.</p>
+          </div>
+          <div class="render-visual" aria-label="Rendered previews">
+            <figure class="render-shot">
+              <div class="device device-phone" aria-hidden="true"><div class="ui-title"></div><div class="ui-sub"></div><div class="ui-field"></div><div class="ui-field"></div><div class="ui-button"></div></div>
+              <figcaption>Sign in · iPhone 16 Pro · dark</figcaption>
+            </figure>
+            <figure class="render-shot">
+              <div class="device device-pad" aria-hidden="true"><div class="ui-title"></div><div class="ui-sub"></div><div class="ui-field"></div><div class="ui-field"></div><div class="ui-button"></div></div>
+              <figcaption>Sign in · iPad · dark</figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="ai-grid">
+          <div class="ai-tool"><code>list_previews</code><p data-i18n="ai_tool_list">Every preview of the project with its file and line, so the agent knows what it can render.</p></div>
+          <div class="ai-tool"><code>render_previews</code><p data-i18n="ai_tool_render">Builds the app and returns PNGs, on the devices, color scheme and Dynamic Type asked for.</p></div>
+          <div class="ai-tool"><code>build_board</code><p data-i18n="ai_tool_board">An HTML board of the last render, grouped by user story, to review a whole flow at once.</p></div>
+        </div>
+        <div class="ai-why">
+          <h3 data-i18n="ai_why_title">Why not Xcode's own preview rendering?</h3>
+          <ul>
+            <li data-i18n="ai_why_1">No running Xcode, works from a terminal and in CI.</li>
+            <li data-i18n="ai_why_2">Many previews in one build, not one canvas at a time.</li>
+            <li data-i18n="ai_why_3">Real devices with their safe area, dark mode and Dynamic Type on request.</li>
+            <li data-i18n="ai_why_4">Built anew every time, so a stale canvas never shows old code.</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -767,7 +920,7 @@
         <div class="steps">
           <article class="step"><span class="step-number">01 / PREVIEW</span><h3 data-i18n="step_1_title">Describe the state</h3><p data-i18n-html="step_1_body">Use <code>#Preview</code>, <code>@Previewable</code> or <code>PreviewProvider</code>.</p></article>
           <article class="step"><span class="step-number">02 / GENERATE</span><h3 data-i18n="step_2_title">Build the target</h3><p data-i18n="step_2_body">The plugin finds previews and generates Swift output.</p></article>
-          <article class="step"><span class="step-number">03 / VERIFY</span><h3 data-i18n="step_3_title">Test or browse</h3><p data-i18n="step_3_body">Run snapshots or open Playbook to inspect the same states.</p></article>
+          <article class="step"><span class="step-number">03 / VERIFY</span><h3 data-i18n="step_3_title">Test, browse or render</h3><p data-i18n="step_3_body">Run snapshots, open Playbook or let an agent render the same states.</p></article>
         </div>
         <img class="confidence-path" src="brand/assets/prefire-grid.svg" alt="Preview to confidence path">
       </div>
@@ -780,13 +933,14 @@
             <span class="eyebrow" data-i18n="install_label">Install</span>
             <h2 data-i18n="install_title">Choose how Prefire runs.</h2>
           </div>
-          <p data-i18n="install_body">Use the plugin in Xcode or SwiftPM. Use the CLI for explicit local and CI runs.</p>
+          <p data-i18n="install_body">Use the plugin in Xcode or SwiftPM. Use the CLI for local and CI runs, and the MCP server for AI agents.</p>
         </div>
         <div class="install-shell">
           <div class="install-tabs" role="tablist" aria-label="Installation methods">
             <button class="install-tab" id="tab-xcode" role="tab" aria-selected="true" aria-controls="panel-xcode"><strong>Xcode</strong><span data-i18n="tab_xcode">Attach the build tool plugin.</span></button>
             <button class="install-tab" id="tab-swiftpm" role="tab" aria-selected="false" aria-controls="panel-swiftpm" tabindex="-1"><strong>SwiftPM</strong><span data-i18n="tab_swiftpm">Add plugins to package targets.</span></button>
             <button class="install-tab" id="tab-cli" role="tab" aria-selected="false" aria-controls="panel-cli" tabindex="-1"><strong>CLI</strong><span data-i18n="tab_cli">Run generation directly.</span></button>
+            <button class="install-tab" id="tab-ai" role="tab" aria-selected="false" aria-controls="panel-ai" tabindex="-1"><strong>AI agents</strong><span data-i18n="tab_ai">Connect the MCP server.</span></button>
           </div>
           <div>
             <section class="tab-panel" id="panel-xcode" role="tabpanel" aria-labelledby="tab-xcode">
@@ -800,7 +954,7 @@
               <p data-i18n="panel_swiftpm_body">Add Prefire once, then attach plugins to the targets that should receive generated output.</p>
               <div class="code-block"><pre>.package(
   url: "https://github.com/BarredEwe/Prefire.git",
-  from: "5.8.1"
+  from: "6.4.0"
 )
 
 .plugin(name: "PrefireTestsPlugin", package: "Prefire")</pre></div>
@@ -812,7 +966,24 @@
 brew install prefire
 
 prefire tests
-prefire playbook</pre></div>
+prefire playbook
+prefire render "Sign in" --device iPad --color-scheme dark</pre></div>
+            </section>
+            <section class="tab-panel" id="panel-ai" role="tabpanel" aria-labelledby="tab-ai" hidden>
+              <h3 data-i18n="panel_ai_title">MCP server</h3>
+              <p data-i18n-html="panel_ai_body">Install the CLI, add <code>render_configuration</code> to <code>.prefire.yml</code>, then connect the server from the project folder.</p>
+              <div class="code-block"><pre><span class="token-value"># Claude Code</span>
+claude mcp add prefire -- prefire mcp
+<span class="token-value"># or the plugin, with a skill</span>
+/plugin marketplace add BarredEwe/Prefire
+/plugin install prefire@prefire
+
+<span class="token-value"># Codex</span>
+codex mcp add prefire -- prefire mcp
+
+<span class="token-value"># VS Code</span>
+code --add-mcp '{"name":"prefire","command":"prefire","args":["mcp"]}'</pre></div>
+              <p class="panel-links"><a href="https://cursor.com/en/install-mcp?name=prefire&amp;config=eyJjb21tYW5kIjoicHJlZmlyZSIsImFyZ3MiOlsibWNwIl19" target="_blank" rel="noreferrer" data-i18n="panel_ai_cursor">Add to Cursor</a> · <a href="https://github.com/BarredEwe/Prefire/blob/main/Documentation/AI.md" target="_blank" rel="noreferrer" data-i18n="panel_ai_guide">AI guide</a></p>
             </section>
           </div>
         </div>
@@ -826,7 +997,11 @@ prefire playbook</pre></div>
   required_os: 16
 
 playbook_configuration:
-  preview_default_enabled: true</pre></div>
+  preview_default_enabled: true
+
+render_configuration:
+  scheme: PrefireExample
+  test_target: PrefireExampleTests</pre></div>
           </div>
         </details>
       </div>
@@ -859,7 +1034,7 @@ playbook_configuration:
         <div>
           <span class="eyebrow" data-i18n="closing_label">Open source</span>
           <h2 data-i18n="closing_title">Your previews are already the fixture.</h2>
-          <p data-i18n="closing_body">Let Prefire turn them into something the whole team can verify.</p>
+          <p data-i18n="closing_body">Let Prefire turn them into something the whole team, and its agents, can verify.</p>
         </div>
         <div class="closing-actions">
           <a class="button button-primary" href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer" data-i18n="closing_primary">Open GitHub</a>
@@ -872,15 +1047,15 @@ playbook_configuration:
   <footer class="footer">
     <div class="container footer-inner">
       <span data-i18n="footer_copy">Prefire · SwiftUI previews to confidence.</span>
-      <div class="footer-links"><a href="/brand/" data-i18n="nav_brand">Brand kit</a><a href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a></div>
+      <div class="footer-links"><a href="/llms.txt">llms.txt</a><a href="/brand/" data-i18n="nav_brand">Brand kit</a><a href="https://github.com/BarredEwe/Prefire" target="_blank" rel="noreferrer">GitHub</a></div>
     </div>
     <p class="container footer-thanks"><span data-i18n="footer_thanks">Thanks for the support to</span> <a href="https://t.me/exploitex" target="_blank" rel="noreferrer">Эксплойт</a> &amp; <a href="https://t.me/codecamp" target="_blank" rel="noreferrer">CodeCamp</a></p>
   </footer>
 
   <script>
     const translations={
-      en:{meta_title:"Prefire | Snapshot tests from SwiftUI previews",meta_description:"Generate snapshot tests and an iOS Playbook from the SwiftUI previews already in your project.",brand_subtitle:"Previews to confidence",nav_result:"Result",nav_workflow:"How it works",nav_install:"Install",nav_brand:"Brand kit",hero_eyebrow:"SwiftUI previews → snapshot tests",hero_title:"Previews, ready to test.",hero_body:"Prefire reads <code>#Preview</code> and generates snapshot tests plus an iOS Playbook. No second set of UI states.",hero_primary:"Install Prefire",hero_secondary:"View on GitHub",flow_source:"Your preview",flow_ready:"ready",result_label:"One source",result_title:"One preview. Two outputs.",result_body:"The states already in your project become tests and a visual catalog.",result_stage_body:"One set of preview states becomes repeatable checks and a browsable interface catalog.",workflow_label:"Three steps",workflow_title:"Keep writing previews.",workflow_body:"Prefire handles the path from source code to generated output.",step_1_title:"Describe the state",step_1_body:"Use <code>#Preview</code>, <code>@Previewable</code> or <code>PreviewProvider</code>.",step_2_title:"Build the target",step_2_body:"The plugin finds previews and generates Swift output.",step_3_title:"Test or browse",step_3_body:"Run snapshots or open Playbook to inspect the same states.",install_label:"Install",install_title:"Choose how Prefire runs.",install_body:"Use the plugin in Xcode or SwiftPM. Use the CLI for explicit local and CI runs.",tab_xcode:"Attach the build tool plugin.",tab_swiftpm:"Add plugins to package targets.",tab_cli:"Run generation directly.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Add Prefire as a package dependency, then attach the test or Playbook plugin to the matching target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Add Prefire once, then attach plugins to the targets that should receive generated output.",panel_cli_title:"CLI",panel_cli_body:"Install with Homebrew, then generate tests or Playbook models explicitly.",config_summary:"Need custom paths, devices or templates?",config_body:"Add <code>.prefire.yml</code> when the defaults no longer match your project. Project-specific control stays in the config.",closing_label:"Open source",closing_title:"Your previews are already the fixture.",closing_body:"Let Prefire turn them into something the whole team can verify.",closing_primary:"Open GitHub",closing_secondary:"Latest release",footer_copy:"Prefire · SwiftUI previews to confidence.",footer_thanks:"Thanks for the information support to",users_label:"In production",users_title:"Already on the job.",users_body:"Open-source apps that turn their previews into tests with Prefire.",user_provenance:"Multi-emulator frontend. Snapshot tests for its SwiftUI package.",user_twake:"Secure Matrix messenger. Previews in the iOS notification extension.",user_reachy:"Native client for the Reachy Mini robot. Preview-driven snapshot tests.",user_smithereen:"iOS client for a federated social network.",users_note:"Integrates with <a href=\"https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests\" target=\"_blank\" rel=\"noreferrer\">Screenshotbot</a> and is the plugin example in the <a href=\"https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md\" target=\"_blank\" rel=\"noreferrer\">XcodeGen docs</a>.",users_cta:"Using Prefire? <a href=\"https://github.com/BarredEwe/Prefire/edit/main/README.md\" target=\"_blank\" rel=\"noreferrer\">Add your project</a>",nav_users:"Users"},
-      ru:{meta_title:"Prefire | Snapshot-тесты из SwiftUI previews",meta_description:"Генерируйте snapshot-тесты и iOS Playbook из SwiftUI previews, которые уже есть в проекте.",brand_subtitle:"От previews к уверенности",nav_result:"Результат",nav_workflow:"Как работает",nav_install:"Установка",nav_brand:"Бренд-кит",hero_eyebrow:"SwiftUI previews → snapshot-тесты",hero_title:"Previews, готовые к тестам.",hero_body:"Prefire читает <code>#Preview</code> и генерирует snapshot-тесты плюс iOS Playbook. Без второго набора UI-состояний.",hero_primary:"Установить Prefire",hero_secondary:"Открыть GitHub",flow_source:"Ваш preview",flow_ready:"готов",result_label:"Один источник",result_title:"Один preview. Два результата.",result_body:"Состояния, которые уже есть в проекте, становятся тестами и визуальным каталогом.",result_stage_body:"Один набор preview-состояний становится повторяемыми проверками и визуальным каталогом интерфейса.",workflow_label:"Три шага",workflow_title:"Продолжайте писать previews.",workflow_body:"Prefire проведёт их от исходного кода до готового результата.",step_1_title:"Опишите состояние",step_1_body:"Используйте <code>#Preview</code>, <code>@Previewable</code> или <code>PreviewProvider</code>.",step_2_title:"Соберите target",step_2_body:"Plugin найдёт previews и сгенерирует Swift-код.",step_3_title:"Тестируйте или смотрите",step_3_body:"Запустите snapshots или откройте Playbook с теми же состояниями.",install_label:"Установка",install_title:"Выберите, как запускать Prefire.",install_body:"Используйте plugin в Xcode или SwiftPM. CLI подойдёт для явных локальных и CI-запусков.",tab_xcode:"Подключите build tool plugin.",tab_swiftpm:"Добавьте plugins к package targets.",tab_cli:"Запускайте генерацию напрямую.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Добавьте Prefire как package dependency и подключите test или Playbook plugin к нужному target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Добавьте Prefire один раз, затем подключите plugins к targets с generated output.",panel_cli_title:"CLI",panel_cli_body:"Установите через Homebrew и запускайте генерацию тестов или Playbook напрямую.",config_summary:"Нужны свои пути, устройства или templates?",config_body:"Добавьте <code>.prefire.yml</code>, когда дефолты перестанут подходить проекту. Проектные детали остаются в конфиге.",closing_label:"Открытый код",closing_title:"Ваши previews — уже готовые fixtures.",closing_body:"Prefire превращает их в результат, который может проверить вся команда.",closing_primary:"Открыть GitHub",closing_secondary:"Последний релиз",footer_copy:"Prefire · От SwiftUI previews к уверенности.",footer_thanks:"При информационной поддержке",users_label:"В работе",users_title:"Уже в деле.",users_body:"Open-source приложения, которые превращают previews в тесты с помощью Prefire.",user_provenance:"Мульти-эмулятор. Snapshot-тесты для SwiftUI-пакета.",user_twake:"Защищённый Matrix-мессенджер. Previews в iOS notification extension.",user_reachy:"Нативный клиент для робота Reachy Mini. Snapshot-тесты из previews.",user_smithereen:"iOS-клиент федеративной соцсети.",users_note:"Есть интеграция со <a href=\"https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests\" target=\"_blank\" rel=\"noreferrer\">Screenshotbot</a>, а в <a href=\"https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md\" target=\"_blank\" rel=\"noreferrer\">документации XcodeGen</a> Prefire — пример build tool plugin.",users_cta:"Используете Prefire? <a href=\"https://github.com/BarredEwe/Prefire/edit/main/README.md\" target=\"_blank\" rel=\"noreferrer\">Добавьте свой проект</a>",nav_users:"Кто использует"}
+      en:{meta_title:"Prefire | Snapshot tests from SwiftUI previews",meta_description:"Snapshot tests, an iOS Playbook and AI-ready renders from the SwiftUI previews already in your project. Claude Code, Cursor and Codex see your UI through an MCP server.",brand_subtitle:"Previews to confidence",nav_result:"Result",nav_workflow:"How it works",nav_install:"Install",nav_brand:"Brand kit",hero_eyebrow:"SwiftUI previews → tests · Playbook · AI",hero_title:"Previews, ready to test.",hero_body:"Prefire reads <code>#Preview</code> and turns it into snapshot tests, an iOS Playbook and PNG renders your AI agent can see. No second set of UI states.",hero_primary:"Install Prefire",hero_secondary:"View on GitHub",flow_source:"Your preview",flow_ready:"ready",result_label:"One source",result_title:"One preview. Three outputs.",result_body:"The states already in your project become tests, a visual catalog and images an agent can read.",result_stage_body:"One set of preview states becomes repeatable checks, a browsable interface catalog and PNG renders for agents and CI.",workflow_label:"Three steps",workflow_title:"Keep writing previews.",workflow_body:"Prefire handles the path from source code to generated output.",step_1_title:"Describe the state",step_1_body:"Use <code>#Preview</code>, <code>@Previewable</code> or <code>PreviewProvider</code>.",step_2_title:"Build the target",step_2_body:"The plugin finds previews and generates Swift output.",step_3_title:"Test, browse or render",step_3_body:"Run snapshots, open Playbook or let an agent render the same states.",install_label:"Install",install_title:"Choose how Prefire runs.",install_body:"Use the plugin in Xcode or SwiftPM. Use the CLI for local and CI runs, and the MCP server for AI agents.",tab_xcode:"Attach the build tool plugin.",tab_swiftpm:"Add plugins to package targets.",tab_cli:"Run generation directly.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Add Prefire as a package dependency, then attach the test or Playbook plugin to the matching target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Add Prefire once, then attach plugins to the targets that should receive generated output.",panel_cli_title:"CLI",panel_cli_body:"Install with Homebrew, then generate tests or Playbook models explicitly.",config_summary:"Need custom paths, devices or templates?",config_body:"Add <code>.prefire.yml</code> when the defaults no longer match your project. Project-specific control stays in the config.",closing_label:"Open source",closing_title:"Your previews are already the fixture.",closing_body:"Let Prefire turn them into something the whole team, and its agents, can verify.",closing_primary:"Open GitHub",closing_secondary:"Latest release",footer_copy:"Prefire · SwiftUI previews to confidence.",footer_thanks:"Thanks for the information support to",users_label:"In production",users_title:"Already on the job.",users_body:"Open-source apps that turn their previews into tests with Prefire.",user_provenance:"Multi-emulator frontend. Snapshot tests for its SwiftUI package.",user_twake:"Secure Matrix messenger. Previews in the iOS notification extension.",user_reachy:"Native client for the Reachy Mini robot. Preview-driven snapshot tests.",user_smithereen:"iOS client for a federated social network.",users_note:"Integrates with <a href=\"https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests\" target=\"_blank\" rel=\"noreferrer\">Screenshotbot</a> and is the plugin example in the <a href=\"https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md\" target=\"_blank\" rel=\"noreferrer\">XcodeGen docs</a>.",users_cta:"Using Prefire? <a href=\"https://github.com/BarredEwe/Prefire/edit/main/README.md\" target=\"_blank\" rel=\"noreferrer\">Add your project</a>",nav_users:"Users",meta_title:"Prefire | SwiftUI previews for tests, Playbook and AI agents",nav_ai:"AI agents",hero_ai:"For AI agents",result_stage_title:"Tests, Playbook, renders.",ai_label:"New in 6.3 · AI agents",ai_title:"Let your agent see SwiftUI.",ai_body:"An agent that edits a view can't see the result. Prefire builds the app and hands the previews back as images, on any iPhone or iPad, light or dark, without Xcode Previews.",ai_you:"You",ai_prompt:"Make the sign-in button bigger and check it in dark mode on iPhone and iPad.",ai_result:"2 images rendered",ai_reply:"The button fits on both devices. On iPad the form stretches too wide, so I capped it at 420 pt and rendered again.",ai_tool_list:"Every preview of the project with its file and line, so the agent knows what it can render.",ai_tool_render:"Builds the app and returns PNGs, on the devices, color scheme and Dynamic Type asked for.",ai_tool_board:"An HTML board of the last render, grouped by user story, to review a whole flow at once.",ai_why_title:"Why not Xcode's own preview rendering?",ai_why_1:"No running Xcode, works from a terminal and in CI.",ai_why_2:"Many previews in one build, not one canvas at a time.",ai_why_3:"Real devices with their safe area, dark mode and Dynamic Type on request.",ai_why_4:"Built anew every time, so a stale canvas never shows old code.",tab_ai:"Connect the MCP server.",panel_ai_title:"MCP server",panel_ai_body:"Install the CLI, add <code>render_configuration</code> to <code>.prefire.yml</code>, then connect the server from the project folder.",panel_ai_cursor:"Add to Cursor",panel_ai_guide:"AI guide"},
+      ru:{meta_title:"Prefire | Snapshot-тесты из SwiftUI previews",meta_description:"Snapshot-тесты, iOS Playbook и рендеры для AI-агентов из SwiftUI previews, которые уже есть в проекте. Claude Code, Cursor и Codex видят ваш UI через MCP-сервер.",brand_subtitle:"От previews к уверенности",nav_result:"Результат",nav_workflow:"Как работает",nav_install:"Установка",nav_brand:"Бренд-кит",hero_eyebrow:"SwiftUI previews → тесты · Playbook · AI",hero_title:"Previews, готовые к тестам.",hero_body:"Prefire читает <code>#Preview</code> и делает из него snapshot-тесты, iOS Playbook и PNG-рендеры, которые видит ваш AI-агент. Без второго набора UI-состояний.",hero_primary:"Установить Prefire",hero_secondary:"Открыть GitHub",flow_source:"Ваш preview",flow_ready:"готов",result_label:"Один источник",result_title:"Один preview. Три результата.",result_body:"Состояния, которые уже есть в проекте, становятся тестами, визуальным каталогом и картинками, которые может прочитать агент.",result_stage_body:"Один набор preview-состояний становится повторяемыми проверками, каталогом интерфейса и PNG-рендерами для агентов и CI.",workflow_label:"Три шага",workflow_title:"Продолжайте писать previews.",workflow_body:"Prefire проведёт их от исходного кода до готового результата.",step_1_title:"Опишите состояние",step_1_body:"Используйте <code>#Preview</code>, <code>@Previewable</code> или <code>PreviewProvider</code>.",step_2_title:"Соберите target",step_2_body:"Plugin найдёт previews и сгенерирует Swift-код.",step_3_title:"Тестируйте, смотрите или рендерьте",step_3_body:"Запустите snapshots, откройте Playbook или дайте агенту отрендерить те же состояния.",install_label:"Установка",install_title:"Выберите, как запускать Prefire.",install_body:"Используйте plugin в Xcode или SwiftPM. CLI подойдёт для локальных и CI-запусков, MCP-сервер — для AI-агентов.",tab_xcode:"Подключите build tool plugin.",tab_swiftpm:"Добавьте plugins к package targets.",tab_cli:"Запускайте генерацию напрямую.",panel_xcode_title:"Xcode Build Tool Plugin",panel_xcode_body:"Добавьте Prefire как package dependency и подключите test или Playbook plugin к нужному target.",panel_swiftpm_title:"Swift Package plugins",panel_swiftpm_body:"Добавьте Prefire один раз, затем подключите plugins к targets с generated output.",panel_cli_title:"CLI",panel_cli_body:"Установите через Homebrew и запускайте генерацию тестов или Playbook напрямую.",config_summary:"Нужны свои пути, устройства или templates?",config_body:"Добавьте <code>.prefire.yml</code>, когда дефолты перестанут подходить проекту. Проектные детали остаются в конфиге.",closing_label:"Открытый код",closing_title:"Ваши previews — уже готовые fixtures.",closing_body:"Prefire превращает их в результат, который может проверить вся команда и её агенты.",closing_primary:"Открыть GitHub",closing_secondary:"Последний релиз",footer_copy:"Prefire · От SwiftUI previews к уверенности.",footer_thanks:"При информационной поддержке",users_label:"В работе",users_title:"Уже в деле.",users_body:"Open-source приложения, которые превращают previews в тесты с помощью Prefire.",user_provenance:"Мульти-эмулятор. Snapshot-тесты для SwiftUI-пакета.",user_twake:"Защищённый Matrix-мессенджер. Previews в iOS notification extension.",user_reachy:"Нативный клиент для робота Reachy Mini. Snapshot-тесты из previews.",user_smithereen:"iOS-клиент федеративной соцсети.",users_note:"Есть интеграция со <a href=\"https://screenshotbot.io/blog/swiftui-previews-and-prefire-free-snapshot-tests\" target=\"_blank\" rel=\"noreferrer\">Screenshotbot</a>, а в <a href=\"https://github.com/yonaskolb/XcodeGen/blob/master/Docs/Usage.md\" target=\"_blank\" rel=\"noreferrer\">документации XcodeGen</a> Prefire — пример build tool plugin.",users_cta:"Используете Prefire? <a href=\"https://github.com/BarredEwe/Prefire/edit/main/README.md\" target=\"_blank\" rel=\"noreferrer\">Добавьте свой проект</a>",nav_users:"Кто использует",meta_title:"Prefire | SwiftUI previews для тестов, Playbook и AI-агентов",nav_ai:"AI-агенты",hero_ai:"Для AI-агентов",result_stage_title:"Тесты, Playbook, рендеры.",ai_label:"Новое в 6.3 · AI-агенты",ai_title:"Покажите агенту SwiftUI.",ai_body:"Агент правит view, но не видит, что получилось. Prefire собирает приложение и возвращает previews картинками: любой iPhone или iPad, светлая или тёмная тема, без Xcode Previews.",ai_you:"Вы",ai_prompt:"Сделай кнопку входа крупнее и проверь в тёмной теме на iPhone и iPad.",ai_result:"Отрендерено 2 картинки",ai_reply:"На обоих устройствах кнопка влезает. На iPad форма растягивается слишком широко, ограничил её 420 pt и отрендерил ещё раз.",ai_tool_list:"Все previews проекта с файлом и строкой, чтобы агент знал, что можно отрендерить.",ai_tool_render:"Собирает приложение и возвращает PNG на нужных устройствах, в нужной теме и с нужным Dynamic Type.",ai_tool_board:"HTML-доска последнего рендера, сгруппированная по user story: весь флоу на одном экране.",ai_why_title:"Почему не рендер previews из самого Xcode?",ai_why_1:"Не нужен запущенный Xcode: работает из терминала и в CI.",ai_why_2:"Много previews за одну сборку, а не по одному canvas.",ai_why_3:"Реальные устройства с safe area, тёмная тема и Dynamic Type по запросу.",ai_why_4:"Каждый раз собирается заново, так что устаревший canvas не покажет старый код.",tab_ai:"Подключите MCP-сервер.",panel_ai_title:"MCP-сервер",panel_ai_body:"Установите CLI, добавьте <code>render_configuration</code> в <code>.prefire.yml</code> и подключите сервер из папки проекта.",panel_ai_cursor:"Добавить в Cursor",panel_ai_guide:"Гайд для AI"}
     };
     const localeStorageKey="prefire-language",supportedLocales=["en","ru"],titleElement=document.querySelector("title"),descriptionMeta=document.querySelector('meta[name="description"]');
     function detectLocale(){const stored=window.localStorage.getItem(localeStorageKey);if(supportedLocales.includes(stored))return stored;return(navigator.language||"en").toLowerCase().startsWith("ru")?"ru":"en"}
