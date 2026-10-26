@@ -199,12 +199,35 @@
       .card-pad { padding:20px; }
       .hero-actions .btn { flex:1 1 auto; }
     }
+
+    .motion-card { display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); align-items:center; }
+    .motion-demo { display:grid; justify-items:center; gap:16px; padding:34px 20px 28px; background:radial-gradient(ellipse 60% 60% at 50% 60%,rgba(255,106,53,.2),transparent 70%); }
+    .motion-demo .phone { width:190px; }
+    .cycle { position:relative; }
+    .cycle img { transition:opacity .7s ease; }
+    .cycle img:not(:first-child) { position:absolute; inset:0; }
+    .cycle img:not(.is-active) { opacity:0; }
+    .state-code { color:var(--text-2); font-size:13px; }
+    .state-code b { color:var(--ember); font-weight:500; }
+    @media (max-width:980px) { .motion-card { grid-template-columns:minmax(0,1fr); } }
+    @media (prefers-reduced-motion:no-preference) {
+      .rays span { animation:ray-drift var(--d,17s) ease-in-out infinite alternate; }
+      .rays span:nth-child(2n) { --d:21s; animation-direction:alternate-reverse; }
+      .rays span:nth-child(3n) { --d:13s; }
+      @keyframes ray-drift { from { transform:rotate(36deg) translateX(-28px); } to { transform:rotate(36deg) translateX(28px); } }
+      .hero .container>* { animation:rise .9s cubic-bezier(.2,.7,.2,1) both; }
+      .hero .container>:nth-child(2) { animation-delay:.08s; } .hero .container>:nth-child(3) { animation-delay:.16s; } .hero .container>:nth-child(4) { animation-delay:.24s; } .hero .container>:nth-child(5) { animation-delay:.32s; }
+      @keyframes rise { from { opacity:0; transform:translateY(18px); } }
+      html.js .reveal { opacity:0; transform:translateY(28px); transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1); transition-delay:var(--delay,0s); }
+      html.js .reveal.in { opacity:1; transform:none; }
+    }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .btn { transition:none; } }
 
     body.only .site-header,body.only .footer,body.only main>section:not(.is-only) { display:none; }
     body.only main>section.is-only { padding:72px 0; }
     body.only .hero.is-only { padding:150px 0 130px; }
     body.only .hero-actions { display:none; }
+    body.only .reveal,body.only .hero .container>* { opacity:1!important; transform:none!important; animation:none!important; }
   </style>
 </head>
 <body>
@@ -252,28 +275,28 @@
     </section>
 
     <section class="section container" id="essence">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div><span class="index">01</span><h2 data-i18n-html="essence_title">Your previews are already tests. <span class="dim">Everything starts here.</span></h2></div>
         <p data-i18n="essence_body">Prefire takes what developers already wrote and turns it into checks, a catalog and images an agent can see. The brand shows that work instead of decorating it.</p>
       </div>
       <div class="grid">
-        <div class="card card-pad span-2"><span class="num">01</span><h3 data-i18n="p1_title">Real output, not illustrations</h3><p data-i18n="p1_body">Every product shot is a real render from prefire render. No mocked screens, no invented numbers.</p></div>
-        <div class="card card-pad span-2"><span class="num">02</span><h3 data-i18n="p2_title">A warm signal on a calm tool</h3><p data-i18n="p2_body">Night carries the surface. Ember and rose appear as rays, glow and one accent per screen.</p></div>
-        <div class="card card-pad span-2"><span class="num">03</span><h3 data-i18n="p3_title">Say what it does</h3><p data-i18n="p3_body">Short, concrete sentences in the developer's words. The result first, then how.</p></div>
+        <div class="reveal card card-pad span-2"><span class="num">01</span><h3 data-i18n="p1_title">Real output, not illustrations</h3><p data-i18n="p1_body">Every product shot is a real render from prefire render. No mocked screens, no invented numbers.</p></div>
+        <div class="reveal card card-pad span-2"><span class="num">02</span><h3 data-i18n="p2_title">A warm signal on a calm tool</h3><p data-i18n="p2_body">Night carries the surface. Ember and rose appear as rays, glow and one accent per screen.</p></div>
+        <div class="reveal card card-pad span-2"><span class="num">03</span><h3 data-i18n="p3_title">Say what it does</h3><p data-i18n="p3_body">Short, concrete sentences in the developer's words. The result first, then how.</p></div>
       </div>
     </section>
 
     <section class="section container" id="logo">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div><span class="index">02</span><h2 data-i18n-html="logo_title">The logo. <span class="dim">Flame and word.</span></h2></div>
         <p data-i18n="logo_body">The flame sits in a rounded square in the mark color. The word is Inter Semibold with tight tracking, set beside the mark at the same height.</p>
       </div>
       <div class="grid">
-        <figure class="card span-2"><div class="logo-stage on-night"><span class="lockup"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span></div><figcaption class="logo-caption"><span class="label" data-i18n="logo_primary">primary, on night</span></figcaption></figure>
-        <figure class="card span-2"><div class="logo-stage on-plum"><span class="lockup"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span></div><figcaption class="logo-caption"><span class="label" data-i18n="logo_plum">on plum, for covers</span></figcaption></figure>
-        <figure class="card span-2"><div class="logo-stage on-paper"><span class="lockup"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span></div><figcaption class="logo-caption"><span class="label" data-i18n="logo_paper">on paper, for print and light docs</span></figcaption></figure>
-        <div class="card span-3"><div class="logo-stage" style="min-height:260px"><span class="clearspace"><span class="lockup"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span></span></div><div class="logo-caption"><span class="label" data-i18n="logo_space">clear space: half the mark height on every side</span></div></div>
-        <div class="card card-pad span-3">
+        <figure class="reveal card span-2"><div class="logo-stage on-night"><span class="lockup"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span></div><figcaption class="logo-caption"><span class="label" data-i18n="logo_primary">primary, on night</span></figcaption></figure>
+        <figure class="reveal card span-2"><div class="logo-stage on-plum"><span class="lockup"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span></div><figcaption class="logo-caption"><span class="label" data-i18n="logo_plum">on plum, for covers</span></figcaption></figure>
+        <figure class="reveal card span-2"><div class="logo-stage on-paper"><span class="lockup"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span></div><figcaption class="logo-caption"><span class="label" data-i18n="logo_paper">on paper, for print and light docs</span></figcaption></figure>
+        <div class="reveal card span-3"><div class="logo-stage" style="min-height:260px"><span class="clearspace"><span class="lockup"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span></span></div><div class="logo-caption"><span class="label" data-i18n="logo_space">clear space: half the mark height on every side</span></div></div>
+        <div class="reveal card card-pad span-3">
           <div class="sizes" style="margin-bottom:26px">
             <figure><span class="lockup" style="font-size:40px"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span><span class="label">40 px</span></figure>
             <figure><span class="lockup" style="font-size:20px"><span class="mark"><img src="assets/prefire-icon.png" alt=""></span>Prefire</span><span class="label">20 px</span></figure>
@@ -289,21 +312,21 @@
     </section>
 
     <section class="section container" id="color">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div><span class="index">03</span><h2 data-i18n-html="color_title">Color. <span class="dim">Night first, fire as a signal.</span></h2></div>
         <p data-i18n="color_body">Most of every surface is night. Text sits in three steps of warm grey. Ember and rose are for rays, glow and the one thing to notice.</p>
       </div>
       <div class="grid">
-        <div class="card swatch span-2"><div class="swatch-chip" style="background:#070607"></div><div class="swatch-info"><b>Night</b><code>#070607</code><span data-i18n="c_night">Page background</span></div></div>
-        <div class="card swatch span-2"><div class="swatch-chip" style="background:#0F0D0E"></div><div class="swatch-info"><b>Surface</b><code>#0F0D0E</code><span data-i18n="c_surface">Cards, panels</span></div></div>
-        <div class="card swatch span-2"><div class="swatch-chip" style="background:#F4F1EE"></div><div class="swatch-info"><b>Text</b><code>#F4F1EE</code><span data-i18n="c_text">Headlines, body, primary button</span></div></div>
-        <div class="card swatch span-2"><div class="swatch-chip" style="background:#FF6A35"></div><div class="swatch-info"><b>Ember</b><code>#FF6A35</code><span data-i18n="c_ember">Rays, links, active states</span></div></div>
-        <div class="card swatch span-2"><div class="swatch-chip" style="background:#E0336B"></div><div class="swatch-info"><b>Rose</b><code>#E0336B</code><span data-i18n="c_rose">Second stop of rays and glow</span></div></div>
-        <div class="card swatch span-2"><div class="swatch-chip" style="background:#31001E"></div><div class="swatch-info"><b>Plum</b><code>#31001E</code><span data-i18n="c_plum">Covers, deep backgrounds</span></div></div>
-        <div class="card swatch span-2"><div class="swatch-chip" style="background:#A19A9E"></div><div class="swatch-info"><b>Text 2</b><code>#A19A9E</code><span data-i18n="c_text2">Descriptions</span></div></div>
-        <div class="card swatch span-2"><div class="swatch-chip" style="background:#625C60"></div><div class="swatch-info"><b>Text 3</b><code>#625C60</code><span data-i18n="c_text3">Labels, captions, comments</span></div></div>
-        <div class="card swatch span-2"><div class="swatch-chip" style="background:linear-gradient(135deg,#FF6A35,#E0336B)"></div><div class="swatch-info"><b data-i18n="c_ray_name">Ray</b><code>#FF6A35 → #E0336B</code><span data-i18n="c_ray">The only gradient</span></div></div>
-        <div class="card card-pad span-6">
+        <div class="reveal card swatch span-2"><div class="swatch-chip" style="background:#070607"></div><div class="swatch-info"><b>Night</b><code>#070607</code><span data-i18n="c_night">Page background</span></div></div>
+        <div class="reveal card swatch span-2"><div class="swatch-chip" style="background:#0F0D0E"></div><div class="swatch-info"><b>Surface</b><code>#0F0D0E</code><span data-i18n="c_surface">Cards, panels</span></div></div>
+        <div class="reveal card swatch span-2"><div class="swatch-chip" style="background:#F4F1EE"></div><div class="swatch-info"><b>Text</b><code>#F4F1EE</code><span data-i18n="c_text">Headlines, body, primary button</span></div></div>
+        <div class="reveal card swatch span-2"><div class="swatch-chip" style="background:#FF6A35"></div><div class="swatch-info"><b>Ember</b><code>#FF6A35</code><span data-i18n="c_ember">Rays, links, active states</span></div></div>
+        <div class="reveal card swatch span-2"><div class="swatch-chip" style="background:#E0336B"></div><div class="swatch-info"><b>Rose</b><code>#E0336B</code><span data-i18n="c_rose">Second stop of rays and glow</span></div></div>
+        <div class="reveal card swatch span-2"><div class="swatch-chip" style="background:#31001E"></div><div class="swatch-info"><b>Plum</b><code>#31001E</code><span data-i18n="c_plum">Covers, deep backgrounds</span></div></div>
+        <div class="reveal card swatch span-2"><div class="swatch-chip" style="background:#A19A9E"></div><div class="swatch-info"><b>Text 2</b><code>#A19A9E</code><span data-i18n="c_text2">Descriptions</span></div></div>
+        <div class="reveal card swatch span-2"><div class="swatch-chip" style="background:#625C60"></div><div class="swatch-info"><b>Text 3</b><code>#625C60</code><span data-i18n="c_text3">Labels, captions, comments</span></div></div>
+        <div class="reveal card swatch span-2"><div class="swatch-chip" style="background:linear-gradient(135deg,#FF6A35,#E0336B)"></div><div class="swatch-info"><b data-i18n="c_ray_name">Ray</b><code>#FF6A35 → #E0336B</code><span data-i18n="c_ray">The only gradient</span></div></div>
+        <div class="reveal card card-pad span-6">
           <span class="label" data-i18n="c_ratio">Share of a typical screen</span>
           <div class="ratio" style="margin-top:14px">
             <div style="flex:70;background:#070607;color:#625C60">night 70</div>
@@ -316,19 +339,19 @@
     </section>
 
     <section class="section container" id="type">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div><span class="index">04</span><h2 data-i18n-html="type_title">Type. <span class="dim">Inter and JetBrains Mono.</span></h2></div>
         <p data-i18n="type_body">Inter for everything people read. JetBrains Mono for code, commands and file names, never for headings or labels in caps.</p>
       </div>
       <div class="grid">
-        <div class="card card-pad span-6"><div class="type-display" data-i18n="type_sample">Your previews are already tests.</div><span class="label" style="display:block;margin-top:18px">Inter Semibold 84 / 1.02 / −4.5%</span></div>
-        <div class="card card-pad span-3">
+        <div class="reveal card card-pad span-6"><div class="type-display" data-i18n="type_sample">Your previews are already tests.</div><span class="label" style="display:block;margin-top:18px">Inter Semibold 84 / 1.02 / −4.5%</span></div>
+        <div class="reveal card card-pad span-3">
           <div class="type-row"><span class="label">Title 52</span><span style="font-size:32px;font-weight:600;letter-spacing:-.04em;line-height:1.1" data-i18n="type_title_s">Let your agent see SwiftUI.</span></div>
           <div class="type-row"><span class="label">Card 18</span><span style="font-size:18px;font-weight:600;letter-spacing:-.02em" data-i18n="type_card_s">Snapshot tests, generated</span></div>
           <div class="type-row"><span class="label">Body 16</span><span style="color:var(--text-2)" data-i18n="type_body_s">The build plugin writes a test for each preview and compares it with the reference image.</span></div>
           <div class="type-row"><span class="label">Mono 13</span><code style="font-size:13px">prefire render --list</code></div>
         </div>
-        <div class="card card-pad span-3">
+        <div class="reveal card card-pad span-3">
 <pre class="code"><span class="kw">#Preview</span>(<span class="st">"Trip delayed"</span>) {
     <span class="ty">TripView</span>(status: .delayed(minutes: <span class="st">45</span>))
         .<span class="fn">previewUserStory</span>(.trip)
@@ -341,41 +364,54 @@
     </section>
 
     <section class="section container" id="graphics">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div><span class="index">05</span><h2 data-i18n-html="graphics_title">Graphic language. <span class="dim">Rays, grain, real screens.</span></h2></div>
-        <p data-i18n="graphics_body">Four pieces build every surface. Use rays once per page, behind the main message, and let product shots do the rest.</p>
+        <p data-i18n="graphics_body">Five pieces build every surface. Use rays once per page, behind the main message, and let product shots do the rest.</p>
       </div>
       <div class="grid">
-        <div class="card span-3">
+        <div class="reveal card span-3">
           <div class="demo">
             <div class="rays" aria-hidden="true"><span style="--x:18%;--w:80px;--o:.5"></span><span style="--x:38%;--w:130px;--o:.6"></span><span style="--x:58%;--w:60px;--o:.45;--b:5px"></span><span style="--x:72%;--w:110px;--o:.45"></span></div>
           </div>
           <div class="card-pad"><h3 data-i18n="g_rays_title">Ember rays</h3><p data-i18n="g_rays_body">Parallel bands at 36°, ember to rose, softly blurred and faded out at the edges. Behind heroes and closing calls only.</p></div>
         </div>
-        <div class="card span-3">
+        <div class="reveal card span-3">
           <div class="grain-demo"><div><span class="label" data-i18n="g_without">without grain</span></div><div><span class="label" data-i18n="g_with">with grain</span></div></div>
           <div class="card-pad"><h3 data-i18n="g_grain_title">Grain</h3><p data-i18n="g_grain_body">Fine noise over rays and gradients, and very faintly over the whole page. It keeps the fire from looking like a flat CSS fill.</p></div>
         </div>
-        <div class="card span-3">
+        <div class="reveal card span-3">
           <div class="phone-demo"><div class="phone"><img src="../assets/trip-dark.png" width="720" height="1558" alt="Trip screen rendered by Prefire" loading="lazy"></div></div>
           <div class="card-pad"><h3 data-i18n="g_phone_title">Product shots</h3><p data-i18n-html="g_phone_body">Real <code>prefire render</code> output in a dark phone frame with a warm glow underneath. Light and dark renders of the same screen sit side by side.</p></div>
         </div>
-        <div class="card span-3">
+        <div class="reveal card span-3">
           <div class="surface-demo" style="min-height:300px;align-content:center">
-            <div class="card card-pad" style="max-width:340px"><h3 data-i18n="g_card_demo">A card</h3><p data-i18n="g_card_demo_body">1 px line, a faint top highlight and a gradient that fades down.</p></div>
+            <div class="reveal card card-pad" style="max-width:340px"><h3 data-i18n="g_card_demo">A card</h3><p data-i18n="g_card_demo_body">1 px line, a faint top highlight and a gradient that fades down.</p></div>
             <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-light" href="#surfaces" data-i18n="g_primary">Primary</a><a class="btn btn-ghost" href="#surfaces" data-i18n="g_secondary">Secondary</a></div>
           </div>
           <div class="card-pad" id="surfaces"><h3 data-i18n="g_surface_title">Surfaces and buttons</h3><p data-i18n="g_surface_body">Radius 22 for cards, 11 for buttons, 50 for phone frames. One light button per screen.</p></div>
+        </div>
+        <div class="reveal card span-6 motion-card">
+          <div class="motion-demo"><div class="phone"><div class="cycle" data-cycle><img class="is-active" src="../assets/trip-light.png" width="720" height="1558" alt="Trip, default" data-state="default"><img src="../assets/trip-light-delayed.png" width="720" height="1558" alt="" aria-hidden="true" data-state="delayed"><img src="../assets/trip-light-loading.png" width="720" height="1558" alt="" aria-hidden="true" data-state="loading"></div></div><code class="state-code">.previewState(.<b data-state-name>default</b>)</code></div>
+          <div class="card-pad">
+            <h3 data-i18n="g_motion_title">Motion</h3>
+            <p data-i18n="g_motion_body">Motion shows the product working: a screen moves through its preview states, rays drift slowly, content rises in as it scrolls into view.</p>
+            <ul class="rules" style="margin-top:18px">
+              <li><b data-i18n="m_states">States</b><span data-i18n="m_states_v">Crossfade 0.7 s, a new state every 2.8 s. Show the state name next to it.</span></li>
+              <li><b data-i18n="m_enter">Enter</b><span data-i18n="m_enter_v">Rise 18–40 px with opacity, 0.8 s, cubic-bezier(.2,.7,.2,1). Stagger siblings by 80–150 ms.</span></li>
+              <li><b data-i18n="m_rays">Rays</b><span data-i18n="m_rays_v">Drift ±28 px across their axis over 13–21 s, never faster.</span></li>
+              <li><b class="no" data-i18n="m_never">Never</b><span data-i18n="m_never_v">Bounce, spin, loop the logo, or move anything when the system asks for reduced motion.</span></li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="section container" id="voice">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div><span class="index">06</span><h2 data-i18n-html="voice_title">Voice. <span class="dim">An engineer who saves you time.</span></h2></div>
         <p data-i18n="voice_body">Calm and specific. Swift terms stay Swift terms. Promise what the tool does today, with its limits.</p>
       </div>
-      <div class="card card-pad">
+      <div class="reveal card card-pad">
         <table class="voice">
           <thead><tr><th data-i18n="v_not">Not this</th><th data-i18n="v_this">This</th></tr></thead>
           <tbody>
@@ -389,7 +425,7 @@
     </section>
 
     <section class="section container" id="templates">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div><span class="index">07</span><h2 data-i18n-html="tpl_title">Templates. <span class="dim">One idea per surface.</span></h2></div>
         <p data-i18n="tpl_body">Social posts, release notes and talks use the same pieces: a short headline, a real render or real code, and rays.</p>
       </div>
@@ -425,7 +461,7 @@
     </section>
 
     <section class="section container downloads-section" id="downloads">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div><span class="index">08</span><h2 data-i18n-html="dl_title">Take it with you. <span class="dim">Same tokens as the site.</span></h2></div>
       </div>
       <div class="downloads">
@@ -470,7 +506,7 @@
         type_sample:"Your previews are already tests.",type_title_s:"Let your agent see SwiftUI.",type_card_s:"Snapshot tests, generated",type_body_s:"The build plugin writes a test for each preview and compares it with the reference image.",
         type_code:"Code keeps the syntax colors from the tokens. Show real Prefire API only.",
         graphics_title:"Graphic language. <span class=\"dim\">Rays, grain, real screens.</span>",
-        graphics_body:"Four pieces build every surface. Use rays once per page, behind the main message, and let product shots do the rest.",
+        graphics_body:"Five pieces build every surface. Use rays once per page, behind the main message, and let product shots do the rest.",
         g_rays_title:"Ember rays",g_rays_body:"Parallel bands at 36°, ember to rose, softly blurred and faded out at the edges. Behind heroes and closing calls only.",
         g_without:"without grain",g_with:"with grain",g_grain_title:"Grain",g_grain_body:"Fine noise over rays and gradients, and very faintly over the whole page. It keeps the fire from looking like a flat CSS fill.",
         g_phone_title:"Product shots",g_phone_body:"Real <code>prefire render</code> output in a dark phone frame with a warm glow underneath. Light and dark renders of the same screen sit side by side.",
@@ -489,7 +525,7 @@
         tpl_release_h:"Render any preview from the terminal.",tpl_release:"Release post, 1080 × 1080",
         tpl_slide_h:"Your previews are already tests.",tpl_slide_p:"Snapshot tests, Playbook and renders for AI agents from #Preview",tpl_slide:"Talk title slide, 16 : 9",
         dl_title:"Take it with you. <span class=\"dim\">Same tokens as the site.</span>",
-        footer_copy:"Prefire brand kit 2.0",footer_back:"Back to Prefire"
+        footer_copy:"Prefire brand kit 2.0",footer_back:"Back to Prefire",g_motion_title:"Motion",g_motion_body:"Motion shows the product working: a screen moves through its preview states, rays drift slowly, content rises in as it scrolls into view.",m_states:"States",m_states_v:"Crossfade 0.7 s, a new state every 2.8 s. Show the state name next to it.",m_enter:"Enter",m_enter_v:"Rise 18–40 px with opacity, 0.8 s, cubic-bezier(.2,.7,.2,1). Stagger siblings by 80–150 ms.",m_rays:"Rays",m_rays_v:"Drift ±28 px across their axis over 13–21 s, never faster.",m_never:"Never",m_never_v:"Bounce, spin, loop the logo, or move anything when the system asks for reduced motion."
       },
       ru:{
         meta_title:"Prefire — бренд-кит",brand_label:"Бренд-кит",download_pdf:"Скачать PDF",download_tokens:"Скачать токены",
@@ -516,7 +552,7 @@
         type_sample:"Ваши previews уже тесты.",type_title_s:"Покажите агенту SwiftUI.",type_card_s:"Snapshot-тесты сами собой",type_body_s:"Плагин сборки пишет тест на каждый preview и сравнивает его с эталоном.",
         type_code:"У кода свои цвета синтаксиса из токенов. Показываем только настоящий API Prefire.",
         graphics_title:"Графика. <span class=\"dim\">Лучи, зерно, настоящие экраны.</span>",
-        graphics_body:"Любая поверхность собирается из четырёх элементов. Лучи — один раз на страницу, за главным сообщением, остальное делают скриншоты продукта.",
+        graphics_body:"Любая поверхность собирается из пяти элементов. Лучи — один раз на страницу, за главным сообщением, остальное делают скриншоты продукта.",
         g_rays_title:"Лучи ember",g_rays_body:"Параллельные полосы под 36°, от ember к rose, слегка размытые и затухающие к краям. Только за hero и финальным призывом.",
         g_without:"без зерна",g_with:"с зерном",g_grain_title:"Зерно",g_grain_body:"Мелкий шум поверх лучей и градиентов и совсем слабый поверх всей страницы. Без него огонь выглядит плоской CSS-заливкой.",
         g_phone_title:"Скриншоты продукта",g_phone_body:"Настоящий вывод <code>prefire render</code> в тёмной рамке телефона с тёплым свечением снизу. Светлый и тёмный рендер одного экрана стоят рядом.",
@@ -535,7 +571,7 @@
         tpl_release_h:"Рендер любого preview из терминала.",tpl_release:"Пост о релизе, 1080 × 1080",
         tpl_slide_h:"Ваши previews уже тесты.",tpl_slide_p:"Snapshot-тесты, Playbook и рендеры для AI-агентов из #Preview",tpl_slide:"Титульный слайд доклада, 16 : 9",
         dl_title:"Заберите с собой. <span class=\"dim\">Те же токены, что на сайте.</span>",
-        footer_copy:"Бренд-кит Prefire 2.0",footer_back:"Вернуться на Prefire"
+        footer_copy:"Бренд-кит Prefire 2.0",footer_back:"Вернуться на Prefire",g_motion_title:"Движение",g_motion_body:"Анимация показывает продукт в работе: экран проходит через свои preview-состояния, лучи медленно дрейфуют, контент поднимается при прокрутке.",m_states:"Состояния",m_states_v:"Плавная смена за 0,7 с, новое состояние каждые 2,8 с. Рядом — название состояния.",m_enter:"Появление",m_enter_v:"Подъём на 18–40 px с прозрачностью, 0,8 с, cubic-bezier(.2,.7,.2,1). Соседей — с задержкой 80–150 мс.",m_rays:"Лучи",m_rays_v:"Дрейф ±28 px поперёк оси за 13–21 с, не быстрее.",m_never:"Нельзя",m_never_v:"Пружинить, крутить, зацикливать логотип и вообще двигать что-либо, если система просит уменьшить движение."
       }
     };
     const localeKey="prefire-language",locales=["en","ru"];
@@ -544,6 +580,13 @@
     function detectLocale(){const q=new URLSearchParams(location.search).get("lang");if(locales.includes(q))return q;const s=readLocale();if(locales.includes(s))return s;return(navigator.language||"en").toLowerCase().startsWith("ru")?"ru":"en"}
     function applyLocale(locale){const d=translations[locale];if(!d)return;document.documentElement.lang=locale;document.title=d.meta_title;document.querySelectorAll("[data-i18n]").forEach(n=>{const v=d[n.dataset.i18n];if(v)n.textContent=v});document.querySelectorAll("[data-i18n-html]").forEach(n=>{const v=d[n.dataset.i18nHtml];if(v)n.innerHTML=v});document.querySelectorAll("[data-language-button]").forEach(b=>{const a=b.dataset.languageButton===locale;b.classList.toggle("is-active",a);b.setAttribute("aria-pressed",String(a))});saveLocale(locale)}
     const only=new URLSearchParams(location.search).get("only");if(only){document.body.classList.add("only");const sec=only==="hero"?document.querySelector(".hero"):document.getElementById(only);if(sec)sec.classList.add("is-only")}
+    document.documentElement.classList.add("js");
+    const motionOK=!matchMedia("(prefers-reduced-motion: reduce)").matches&&!document.body.classList.contains("only");
+    const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.12,rootMargin:"0px 0px -40px 0px"});
+    document.querySelectorAll(".grid").forEach(g=>[...g.querySelectorAll(":scope>.reveal")].forEach((el,i)=>el.style.setProperty("--delay",(i%3)*0.08+"s")));
+    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+    const stateName=document.querySelector("[data-state-name]");
+    document.querySelectorAll("[data-cycle]").forEach(c=>{const imgs=[...c.children];let i=0;if(!motionOK)return;setInterval(()=>{if(document.hidden)return;imgs[i].classList.remove("is-active");i=(i+1)%imgs.length;imgs[i].classList.add("is-active");if(stateName)stateName.textContent=imgs[i].dataset.state},2800)});
     const fitTemplates=()=>document.querySelectorAll("[data-tpl]").forEach(t=>t.style.setProperty("--s",t.parentElement.clientWidth/Number(t.dataset.tpl)));fitTemplates();addEventListener("resize",fitTemplates);if(window.ResizeObserver)new ResizeObserver(fitTemplates).observe(document.body);
     document.querySelectorAll("[data-language-button]").forEach(b=>b.addEventListener("click",()=>applyLocale(b.dataset.languageButton)));applyLocale(detectLocale());
   </script>

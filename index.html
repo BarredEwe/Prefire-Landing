@@ -237,6 +237,43 @@
       .hero-actions .btn { flex:1 1 auto; }
       .closing { margin-top:110px; padding:110px 0 100px; }
     }
+
+    /* motion */
+    .cycle { position:relative; }
+    .cycle img { transition:opacity .7s ease; }
+    .cycle img:not(:first-child) { position:absolute; inset:0; }
+    .cycle img:not(.is-active) { opacity:0; }
+    .state-code { margin-left:6px; color:var(--text-2); }
+    .state-code b { color:var(--ember); font-weight:500; }
+    .states figure { transition:opacity .5s ease,transform .5s ease; }
+    .states figcaption b { transition:color .4s ease; }
+    .states[data-active] figure { opacity:.45; }
+    .states figure.is-active { opacity:1; transform:translateY(-6px); }
+    .states figure.is-active figcaption b { color:var(--ember); }
+    @media (prefers-reduced-motion:no-preference) {
+      .rays span { animation:ray-drift var(--d,17s) ease-in-out infinite alternate; }
+      .rays span:nth-child(2n) { --d:21s; animation-direction:alternate-reverse; }
+      .rays span:nth-child(3n) { --d:13s; }
+      @keyframes ray-drift { from { transform:rotate(36deg) translateX(-28px); } to { transform:rotate(36deg) translateX(28px); } }
+      .stage::before { animation:glow 7s ease-in-out infinite alternate; }
+      @keyframes glow { from { opacity:.75; } to { opacity:1; } }
+      .hero-copy>* { animation:rise .9s cubic-bezier(.2,.7,.2,1) both; }
+      .hero-copy>:nth-child(2) { animation-delay:.08s; } .hero-copy>:nth-child(3) { animation-delay:.16s; } .hero-copy>:nth-child(4) { animation-delay:.24s; }
+      @keyframes rise { from { opacity:0; transform:translateY(18px); } }
+      .phone-center { animation:phone-in 1.2s .3s cubic-bezier(.2,.7,.2,1) both; }
+      .phone-left,.phone-right { animation:phone-side 1.2s .5s cubic-bezier(.2,.7,.2,1) both; }
+      @keyframes phone-in { from { opacity:0; transform:translateX(-50%) translateY(70px); } }
+      @keyframes phone-side { from { opacity:0; } }
+      html.js .reveal { opacity:0; transform:translateY(28px); transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1); transition-delay:var(--delay,0s); }
+      html.js .reveal.in { opacity:1; transform:none; }
+      html.js [data-stagger] .mini-phone { opacity:0; transform:translateY(40px); transition:opacity .7s ease,transform .8s cubic-bezier(.2,.7,.2,1); }
+      html.js [data-stagger].in .mini-phone { opacity:1; transform:none; }
+      html.js [data-stagger].in .mini-phone:nth-child(2) { transition-delay:.15s; } html.js [data-stagger].in .mini-phone:nth-child(3) { transition-delay:.3s; }
+      html.js [data-type] .tl { opacity:0; }
+      html.js [data-type].in .tl { animation:line-in .35s ease both; animation-delay:calc(var(--n) * .45s + .2s); }
+      @keyframes line-in { from { opacity:0; transform:translateX(-6px); } to { opacity:1; transform:none; } }
+      .btn-light:hover { transform:translateY(-1px); }
+    }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .btn { transition:none; } }
   </style>
 </head>
@@ -283,20 +320,20 @@
       </div>
       <figure class="container stage">
         <div class="phone phone-left"><img src="assets/trip-light.png" width="720" height="1558" alt="Trip screen, light mode, rendered by Prefire"></div>
-        <div class="phone phone-center"><img src="assets/trip-dark.png" width="720" height="1558" alt="Trip screen, dark mode, rendered by Prefire"></div>
-        <div class="phone phone-right"><img src="assets/trip-dark-delayed.png" width="720" height="1558" alt="Trip screen in the delayed state, rendered by Prefire"></div>
-        <figcaption data-i18n="stage_caption">Three previews of one screen, rendered by prefire render</figcaption>
+        <div class="phone phone-center"><div class="cycle" data-cycle><img class="is-active" src="assets/trip-dark.png" width="720" height="1558" alt="Trip screen, dark mode, rendered by Prefire" data-state="default"><img src="assets/trip-dark-delayed.png" width="720" height="1558" alt="" aria-hidden="true" data-state="delayed"><img src="assets/trip-dark-loading.png" width="720" height="1558" alt="" aria-hidden="true" data-state="loading"></div></div>
+        <div class="phone phone-right"><img src="assets/trip-light-delayed.png" width="720" height="1558" alt="Trip screen in the delayed state, light mode, rendered by Prefire"></div>
+        <figcaption><span data-i18n="stage_caption">Rendered by prefire render</span> <code class="state-code">.previewState(.<b data-state-name>default</b>)</code></figcaption>
       </figure>
       <div class="container works-with"><span data-i18n="works_with">Works with</span><b>Xcode</b><b>Swift Package Manager</b><b>Claude Code</b><b>Cursor</b><b>Codex</b></div>
     </section>
 
     <section class="section container" id="features">
-      <div class="section-title">
+      <div class="section-title reveal">
         <h2 data-i18n-html="features_title">Write previews. <span class="dim">Get the rest for free.</span></h2>
         <p data-i18n-html="features_body">You already describe every state of a screen in <code>#Preview</code>. Prefire reuses them, so there is nothing extra to write or keep in sync.</p>
       </div>
       <div class="bento">
-        <article class="card span-4 glow-ember">
+        <article class="reveal card span-4 glow-ember">
           <div class="card-visual">
 <pre class="code"><span class="kw">#Preview</span>(<span class="st">"Trip"</span>) {
     <span class="ty">TripView</span>(status: .onTime)
@@ -311,13 +348,13 @@
           </div>
           <div class="card-copy"><h3 data-i18n="f_tests_title">Snapshot tests, generated</h3><p data-i18n="f_tests_body">The build plugin writes a test for each preview and compares it with the reference image on the devices you pick. A moved pixel fails CI, not the release.</p></div>
         </article>
-        <article class="card span-2">
+        <article class="reveal card span-2">
           <div class="card-visual"><div class="mini-phone"><div class="crop"><img src="assets/prefire-playbook.gif" width="320" height="693" alt="Playbook catalog of components and user stories" loading="lazy"></div></div></div>
           <div class="card-copy"><h3>Playbook</h3><p data-i18n="f_playbook_body">A catalog of every component and user story, inside your app.</p></div>
         </article>
-        <article class="card span-3">
+        <article class="reveal card span-3">
           <div class="card-visual">
-            <div class="states">
+            <div class="states" data-states>
               <figure><div class="mini-phone"><div class="crop" style="max-height:230px"><img src="assets/trip-light.png" width="720" height="1558" alt="Trip, on time" loading="lazy"></div></div><figcaption><b>default</b></figcaption></figure>
               <figure><div class="mini-phone"><div class="crop" style="max-height:230px"><img src="assets/trip-light-delayed.png" width="720" height="1558" alt="Trip, delayed" loading="lazy"></div></div><figcaption><b>delayed</b></figcaption></figure>
               <figure><div class="mini-phone"><div class="crop" style="max-height:230px"><img src="assets/trip-light-loading.png" width="720" height="1558" alt="Trip, loading" loading="lazy"></div></div><figcaption><b>loading</b></figcaption></figure>
@@ -325,7 +362,7 @@
           </div>
           <div class="card-copy"><h3 data-i18n="f_states_title">Every state</h3><p data-i18n-html="f_states_body">Mark states with <code>.previewState()</code> and group screens into flows with <code>.previewUserStory()</code>.</p></div>
         </article>
-        <article class="card span-3">
+        <article class="reveal card span-3">
           <div class="card-visual" style="padding-top:52px">
             <div class="compare" data-compare>
               <div class="compare-labels"><span data-i18n="light">light</span><span data-i18n="dark">dark</span></div>
@@ -343,11 +380,11 @@
     </section>
 
     <section class="section container" id="ai">
-      <div class="section-title">
+      <div class="section-title reveal">
         <h2 data-i18n-html="ai_title">Let your agent see SwiftUI. <span class="dim">Not guess it.</span></h2>
         <p data-i18n="ai_body">An agent that edits a view can't see the result. Prefire builds the app and returns the previews as images, right in the conversation.</p>
       </div>
-      <article class="card agent">
+      <article class="reveal card agent">
         <div class="agent-copy">
           <h3 data-i18n="ai_card_title">One command to connect</h3>
           <div class="tabs" role="tablist" aria-label="Agent">
@@ -382,7 +419,7 @@
   devices: [<span class="st">"iPhone 16 Pro"</span>],
   color_scheme: <span class="st">"dark"</span>
 )</pre>
-          <div class="returned">
+          <div class="returned" data-stagger>
             <div class="mini-phone"><div class="crop" style="max-height:250px"><img src="assets/trip-dark.png" width="720" height="1558" alt="Trip, dark" loading="lazy"></div></div>
             <div class="mini-phone"><div class="crop" style="max-height:250px"><img src="assets/trip-dark-delayed.png" width="720" height="1558" alt="Trip delayed, dark" loading="lazy"></div></div>
             <div class="mini-phone"><div class="crop" style="max-height:250px"><img src="assets/trip-dark-loading.png" width="720" height="1558" alt="Trip loading, dark" loading="lazy"></div></div>
@@ -390,15 +427,15 @@
         </div>
       </article>
       <div class="bento" style="margin-top:16px">
-        <article class="card span-6">
+        <article class="reveal card span-6">
           <div class="card-visual" style="min-height:0;padding-bottom:0">
-            <div class="terminal">
+            <div class="terminal" data-type>
               <div class="terminal-bar"><i></i><i></i><i></i><span>~/Example</span></div>
 <pre><span class="p">$</span> <span class="c">prefire render "Trip" "Trip delayed" "Trip loading" --device "iPhone 16 Pro" --color-scheme dark</span>
-<span class="ok">✅</span> Trip-iPhone 16 Pro (iPhone 16 Pro): .prefire/render/Trip-iPhone_16_Pro.png
-<span class="ok">✅</span> Trip delayed-iPhone 16 Pro (iPhone 16 Pro): .prefire/render/Trip_delayed-iPhone_16_Pro.png
-<span class="ok">✅</span> Trip loading-iPhone 16 Pro (iPhone 16 Pro): .prefire/render/Trip_loading-iPhone_16_Pro.png
-Manifest: .prefire/render/manifest.json</pre>
+<span class="tl" style="--n:1"><span class="ok">✅</span> Trip-iPhone 16 Pro (iPhone 16 Pro): .prefire/render/Trip-iPhone_16_Pro.png</span>
+<span class="tl" style="--n:2"><span class="ok">✅</span> Trip delayed-iPhone 16 Pro (iPhone 16 Pro): .prefire/render/Trip_delayed-iPhone_16_Pro.png</span>
+<span class="tl" style="--n:3"><span class="ok">✅</span> Trip loading-iPhone 16 Pro (iPhone 16 Pro): .prefire/render/Trip_loading-iPhone_16_Pro.png</span>
+<span class="tl" style="--n:4">Manifest: .prefire/render/manifest.json</span></pre>
             </div>
           </div>
           <div class="card-copy"><h3 data-i18n="f_cli_title">The same from the terminal or CI</h3><p data-i18n-html="f_cli_body"><code>prefire render</code> writes PNGs with a JSON record for each preview. <code>prefire board</code> lays the last render out as an HTML flow board.</p></div>
@@ -407,11 +444,11 @@ Manifest: .prefire/render/manifest.json</pre>
     </section>
 
     <section class="section container" id="install">
-      <div class="section-title">
+      <div class="section-title reveal">
         <h2 data-i18n-html="install_title">Set up in a minute. <span class="dim">Pick one.</span></h2>
       </div>
       <div class="install">
-        <div class="card">
+        <div class="reveal card">
           <h3>Swift Package Manager</h3>
           <p data-i18n="inst_spm">Add the plugin to your snapshot test target.</p>
 <pre>.package(
@@ -420,7 +457,7 @@ Manifest: .prefire/render/manifest.json</pre>
 )
 .<span class="fn">plugin</span>(name: <span class="st">"PrefireTestsPlugin"</span>, package: <span class="st">"Prefire"</span>)</pre>
         </div>
-        <div class="card">
+        <div class="reveal card">
           <h3>Xcode</h3>
           <p data-i18n="inst_xcode">Add the package, then the plugins in Build Phases.</p>
 <pre><span class="cm">// test target</span>
@@ -428,7 +465,7 @@ PrefireTestsPlugin
 <span class="cm">// app target</span>
 PrefirePlaybookPlugin</pre>
         </div>
-        <div class="card">
+        <div class="reveal card">
           <h3>Homebrew</h3>
           <p data-i18n="inst_brew">The CLI for tests, render and the MCP server.</p>
           <div class="cmd" style="margin-top:auto"><pre>brew install barredewe/prefire/prefire</pre><button class="copy" type="button" data-copy="brew install barredewe/prefire/prefire" data-i18n="copy">Copy</button></div>
@@ -477,7 +514,7 @@ PrefirePlaybookPlugin</pre>
         hero_title:"Your previews are already tests.",
         hero_body:"Prefire turns every <code>#Preview</code> into a snapshot test, a Playbook screen and an image your AI agent can look at.",
         hero_primary:"Install Prefire",hero_secondary:"Read the docs",
-        stage_caption:"Three previews of one screen, rendered by prefire render",
+        stage_caption:"Rendered by prefire render",
         works_with:"Works with",
         features_title:"Write previews. <span class=\"dim\">Get the rest for free.</span>",
         features_body:"You already describe every state of a screen in <code>#Preview</code>. Prefire reuses them, so there is nothing extra to write or keep in sync.",
@@ -513,7 +550,7 @@ PrefirePlaybookPlugin</pre>
         hero_title:"Ваши previews уже тесты.",
         hero_body:"Prefire превращает каждый <code>#Preview</code> в snapshot-тест, экран в Playbook и картинку, которую видит ваш AI-агент.",
         hero_primary:"Установить Prefire",hero_secondary:"Документация",
-        stage_caption:"Три preview одного экрана, отрендерено prefire render",
+        stage_caption:"Отрендерено prefire render",
         works_with:"Работает с",
         features_title:"Пишите previews. <span class=\"dim\">Остальное бесплатно.</span>",
         features_body:"Все состояния экрана вы уже описываете в <code>#Preview</code>. Prefire берёт их оттуда: писать и синхронизировать ничего не нужно.",
@@ -551,6 +588,16 @@ PrefirePlaybookPlugin</pre>
 
     document.querySelectorAll('[role="tablist"]').forEach(list=>{const tabs=[...list.querySelectorAll('[role="tab"]')];const activate=tab=>tabs.forEach(t=>{const a=t===tab;t.setAttribute("aria-selected",String(a));t.tabIndex=a?0:-1;document.getElementById(t.getAttribute("aria-controls")).hidden=!a});tabs.forEach((tab,i)=>{tab.addEventListener("click",()=>activate(tab));tab.addEventListener("keydown",e=>{if(!["ArrowLeft","ArrowRight"].includes(e.key))return;e.preventDefault();const n=tabs[(i+(e.key==="ArrowRight"?1:tabs.length-1))%tabs.length];activate(n);n.focus()})})});
 
+
+    document.documentElement.classList.add("js");
+    const motionOK=!matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.15,rootMargin:"0px 0px -40px 0px"});
+    document.querySelectorAll(".bento").forEach(b=>[...b.querySelectorAll(".reveal")].forEach((el,i)=>el.style.setProperty("--delay",(i%3)*0.08+"s")));
+    document.querySelectorAll(".reveal,[data-stagger],[data-type]").forEach(el=>io.observe(el));
+    const stateName=document.querySelector("[data-state-name]");
+    document.querySelectorAll("[data-cycle]").forEach(c=>{const imgs=[...c.children];let i=0;if(!motionOK)return;setInterval(()=>{if(document.hidden)return;imgs[i].classList.remove("is-active");i=(i+1)%imgs.length;imgs[i].classList.add("is-active");if(stateName)stateName.textContent=imgs[i].dataset.state},2800)});
+    document.querySelectorAll("[data-states]").forEach(st=>{const figs=[...st.children];let i=0;if(!motionOK)return;st.dataset.active="";figs[0].classList.add("is-active");setInterval(()=>{if(document.hidden)return;figs[i].classList.remove("is-active");i=(i+1)%figs.length;figs[i].classList.add("is-active")},2200)});
+    document.querySelectorAll("[data-compare]").forEach(c=>{if(!motionOK)return;const input=c.querySelector("input");let auto=true,start=null;const stop=()=>auto=false;input.addEventListener("pointerdown",stop);input.addEventListener("keydown",stop);input.addEventListener("input",e=>{if(e.isTrusted)stop()});const tick=t=>{if(!auto)return;if(start===null)start=t;const v=50+38*Math.sin((t-start)/1400);input.value=v;c.style.setProperty("--pos",v+"%");requestAnimationFrame(tick)};const vis=new IntersectionObserver(es=>{if(es[0].isIntersecting){requestAnimationFrame(tick);vis.disconnect()}});vis.observe(c)});
     document.querySelectorAll("[data-compare]").forEach(c=>{const input=c.querySelector("input");const set=()=>c.style.setProperty("--pos",input.value+"%");input.addEventListener("input",set);set()});
 
     document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent=translations[currentLocale].copied;b.classList.add("is-copied");setTimeout(()=>{b.textContent=translations[currentLocale].copy;b.classList.remove("is-copied")},1600)}catch{}}));
